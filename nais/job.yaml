@@ -1,0 +1,33 @@
+#This file can be used as an example of a job, but this file is not actually used
+#env jobname must be unique, and can be set in workflow.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{jobname}}
+  namespace: klage
+spec:
+  backoffLimit: 0
+  completions: 1
+  parallelism: 1
+  template:
+    metadata:
+      labels:
+        job-name: {{jobname}}
+        app: kabal-e2e-tests
+    spec:
+      imagePullSecrets:
+        - name: gpr-credentials
+      serviceAccount: default
+      serviceAccountName: default
+      containers:
+        - image: ghcr.io/navikt/kabal-e2e-tests:latest
+          name: kabal-e2e-tests
+          envFrom:
+            - secretRef:
+                name: kabal-e2e-test-users
+            - secretRef:
+                name: slack-e2e-secrets
+            - configMapRef:
+                name: slack-e2e-configmap
+      dnsPolicy: ClusterFirst
+      restartPolicy: Never

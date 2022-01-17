@@ -1,0 +1,125 @@
+{
+    "ignorePatterns": ["*.json", "*.md", "*.yaml", "Dockerfile", "README", "CODEOWNERS", "LICENSE"],
+    "extends": [
+      "prettier",
+      "eslint:recommended",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "sourceType": "module",
+      "project": "./tsconfig.json"
+    },
+    "plugins": ["@typescript-eslint", "prettier", "import", "prefer-arrow"],
+    "settings": {},
+    "root": true,
+    "env": {
+      "node": true,
+      "es6": true
+    },
+    "rules": {
+      "prettier/prettier": [
+        "error",
+        {
+          "semi": true,
+          "singleQuote": true,
+          "printWidth": 120,
+          "tabWidth": 2,
+          "endOfLine": "lf"
+        }
+      ],
+      "max-lines": ["error", {
+        "max": 500,
+        "skipBlankLines": true,
+        "skipComments": true
+      }],
+      "linebreak-style": ["error", "unix"],
+      "max-depth": ["error", { "max": 2 }],
+      "no-lonely-if": "error",
+      "complexity": ["error", { "max": 11 }],
+      "curly": ["error", "all"],
+      "default-case": "error",
+      "default-case-last": "error",
+      "no-alert": "error",
+      "no-eval": "error",
+      "no-extend-native": "error",
+      "no-proto": "error",
+      "no-return-assign": ["error", "always"],
+      "no-implicit-coercion": "error",
+      "no-nested-ternary": "error",
+      "no-unneeded-ternary": "error",
+      "arrow-body-style": ["error", "as-needed"],
+      "prefer-const": "error",
+      "prefer-destructuring": "error",
+      "eol-last": ["error", "always"],
+      "padded-blocks": ["error", "never"],
+      "@typescript-eslint/no-empty-function": "off",
+      "prefer-arrow/prefer-arrow-functions": [
+        "warn",
+        {
+          "disallowPrototype": true,
+          "singleReturnOnly": false,
+          "classPropertiesAllowed": false
+        }
+      ],
+      "sort-imports": ["error", {
+        "ignoreDeclarationSort": true
+      }],
+      "comma-dangle": [0, "never"],
+      "no-unused-vars": "off",
+      "no-duplicate-imports": "error",
+      "no-var": "error",
+      "eqeqeq": "error",
+      "radix": ["error", "always"],
+      "yoda": ["error", "never"],
+      "no-shadow": "off",
+      "@typescript-eslint/no-shadow": ["error"],
+      "no-useless-rename": "error",
+      "no-useless-return": "error",
+      "no-else-return": "error",
+      "array-callback-return": "error",
+      "object-shorthand": ["error", "always"],
+      "prefer-rest-params": "error",
+      "prefer-spread": "error",
+      "prefer-object-spread": "error",
+      "padding-line-between-statements": ["error",
+        { "blankLine": "always", "prev": "*", "next": "block" },
+        { "blankLine": "always", "prev": "block", "next": "*" },
+        { "blankLine": "always", "prev": "*", "next": "block-like" },
+        { "blankLine": "always", "prev": "block-like", "next": "*" }
+      ],
+      "space-before-blocks": ["error", {
+        "functions": "always",
+        "keywords": "always",
+        "classes": "always"
+      }],
+      "keyword-spacing": ["error", {
+        "before": true
+      }],
+      "import/first": "error",
+      "import/no-default-export": "off",
+      "import/newline-after-import": ["error", { "count": 1 }],
+      "import/no-duplicates": "error",
+      "import/order": ["error", {
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index", "object"],
+        "newlines-between": "never",
+        "alphabetize": {
+          "order": "asc"
+        }
+      }],
+      "@typescript-eslint/no-var-requires": 0,
+      "@typescript-eslint/no-unused-vars": ["error"],
+      "@typescript-eslint/explicit-module-boundary-types": "off",
+      "@typescript-eslint/strict-boolean-expressions": "error",
+      "@typescript-eslint/array-type": "error",
+      "@typescript-eslint/no-unsafe-assignment": "error",
+      "@typescript-eslint/prefer-reduce-type-parameter": "error",
+      "@typescript-eslint/switch-exhaustiveness-check": "error",
+      "@typescript-eslint/prefer-nullish-coalescing": "error",
+      "@typescript-eslint/prefer-includes": "error",
+      "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
+      "@typescript-eslint/consistent-type-imports": ["error", { "prefer": "no-type-imports" }]
+    }
+  }
+  
