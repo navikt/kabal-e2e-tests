@@ -13,7 +13,6 @@ const config: PlaywrightTestConfig = {
     trace: 'on',
     locale: 'no-NB',
   },
-  workers: 1,
 };
 
 export default config;
