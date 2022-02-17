@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.17.2-focal
+FROM mcr.microsoft.com/playwright:v1.19.1-focal
 
 ENV NODE_ENV test
 
