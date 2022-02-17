@@ -6,7 +6,7 @@
   },
   "scripts": {
     "test": "playwright test",
-    "test-headed": "playwright test --headed",
+    "test-headed": "playwright test --headed --retries 0",
     "lint": "eslint . --color",
     "lint-fix": "eslint . --color --fix",
     "lint-staged": "lint-staged",
