@@ -19,7 +19,7 @@ export const getLoggedInPage = async (page: Page, { username, password }: User, 
   await azurePage.click('input[type=submit]', { timeout: 10000 });
 
   // Fill in password.
-  await azurePage.fill('input[type=password]', password, { timeout: 10000 });
+  await azurePage.fill('input[type=password][tabindex="0"]', password, { timeout: 10000 });
 
   // Click "Sign in".
   await azurePage.click('input[type=submit]', { timeout: 10000 });
