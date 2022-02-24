@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 export const optionalEnvString = (name: string): string | undefined => {
   const envVariable = process.env[name];
 

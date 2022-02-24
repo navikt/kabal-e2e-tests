@@ -3,12 +3,15 @@ import { getParsedUrl } from './functions';
 import { getLoggedInPage, goToAzure } from './helpers';
 import { userSaksbehandler } from './users';
 
-test.describe('Uauthorized', () => {
-  test('Uauthorized load of KABAL without path should redirect to Azure login', async ({ page }) => {
+test.describe('Ikke innlogget', () => {
+  // Don't reuse logged in state for these tests
+  test.use({ storageState: undefined });
+
+  test('Uautentisert/uautorisert bruker av KABAL skal sendes til innlogging i Azure', async ({ page }) => {
     await goToAzure(page);
   });
 
-  test('User should be redirected to initial path after login', async ({ page }) => {
+  test('Bruker skal sendes tilbake til KABAL etter innlogging', async ({ page }) => {
     const path = '/mineoppgaver';
     const loggedInPage = await getLoggedInPage(page, userSaksbehandler, path);
 

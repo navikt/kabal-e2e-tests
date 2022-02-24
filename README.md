@@ -14,6 +14,11 @@ Locally the E2E application will not send messages to Slack. The Slack config is
 export SAKSBEHANDLER_USERNAME=<email>
 export SAKSBEHANDLER_PASSWORD=<password>
 ```
+... or create an `.env` file with the following content: 
+```
+SAKSBEHANDLER_USERNAME=<email>
+SAKSBEHANDLER_PASSWORD=<password>
+```
 
 ### GCP
 ```
