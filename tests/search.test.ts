@@ -8,7 +8,7 @@ test.describe('Søk', () => {
     await page.goto(`${ROOT_URL}/sok`);
   });
 
-  test('Mix of letters and numbers should not search', async ({ page }) => {
+  test('Søketekst med både tall og bokstaver utfører ikke et søk', async ({ page }) => {
     page.on('request', (req) => {
       const url = req.url();
 
@@ -24,7 +24,7 @@ test.describe('Søk', () => {
     await page.waitForTimeout(1000);
   });
 
-  test('A set of letters should search for people', async ({ page }) => {
+  test('Søketekst med bare boksstaver søker etter flere personer', async ({ page }) => {
     const TEST_STRING = 'tøffeldyr';
 
     const searchField = await page.waitForSelector('data-testid=search-input');
@@ -36,7 +36,7 @@ test.describe('Søk', () => {
     expect(results).toBeGreaterThan(0);
   });
 
-  test('A set of 11 digits should search for a person', async ({ page }) => {
+  test('Søketekst med 11 siffer skal søke etter saker på enkeltperson', async ({ page }) => {
     const TEST_STRING = '184969 00509';
 
     const searchField = await page.waitForSelector('data-testid=search-input');
