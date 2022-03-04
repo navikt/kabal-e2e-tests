@@ -13,11 +13,10 @@ test.describe('Tildelt oppgave', () => {
 
     await page.waitForSelector('[data-testid="select-utfall"][data-ready="true"]');
     await select.selectOption({ label: 'Medhold' });
-    await page.waitForResponse(
-      (res) => res.ok() && res.request().method() === 'PUT' && res.url().endsWith('/resultat/utfall')
-    );
+    await page.waitForTimeout(200);
 
     await page.reload();
+    await select.scrollIntoViewIfNeeded();
 
     await page.waitForSelector('[data-testid="select-utfall"][data-ready="true"]');
     const selected = await select.inputValue();
@@ -48,15 +47,17 @@ test.describe('Tildelt oppgave', () => {
     expect(hjemmelCount).toBe(1);
     expect(hjemmel).toBe('§ 22-15 første ledd første punktum');
 
-    const checked = await page.isChecked('text=§ 22-15 første ledd første punktum');
-    await page.setChecked('text=§ 22-15 første ledd første punktum', !checked);
-    await page.waitForResponse(
-      (res) => res.ok() && res.request().method() === 'PUT' && res.url().endsWith('/resultat/hjemler')
-    );
+    const checkbox = hjemmelList.locator('text=§ 22-15 første ledd første punktum');
 
+    const checked = await checkbox.isChecked();
+    await checkbox.setChecked(!checked);
+
+    await page.waitForTimeout(200);
     await page.reload();
+    await page.locator('data-testid=lovhjemmel-button').scrollIntoViewIfNeeded();
+
     await page.click('data-testid=lovhjemmel-button');
-    const checkedAfterToggle = await page.isChecked('text=§ 22-15 første ledd første punktum');
+    const checkedAfterToggle = await checkbox.isChecked();
 
     expect(checkedAfterToggle).toBe(!checked);
 
@@ -77,10 +78,11 @@ test.describe('Tildelt oppgave', () => {
       .evaluateAll<string[], HTMLOptionElement>((options) => options.map((option) => option.value));
 
     await select.selectOption({ value: secondValue });
-    await page.waitForResponse(
-      (res) => res.ok() && res.request().method() === 'PUT' && res.url().endsWith('/medunderskriverident')
-    );
+
+    await page.waitForTimeout(200);
     await page.reload();
+    await select.scrollIntoViewIfNeeded();
+
     const selected = await select.inputValue();
     expect(selected).toBe(secondValue);
 

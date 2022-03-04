@@ -1,10 +1,16 @@
 import fs from 'fs';
 import { resolve } from 'path';
 import { Page, expect } from '@playwright/test';
+import { DocumentType } from './types';
 
 const getDocumentByName = (page: Page, documentName: string) => {
   const newDocumentsList = page.locator('data-testid=new-documents-list');
   return newDocumentsList.locator(`article[data-documentname="${documentName}"]`);
+};
+
+const getDocumentListItemByName = (page: Page, documentName: string) => {
+  const newDocumentsList = page.locator('data-testid=new-documents-list');
+  return newDocumentsList.locator(`li[data-documentname="${documentName}"]`);
 };
 
 const getDocumentById = (page: Page, documentId: string) => {
@@ -90,8 +96,10 @@ export const verifyFinishedDocument = async (page: Page, documentName: string) =
     .locator('[data-testid="journalfoert-document-checkbox"]:checked')
     .waitFor({ timeout: 20 * 1000 });
 
+  await page.waitForTimeout(200);
+
   const inNewList = await inProgressList.locator(`article[data-documentname="${documentName}"]`).count();
-  expect(inNewList, 'Forventet at journalført dokument forsvinner fra "Under arbeid"-listen.').toBe(0);
+  expect(inNewList === 0, 'Forventet at journalført dokument forsvinner fra "Under arbeid"-listen.').toBe(true);
 };
 
 export const deleteDocument = async (page: Page, documentName: string) => {
@@ -109,7 +117,7 @@ export const deleteDocument = async (page: Page, documentName: string) => {
   await container.locator('data-testid=document-delete-button').click();
   await container.locator('data-testid=document-delete-confirm').click();
 
-  await page.waitForResponse((res) => res.request().method() === 'DELETE', { timeout: 500 });
+  await page.waitForResponse((res) => res.ok() && res.request().method() === 'DELETE', { timeout: 500 });
 
   const documentsCount = await container.count();
 
@@ -118,4 +126,48 @@ export const deleteDocument = async (page: Page, documentName: string) => {
   }
 
   return documentName;
+};
+
+export const setDocumentType = async (page: Page, documentName: string, type: DocumentType) => {
+  const container = getDocumentByName(page, documentName);
+
+  const button = container.locator('data-testid=document-type-button');
+  await button.click();
+
+  const dropdown = container.locator('data-testid=document-type-dropdown');
+  await dropdown.waitFor();
+
+  await dropdown.locator(`data-testid=document-set-type-${type}`).click();
+
+  const selectedType = await button.getAttribute('data-value');
+  expect(selectedType).toBe(type);
+};
+
+export const setDocumentAsAttachmentTo = async (page: Page, documentName: string, parentName: string) => {
+  const container = getDocumentListItemByName(page, documentName);
+
+  const actionButton = container.locator('data-testid=document-actions-button');
+
+  const actionButtonCount = await actionButton.count();
+
+  expect(actionButtonCount, `Forventet kun én dropdown-knapp for dokument ${documentName}`).toBe(1);
+
+  await actionButton.click();
+
+  const select = container.locator('data-testid=document-set-parent-document');
+  await select.waitFor();
+  await select.selectOption({ label: parentName });
+
+  await page.waitForResponse((res) => res.ok() && res.request().method() === 'PUT' && res.url().endsWith('/parent'), {
+    timeout: 500,
+  });
+
+  const parent = getDocumentListItemByName(page, parentName);
+  const attachmentList = parent.locator('data-testid=new-attachments-list');
+  await attachmentList.waitFor();
+  const attachments = attachmentList.locator(
+    `[data-testid="new-document-list-item-content"][data-documentname="${documentName}"][data-documenttype="attachment"]`
+  );
+  const count = await attachments.count();
+  expect(count, `Forventet å finne dokument ${documentName} som vedlegg til ${parentName}.`).toBe(1);
 };
