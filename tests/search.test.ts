@@ -1,8 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { ROOT_URL } from './functions';
 
-const timeout = 5000;
-
 test.describe('Søk', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(`${ROOT_URL}/sok`);
@@ -30,7 +28,7 @@ test.describe('Søk', () => {
     const searchField = await page.waitForSelector('data-testid=search-input');
     await searchField.fill(TEST_STRING);
 
-    await page.waitForResponse((response) => response.url().endsWith('/search/name'), { timeout });
+    await page.waitForResponse((res) => res.ok() && res.url().endsWith('/search/name'));
     const results = await page.locator('data-testid=search-result').count();
 
     expect(results).toBeGreaterThan(0);
@@ -42,6 +40,6 @@ test.describe('Søk', () => {
     const searchField = await page.waitForSelector('data-testid=search-input');
     await searchField.fill(TEST_STRING);
 
-    await page.waitForSelector('data-testid=search-result', { timeout });
+    await page.waitForSelector('data-testid=search-result');
   });
 });
