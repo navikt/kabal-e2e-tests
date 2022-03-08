@@ -5,7 +5,7 @@
     "node": ">=16"
   },
   "scripts": {
-    "test": "playwright test",
+    "test": "FORCE_COLOR=0 playwright test",
     "dev": "NODE_ENV=development playwright test --headed --retries 0 --workers 1",
     "lint": "eslint . --color",
     "lint-fix": "eslint . --color --fix",
