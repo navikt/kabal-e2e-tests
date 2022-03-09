@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { ROOT_URL, getParsedUrl } from './functions';
+import { UI_DOMAIN, getParsedUrl } from './functions';
 
 test.describe('Innstillinger', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(`${ROOT_URL}/innstillinger`);
+    await page.goto(`${UI_DOMAIN}/innstillinger`);
   });
 
   test('"Innstillinger" laster og viser innstillinger', async ({ page }) => {

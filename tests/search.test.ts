@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { ROOT_URL } from './functions';
+import { UI_DOMAIN } from './functions';
 
 test.describe('Søk', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(`${ROOT_URL}/sok`);
+    await page.goto(`${UI_DOMAIN}/sok`);
   });
 
   test('Søketekst med både tall og bokstaver utfører ikke et søk', async ({ page }) => {
@@ -22,7 +22,7 @@ test.describe('Søk', () => {
     await page.waitForTimeout(1000);
   });
 
-  test('Søketekst med bare boksstaver søker etter flere personer', async ({ page }) => {
+  test('Søketekst med bare bokstaver søker etter flere personer', async ({ page }) => {
     const TEST_STRING = 'tøffeldyr';
 
     const searchField = await page.waitForSelector('data-testid=search-input');

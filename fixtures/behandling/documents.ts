@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { resolve } from 'path';
 import { Page, expect } from '@playwright/test';
+import { test } from './fixture';
 import { DocumentType } from './types';
 
 const getDocumentByName = (page: Page, documentName: string) => {
@@ -38,13 +39,13 @@ export const renameDocument = async (page: Page, documentName: string, newDocume
   const documentId = await container.getAttribute('data-documentid');
 
   if (documentId === null) {
-    throw new Error(`Document with name "${documentName}" is missing its document ID.`);
+    throw new Error(`Dokument med navn "${documentName}" mangler ID.`);
   }
 
   const renameButtonCount = await renameButton.count();
 
   if (renameButtonCount !== 1) {
-    throw new Error(`Expected 1 rename button, found ${renameButtonCount}`);
+    throw new Error(`Forventet 1 "Endre navn"-knapp, fant ${renameButtonCount}`);
   }
 
   await renameButton.click();
@@ -55,9 +56,14 @@ export const renameDocument = async (page: Page, documentName: string, newDocume
   await input.fill(newDocumentName);
   await input.press('Enter');
 
-  const document = getDocumentById(page, documentId);
-  await document.waitFor();
-  await document.locator(`text="${newDocumentName}"`).waitFor({ timeout: 100 });
+  await test.step(
+    `Dokument (\`${documentId}\`) skal være omdøpt fra \`${documentName}\` til \`${newDocumentName}\``,
+    async () => {
+      const document = getDocumentById(page, documentId);
+      await document.waitFor();
+      await document.locator(`text="${newDocumentName}"`).waitFor({ timeout: 1000 });
+    }
+  );
 
   return newDocumentName;
 };
@@ -69,7 +75,7 @@ export const finishDocument = async (page: Page, documentName: string) => {
   const actionButtonCount = await actionButton.count();
 
   if (actionButtonCount !== 1) {
-    throw new Error(`Expected 1 action button, found ${actionButtonCount}`);
+    throw new Error(`Forventet 1 kontekstknapp, fant ${actionButtonCount}`);
   }
 
   await actionButton.click();
@@ -117,12 +123,12 @@ export const deleteDocument = async (page: Page, documentName: string) => {
   await container.locator('data-testid=document-delete-button').click();
   await container.locator('data-testid=document-delete-confirm').click();
 
-  await page.waitForResponse((res) => res.ok() && res.request().method() === 'DELETE', { timeout: 500 });
+  await page.waitForResponse((res) => res.ok() && res.request().method() === 'DELETE');
 
   const documentsCount = await container.count();
 
   if (documentsCount !== 0) {
-    throw new Error(`Expected document to be deleted, but it was not`);
+    throw new Error(`Forventet at dokumentet (${documentName}) var slettet`);
   }
 
   return documentName;
@@ -150,7 +156,7 @@ export const setDocumentAsAttachmentTo = async (page: Page, documentName: string
 
   const actionButtonCount = await actionButton.count();
 
-  expect(actionButtonCount, `Forventet kun én dropdown-knapp for dokument ${documentName}`).toBe(1);
+  expect(actionButtonCount, `Forventet kun én kontekstknapp for dokument ${documentName}`).toBe(1);
 
   await actionButton.click();
 
@@ -158,9 +164,7 @@ export const setDocumentAsAttachmentTo = async (page: Page, documentName: string
   await select.waitFor();
   await select.selectOption({ label: parentName });
 
-  await page.waitForResponse((res) => res.ok() && res.request().method() === 'PUT' && res.url().endsWith('/parent'), {
-    timeout: 500,
-  });
+  await page.waitForResponse((res) => res.ok() && res.request().method() === 'PUT' && res.url().endsWith('/parent'));
 
   const parent = getDocumentListItemByName(page, parentName);
   const attachmentList = parent.locator('data-testid=new-attachments-list');

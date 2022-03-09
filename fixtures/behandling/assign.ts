@@ -1,8 +1,8 @@
 import { Page } from '@playwright/test';
-import { makeDirectApiRequest } from './direct-api-request';
+import { makeDirectApiRequest } from '../direct-api-request';
 import { getBrukerData } from './get-user-data';
 
-export const assignTask = async (page: Page, oppgaveId: string) => {
+export const assignBehandling = async (page: Page, behandlingId: string) => {
   const brukerData = await getBrukerData(page);
 
   if (brukerData === null) {
@@ -12,17 +12,17 @@ export const assignTask = async (page: Page, oppgaveId: string) => {
   const res = await makeDirectApiRequest(
     page,
     'kabal-api',
-    `/ansatte/${brukerData.info.navIdent}/klagebehandlinger/${oppgaveId}/saksbehandlertildeling`,
+    `/ansatte/${brukerData.info.navIdent}/klagebehandlinger/${behandlingId}/saksbehandlertildeling`,
     'POST',
     { navIdent: brukerData.info.navIdent, enhetId: brukerData.ansattEnhet.id }
   );
 
   if (!res.ok) {
-    throw new Error(`Failed to assign task "${oppgaveId}". ${res.status} - ${res.statusText}`);
+    throw new Error(`Failed to assign behandling "${behandlingId}". ${res.status} - ${res.statusText}`);
   }
 };
 
-export const deAssignTask = async (page: Page, oppgaveId: string) => {
+export const deAssignBehandling = async (page: Page, behandlingId: string) => {
   const brukerData = await getBrukerData(page);
 
   if (brukerData === null) {
@@ -32,11 +32,11 @@ export const deAssignTask = async (page: Page, oppgaveId: string) => {
   const res = await makeDirectApiRequest(
     page,
     'kabal-api',
-    `/ansatte/${brukerData.info.navIdent}/klagebehandlinger/${oppgaveId}/saksbehandlerfradeling`,
+    `/ansatte/${brukerData.info.navIdent}/klagebehandlinger/${behandlingId}/saksbehandlerfradeling`,
     'POST'
   );
 
   if (!res.ok) {
-    throw new Error(`Failed to deassign task "${oppgaveId}". ${res.status} - ${res.statusText}`);
+    throw new Error(`Failed to deassign behandling "${behandlingId}". ${res.status} - ${res.statusText}`);
   }
 };

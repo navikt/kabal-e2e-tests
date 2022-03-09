@@ -1,21 +1,13 @@
 import { ReadStream, createReadStream } from 'fs';
 import { App } from '@slack/bolt';
 import { ChatPostMessageResponse } from '@slack/web-api';
-import { requiredEnvString } from '../config/env';
+import { IS_DEPLOYED, envString } from '../config/env';
 
 class SlackClient {
   private app: App;
-  private token: string;
-  private channel: string;
 
-  constructor() {
-    this.token = requiredEnvString('slack_e2e_token');
-    this.channel = requiredEnvString('kabal_notications_channel');
-
-    this.app = new App({
-      token: this.token,
-      signingSecret: requiredEnvString('slack_signing_secret'),
-    });
+  constructor(private token: string, private channel: string, signingSecret: string) {
+    this.app = new App({ token, signingSecret });
   }
 
   async postMessage(message: string) {
@@ -40,8 +32,8 @@ class SlackClient {
 
   async uploadFileBuffer(
     fileBuffer: Buffer | ReadStream,
-    filename: string,
-    title: string,
+    filename?: string,
+    title?: string,
     message?: string,
     threadMessage?: ChatPostMessageResponse
   ) {
@@ -61,14 +53,19 @@ class SlackClient {
       throw new Error('Could not update message.');
     }
 
-    const response = await this.app.client.chat.update({
-      token: this.token,
-      channel: message?.channel ?? this.channel,
-      ts: message.ts,
-      text: newMessage,
-    });
+    try {
+      const response = await this.app.client.chat.update({
+        token: this.token,
+        channel: message?.channel ?? this.channel,
+        ts: message.ts,
+        text: newMessage,
+      });
 
-    return new SlackMessageThread(this, response);
+      return new SlackMessageThread(this, response);
+    } catch (error) {
+      console.debug('Failed to update message with', newMessage);
+      throw error;
+    }
   }
 
   async postReply(threadMessage: ChatPostMessageResponse, reply: string) {
@@ -89,24 +86,20 @@ class SlackClient {
 
 export type SlackClientType = InstanceType<typeof SlackClient>;
 
-const isDeployed = process.env.NODE_ENV === 'test';
-
 export const getSlack = () => {
-  if (isDeployed) {
-    return new SlackClient();
+  const token = envString('slack_e2e_token', IS_DEPLOYED);
+  const channel = envString('kaka_notifications_channel', IS_DEPLOYED);
+  const secret = envString('slack_signing_secret', IS_DEPLOYED);
+
+  if (typeof token === 'string' && typeof channel === 'string' && typeof secret === 'string') {
+    return new SlackClient(token, channel, secret);
   }
 
   return null;
 };
 
 export class SlackMessageThread {
-  private app: SlackClient;
-  private message: ChatPostMessageResponse;
-
-  constructor(app: SlackClient, message: ChatPostMessageResponse) {
-    this.app = app;
-    this.message = message;
-  }
+  constructor(private app: SlackClient, private message: ChatPostMessageResponse) {}
 
   update = (newMessage: string) => this.app.updateMessage(this.message, newMessage);
 

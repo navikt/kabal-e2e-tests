@@ -34,6 +34,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish Docker images
         run: |
-          docker build --tag ${IMAGE} --tag ${LATEST} .
+          docker build --build-arg CI=${CI} --tag ${IMAGE} --tag ${LATEST} .
           docker push ${IMAGE}
           docker push ${LATEST}

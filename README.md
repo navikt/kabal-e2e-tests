@@ -23,7 +23,7 @@ SAKSBEHANDLER_PASSWORD=<password>
 ### GCP
 ```
 kubectl create configmap slack-e2e-configmap \
---from-literal=kabal_notications_channel=klage-notifications
+--from-literal=kabal_notifications_channel=klage-notifications
 
 kubectl create secret generic slack-e2e-secrets \
 --from-literal=slack_e2e_token=<token> \

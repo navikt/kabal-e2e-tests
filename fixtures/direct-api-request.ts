@@ -1,7 +1,6 @@
-import { join } from 'path';
 import { Page } from '@playwright/test';
 import fetch from 'node-fetch';
-import { ROOT_URL } from '../../tests/functions';
+import { createApiUrl } from '../tests/functions';
 
 export const makeDirectApiRequest = async <T>(
   page: Page,
@@ -10,8 +9,10 @@ export const makeDirectApiRequest = async <T>(
   method: 'POST' | 'GET' | 'PUT' | 'DELETE',
   body?: T
 ) => {
+  const url = createApiUrl(api, path);
+
   try {
-    return fetch(join(ROOT_URL, 'api', api, path), {
+    return fetch(url, {
       method,
       body: JSON.stringify(body),
       headers: {
@@ -22,9 +23,9 @@ export const makeDirectApiRequest = async <T>(
     });
   } catch (e) {
     if (e instanceof Error) {
-      throw new Error(`${method} ${path} to ${api} - ${e.message}.`);
+      throw new Error(`${method} ${url} - ${e.message}.`);
     }
 
-    throw new Error(`${method} ${path} to ${api} - Unkown error.`);
+    throw new Error(`${method} ${url} - Unkown error.`);
   }
 };

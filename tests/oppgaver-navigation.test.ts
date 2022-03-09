@@ -1,17 +1,17 @@
 import { expect, test } from '@playwright/test';
-import { ROOT_URL, getParsedUrl } from './functions';
+import { UI_DOMAIN, getParsedUrl } from './functions';
 
 const timeout = 5000;
 
 test.describe('Navigering', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(ROOT_URL);
+    await page.goto(UI_DOMAIN);
   });
 
   test('"Oppgaver"-lenke navigerer til `/oppgaver/1`', async ({ page }) => {
-    const oppgaverLink = await page.waitForSelector('data-testid=oppgaver-nav-link', { timeout });
+    const behandlingerLink = await page.waitForSelector('data-testid=oppgaver-nav-link', { timeout });
 
-    await oppgaverLink.click();
+    await behandlingerLink.click();
 
     const url = getParsedUrl(page.url());
     expect(url.pathname).toBe('/oppgaver/1');

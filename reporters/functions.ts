@@ -49,6 +49,7 @@ export enum SlackIcon {
   QUESTION = ':question:',
   TADA = ':tada:',
   SKEPTIC = ':face_with_raised_eyebrow:',
+  RUNNING = ':meow_code:',
 }
 
 export const getStatusIcon = (status: TestStatus): SlackIcon => {

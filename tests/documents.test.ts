@@ -1,44 +1,38 @@
-import { test } from '../fixtures/oppgavebehandling/fixture';
-import { DocumentType } from '../fixtures/oppgavebehandling/types';
+import { test } from '../fixtures/behandling/fixture';
+import { DocumentType } from '../fixtures/behandling/types';
 
 test.describe('Dokumenter', () => {
-  test('Saksbehandler kan laste opp og slette dokumenter', async ({ kabalPage }) => {
+  test('Saksbehandler kan laste opp og slette dokumenter', async ({ klagebehandling }) => {
     const filename = 'e2e-test-document.pdf';
 
-    const oppgave = await kabalPage.generateKlage();
-    await oppgave.assign();
-    await oppgave.navigateTo();
+    const { behandling } = klagebehandling;
 
-    const title = await oppgave.uploadDocument(filename);
-    await oppgave.deleteDocument(title);
-
-    await oppgave.deAssign();
+    const title = await behandling.uploadDocument(filename);
+    await behandling.deleteDocument(title);
   });
 
-  test('Opplasting, endre navn/type, ferdigstille, sette vedlegg', async ({ kabalPage }) => {
+  test('Opplasting, endre navn/type, ferdigstille, sette vedlegg', async ({ klagebehandling }) => {
     const filename = 'e2e-test-document.pdf';
 
-    const oppgave = await kabalPage.generateKlage();
-    await oppgave.assign();
-    await oppgave.navigateTo();
+    const { behandling } = klagebehandling;
 
     const documents: string[] = [];
 
     const DOCUMENTS_TO_UPLOAD = 5;
 
     for (let i = 0; i < DOCUMENTS_TO_UPLOAD; i++) {
-      const title = await oppgave.uploadDocument(filename);
+      const title = await behandling.uploadDocument(filename);
       documents.push(title);
     }
 
     const [parent, vedlegg] = documents;
 
-    await oppgave.setDocumentAsAttachmentTo(vedlegg, parent);
+    await behandling.setDocumentAsAttachmentTo(vedlegg, parent);
 
     const renamedDocuments: string[] = [];
 
     for (const title of documents) {
-      const newTitle = await oppgave.renameDocument(title, `${title}-renamed`);
+      const newTitle = await behandling.renameDocument(title, `${title}-renamed`);
 
       renamedDocuments.push(newTitle);
     }
@@ -46,23 +40,23 @@ test.describe('Dokumenter', () => {
     const [hoveddokument1, vedlegg1, vedlegg2, hoveddokument2, hoveddokument3] = renamedDocuments;
     const hoveddokumentmenter = [hoveddokument1, hoveddokument2, hoveddokument3];
 
-    await oppgave.setDocumentAsAttachmentTo(vedlegg2, hoveddokument1);
+    await behandling.setDocumentAsAttachmentTo(vedlegg2, hoveddokument1);
     const newTitle = `${vedlegg1}-again`;
-    await oppgave.renameDocument(vedlegg1, newTitle);
+    await behandling.renameDocument(vedlegg1, newTitle);
 
     const afterAttachmentNames = renamedDocuments.map((n) => (n === vedlegg1 ? newTitle : n));
 
-    await oppgave.setDocumentType(hoveddokument2, DocumentType.BREV);
-    await oppgave.setDocumentType(hoveddokument3, DocumentType.BESLUTNING);
+    await behandling.setDocumentType(hoveddokument2, DocumentType.BREV);
+    await behandling.setDocumentType(hoveddokument3, DocumentType.BESLUTNING);
 
     for (const hoveddokument of hoveddokumentmenter) {
-      await oppgave.finishDocument(hoveddokument);
+      await behandling.finishDocument(hoveddokument);
     }
 
-    const journalfoerte = afterAttachmentNames.map(oppgave.verifyFinishedDocument);
+    const journalfoerte = afterAttachmentNames.map(behandling.verifyFinishedDocument);
 
     await Promise.all(journalfoerte);
 
-    await oppgave.deAssign();
+    await behandling.deAssign();
   });
 });
