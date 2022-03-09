@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { makeDirectApiRequest } from './direct-api-request';
+import { makeDirectApiRequest } from '../direct-api-request';
 
 let cachedBrukerdata: IBrukerdata | null = null;
 

@@ -5,7 +5,7 @@ const config: PlaywrightTestConfig = {
   globalTimeout: 600000,
   name: 'KABAL',
   reporter: [['list'], ['./reporters/slack-reporter.ts']],
-  retries: 3,
+  retries: 0,
   testDir: './tests',
   use: {
     actionTimeout: 10000,

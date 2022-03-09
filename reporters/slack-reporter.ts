@@ -1,21 +1,15 @@
 import nodePath from 'path';
-import { FullConfig, FullResult, Reporter, Suite, TestCase, TestResult } from '@playwright/test/reporter';
+import { FullConfig, FullResult, Reporter, Suite, TestCase, TestResult, TestStep } from '@playwright/test/reporter';
 import fetch from 'node-fetch';
+import { IS_DEPLOYED } from '../config/env';
 import { SlackMessageThread, getSlack } from '../slack/slack-client';
-import {
-  SlackIcon,
-  asyncForEach,
-  delay,
-  getFullStatusIcon,
-  getTestStatusIcon,
-  getTestTitle,
-  isNotNull,
-} from './functions';
+import { SlackIcon, asyncForEach, delay, getFullStatusIcon, getTestStatusIcon, getTestTitle } from './functions';
 
 interface TestSlackData {
   icon: SlackIcon;
-  status: string;
   title: string;
+  status: string;
+  steps: Map<TestStep, TestSlackData>;
 }
 
 class SlackReporter implements Reporter {
@@ -29,6 +23,7 @@ class SlackReporter implements Reporter {
   private creatingSlackMessage = false;
   private timer: NodeJS.Timeout | null = null;
   private startTime = Date.now();
+  private name = '';
 
   private async setTestMessage(test: TestCase, status: TestSlackData) {
     this.testStatuses.set(test, status);
@@ -51,22 +46,9 @@ class SlackReporter implements Reporter {
   }
 
   private async updateMessage() {
-    // Sort tests by title.
-    const orderedTests = Array.from(this.testStatuses.values())
-      .sort((a, b) => {
-        if (a.title < b.title) {
-          return -1;
-        }
+    const orderedTests = formatMessage(Array.from(this.testStatuses.values()));
 
-        if (a.title > b.title) {
-          return 1;
-        }
-
-        return 0;
-      })
-      .map(({ icon, status, title }) => `${icon} ${title} - \`${status}\``);
-
-    const message = [`*${this.mainMessage}*`, '', ...orderedTests].join('\n');
+    const message = [`*${this.name} - ${this.mainMessage}*`, '', orderedTests].join('\n');
 
     if (this.slack === null) {
       console.log('');
@@ -103,15 +85,53 @@ class SlackReporter implements Reporter {
   async onBegin(config: FullConfig, suite: Suite) {
     const allTests = suite.allTests();
     this.totalTests = allTests.length;
+
+    this.name = config.projects.map(({ name }) => name).join(', ');
+
     this.mainMessage = `Running ${this.totalTests} E2E tests with ${config.workers} workers...`;
     allTests.forEach((test) =>
-      this.testStatuses.set(test, { icon: SlackIcon.WAITING, title: getTestTitle(test), status: 'Running...' })
+      this.testStatuses.set(test, {
+        icon: SlackIcon.WAITING,
+        title: getTestTitle(test),
+        status: 'Waiting...',
+        steps: new Map(),
+      })
     );
     this.updateMessage();
   }
 
   async onTestBegin(test: TestCase) {
-    this.updateTestMessage(test, { icon: SlackIcon.WAITING });
+    this.updateTestMessage(test, { icon: SlackIcon.RUNNING, status: 'Running...' });
+  }
+
+  async onStepBegin(test: TestCase, result: TestResult, step: TestStep) {
+    const data = this.testStatuses.get(test);
+
+    if (typeof data === 'undefined' || step.category !== 'test.step') {
+      return;
+    }
+
+    data.steps.set(step, {
+      title: step.title,
+      icon: SlackIcon.RUNNING,
+      status: 'Running...',
+      steps: new Map(),
+    });
+  }
+
+  async onStepEnd(test: TestCase, result: TestResult, step: TestStep) {
+    const data = this.testStatuses.get(test);
+
+    if (typeof data === 'undefined' || !data.steps.has(step)) {
+      return;
+    }
+
+    data.steps.set(step, {
+      title: step.title,
+      icon: typeof step.error === 'undefined' ? SlackIcon.SUCCESS : SlackIcon.WARNING,
+      status: `${result.duration}`,
+      steps: new Map(),
+    });
   }
 
   async onTestEnd(test: TestCase, result: TestResult) {
@@ -119,40 +139,39 @@ class SlackReporter implements Reporter {
     const title = getTestTitle(test);
     this.updateTestMessage(test, { icon, status: `${result.duration / 1000} seconds` });
 
-    if (result.status === 'failed' || result.status === 'timedOut') {
+    const isFailed = result.status === 'failed' || result.status === 'timedOut';
+
+    if (isFailed) {
       this.failedTestCount += 1;
 
       const log = [`${title} - stacktrace`, '```', result?.error?.stack ?? 'No stacktrace', '```'];
       await this.thread?.reply(log.join('\n'));
-
-      const fileOrder = ['video', 'screenshot', 'trace'];
-
-      const sortedFiles = result.attachments
-        .map(({ name, path }) => {
-          if (typeof path === 'undefined') {
-            return null;
-          }
-
-          return { name, path };
-        })
-        .filter(isNotNull)
-        .sort((a, b) => fileOrder.indexOf(a.name) - fileOrder.indexOf(b.name));
-
-      await asyncForEach(sortedFiles, async ({ name, path }) => {
-        const filename = name + nodePath.extname(path);
-
-        if (name === 'trace') {
-          return await this.thread?.replyFilePath(
-            path,
-            `${title} - \`${name}\`\n\`npx playwright show-trace ${filename}\``,
-            test.title,
-            filename
-          );
-        }
-
-        return await this.thread?.replyFilePath(path, `${title} - ${name}`, test.title, filename);
-      });
     }
+
+    const atttachments = isFailed ? prepareFailedResult(result) : preparePassedResult(result);
+
+    await asyncForEach(atttachments, async ({ name, path, body, contentType }) => {
+      if (contentType === 'text/plain' && body instanceof Buffer) {
+        return await this.thread?.reply(`:warning: *Warning*\`\`\`${body.toString('utf-8')}\`\`\``);
+      }
+
+      if (typeof path === 'undefined') {
+        return;
+      }
+
+      const filename = name + nodePath.extname(path);
+
+      if (name === 'trace') {
+        return await this.thread?.replyFilePath(
+          path,
+          `${title} - \`${name}\`\n\`npx playwright show-trace ${filename}\``,
+          test.title,
+          filename
+        );
+      }
+
+      return await this.thread?.replyFilePath(path, `${title} - ${name}`, test.title, filename);
+    });
 
     this.completedTests += 1;
   }
@@ -178,7 +197,7 @@ class SlackReporter implements Reporter {
       await delay(200);
     }
 
-    if (this.slack !== null) {
+    if (IS_DEPLOYED) {
       console.log('Shutting down Linkerd.');
       // Shut down Linkerd proxy sidecar.
       await fetch('http://127.0.0.1:4191/shutdown', {
@@ -187,5 +206,37 @@ class SlackReporter implements Reporter {
     }
   }
 }
+
+const ORDER = ['warningMessage', 'video', 'screenshot', 'trace'];
+
+const prepareFailedResult = (result: TestResult) =>
+  result.attachments.sort((a, b) => ORDER.indexOf(a.name) - ORDER.indexOf(b.name));
+
+const preparePassedResult = (result: TestResult) => result.attachments.filter(({ name }) => name === 'warningMessage');
+
+const formatMessage = (tests: TestSlackData[], level = 0): string => {
+  const indent = '\t'.repeat(level);
+
+  return tests
+    .sort((a, b) => {
+      if (a.title < b.title) {
+        return -1;
+      }
+
+      if (a.title > b.title) {
+        return 1;
+      }
+
+      return 0;
+    })
+    .map(({ icon, status, title, steps }) => {
+      if (steps.size === 0) {
+        return `${indent}${icon} ${title} - \`${status}\``;
+      }
+
+      return `${indent}${icon} ${title} - \`${status}\`\n${formatMessage(Array.from(steps.values()), level + 1)}`;
+    })
+    .join('\n');
+};
 
 export default SlackReporter;

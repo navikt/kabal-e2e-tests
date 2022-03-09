@@ -1,9 +1,9 @@
 import { Page, expect } from '@playwright/test';
-import { IS_DEV, ROOT_URL } from './functions';
+import { DEV_DOMAIN, LOCAL_DOMAIN, UI_DOMAIN, USE_DEV } from './functions';
 import { User } from './users';
 
 export const goToAzure = async (page: Page, path = ''): Promise<Page> => {
-  const res = await page.goto(`https://kabal.dev.nav.no${path}`);
+  const res = await page.goto(`${DEV_DOMAIN}${path}`);
   expect(res).not.toBeNull();
   const url = res?.url();
   expect(url).toBeDefined();
@@ -28,12 +28,13 @@ export const getLoggedInPage = async (page: Page, { username, password }: User, 
   // Click "No" to remember login.
   await azurePage.click('input[type=button]');
 
-  if (IS_DEV) {
-    await page.goto(`${ROOT_URL}${path}`);
+  // Force navigation to local domain, if not using dev domain.
+  if (!USE_DEV) {
+    await page.goto(`${LOCAL_DOMAIN}${path}`);
   }
 
   // Browser should be redirected to KABAL.
-  expect(azurePage.url()).toMatch(`${ROOT_URL}${path}`);
+  expect(azurePage.url()).toMatch(`${UI_DOMAIN}${path}`);
 
   return azurePage;
 };
