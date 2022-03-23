@@ -12,9 +12,9 @@ export const assignBehandling = async (page: Page, behandlingId: string) => {
   const res = await makeDirectApiRequest(
     page,
     'kabal-api',
-    `/ansatte/${brukerData.info.navIdent}/klagebehandlinger/${behandlingId}/saksbehandlertildeling`,
+    `/ansatte/${brukerData.navIdent}/klagebehandlinger/${behandlingId}/saksbehandlertildeling`,
     'POST',
-    { navIdent: brukerData.info.navIdent, enhetId: brukerData.ansattEnhet.id }
+    { navIdent: brukerData.navIdent, enhetId: brukerData.ansattEnhet.id }
   );
 
   if (!res.ok) {
@@ -32,7 +32,7 @@ export const deAssignBehandling = async (page: Page, behandlingId: string) => {
   const res = await makeDirectApiRequest(
     page,
     'kabal-api',
-    `/ansatte/${brukerData.info.navIdent}/klagebehandlinger/${behandlingId}/saksbehandlerfradeling`,
+    `/ansatte/${brukerData.navIdent}/klagebehandlinger/${behandlingId}/saksbehandlerfradeling`,
     'POST'
   );
 
