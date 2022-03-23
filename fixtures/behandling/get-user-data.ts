@@ -3,7 +3,7 @@ import { makeDirectApiRequest } from '../direct-api-request';
 
 let cachedBrukerdata: IBrukerdata | null = null;
 
-const userProperties = ['info', 'roller', 'enheter', 'ansattEnhet', 'innstillinger'];
+const userProperties = ['navIdent', 'roller', 'enheter', 'ansattEnhet'];
 
 export const getBrukerData = async (page: Page) => {
   if (cachedBrukerdata !== null) {
@@ -25,22 +25,10 @@ const isBrukerdata = (json: unknown): json is IBrukerdata =>
   json !== null && typeof json === 'object' && userProperties.every((p) => p in json);
 
 interface IBrukerdata {
-  info: {
-    navIdent: string;
-    azureId: string;
-    fornavn: string;
-    etternavn: string;
-    sammensattNavn: string;
-    epost: string;
-  };
+  navIdent: string;
   roller: string[];
   enheter: IEnhet[];
   ansattEnhet: IEnhet;
-  innstillinger: {
-    hjemler: string[];
-    ytelser: string[];
-    typer: string[];
-  };
 }
 
 interface IEnhet {
