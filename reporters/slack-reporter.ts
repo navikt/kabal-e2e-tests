@@ -1,7 +1,5 @@
 import nodePath from 'path';
 import { FullConfig, FullResult, Reporter, Suite, TestCase, TestResult, TestStep } from '@playwright/test/reporter';
-import fetch from 'node-fetch';
-import { IS_DEPLOYED } from '../config/env';
 import { SlackMessageThread, getSlack } from '../slack/slack-client';
 import { SlackIcon, asyncForEach, delay, getFullStatusIcon, getTestStatusIcon, getTestTitle } from './functions';
 
@@ -195,14 +193,6 @@ class SlackReporter implements Reporter {
     // Wait for all tests to be done sending to Slack.
     while (this.completedTests < this.totalTests) {
       await delay(200);
-    }
-
-    if (IS_DEPLOYED) {
-      console.log('Shutting down Linkerd.');
-      // Shut down Linkerd proxy sidecar.
-      await fetch('http://127.0.0.1:4191/shutdown', {
-        method: 'post',
-      });
     }
   }
 }
