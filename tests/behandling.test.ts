@@ -46,32 +46,48 @@ const changeUtfall = async (behandling: AnkebehandlingPage | KlagebehandlingPage
 const changeHjemmel = async (behandling: AnkebehandlingPage | KlagebehandlingPage) => {
   const { page } = behandling;
 
-  await page.click('data-testid=lovhjemmel-button');
+  const lovhjemmelSelect = page.locator('data-testid=lovhjemmel-select');
+  await lovhjemmelSelect.locator('data-testid=lovhjemmel-button').click();
+  const filterText = 'første ledd første';
+  await lovhjemmelSelect.locator('data-testid=header-filter').fill(filterText);
 
-  await page.fill('data-testid=dropdown-search', 'første ledd første');
-  const lovkildeList = page.locator('data-testid=lovhjemmel-dropdown-list >> ul');
-  const hjemmelList = page.locator('data-testid=Folketrygdloven-option-list >> li');
-  await hjemmelList.scrollIntoViewIfNeeded();
+  const lovkildeList = lovhjemmelSelect.locator('data-testid=group-filter-list');
+  const hjemmelList = lovkildeList.locator('data-testid=filter-list');
 
-  const hjemmel = await hjemmelList.first().textContent();
+  const firstHjemmelList = hjemmelList.first();
+  await firstHjemmelList.scrollIntoViewIfNeeded();
+
+  const hjemler = firstHjemmelList.locator('data-testid=filter-list-item');
+  const firstHjemmel = hjemler.first();
+
+  const filterId = await firstHjemmel.getAttribute('data-filterid');
+
+  if (filterId === null) {
+    expect(filterId).not.toBeNull();
+    return;
+  }
+
+  const hjemmelText = await firstHjemmel.textContent();
 
   const lovkildeCount = await lovkildeList.count();
   const hjemmelCount = await hjemmelList.count();
 
   expect(lovkildeCount).toBe(1);
   expect(hjemmelCount).toBe(1);
-  expect(hjemmel).toBe('§ 22-15 første ledd første punktum');
+  expect(hjemmelText).toMatch(filterText);
 
-  const checkbox = hjemmelList.locator('text=§ 22-15 første ledd første punktum');
+  const checkbox = firstHjemmelList.locator(`[data-testid=filter][data-filterid="${filterId}"]`);
 
   const checked = await checkbox.isChecked();
   await checkbox.setChecked(!checked);
 
   await page.waitForTimeout(200);
   await page.reload();
-  await page.locator('data-testid=lovhjemmel-button').scrollIntoViewIfNeeded();
 
-  await page.click('data-testid=lovhjemmel-button');
+  const lovhjemmelButton = page.locator('data-testid=lovhjemmel-button');
+  await lovhjemmelButton.scrollIntoViewIfNeeded();
+  await lovhjemmelButton.click();
+
   const checkedAfterToggle = await checkbox.isChecked();
 
   expect(checkedAfterToggle).toBe(!checked);
