@@ -1,10 +1,8 @@
 .github/
-.husky/
 .vscode/
 nais/
 test-results/
 .editorconfig
 .eslintrc
 .gitignore
-.lintstagedrc
 *.md
