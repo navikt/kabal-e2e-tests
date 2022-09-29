@@ -73,7 +73,7 @@ const assignBehandling = async (page: Page, behandling: Behandling) => {
       const visible = await behandlingRow.isVisible();
 
       if (!visible) {
-        const nextButton = page.locator('button[page][text="Neste"]');
+        const nextButton = page.locator('button[page]', { hasText: 'Neste' });
 
         const hasNextButton = await nextButton.isVisible();
 
