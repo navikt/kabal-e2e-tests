@@ -4,8 +4,8 @@ import { getLoggedInPage, goToAzure } from './helpers';
 import { userSaksbehandler } from './users';
 
 test.describe('Ikke innlogget', () => {
-  // Don't reuse logged in state for these tests
-  test.use({ storageState: undefined });
+  // Don't reuse logged in state for these tests.
+  test.use({ storageState: { cookies: [], origins: [] } });
 
   test('Uautentisert/uautorisert bruker av KABAL skal sendes til innlogging i Azure', async ({ page }) => {
     await goToAzure(page);
