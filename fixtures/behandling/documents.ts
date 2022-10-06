@@ -56,14 +56,11 @@ export const renameDocument = async (page: Page, documentName: string, newDocume
   await input.fill(newDocumentName);
   await input.press('Enter');
 
-  await test.step(
-    `Dokument (\`${documentId}\`) skal være omdøpt fra \`${documentName}\` til \`${newDocumentName}\``,
-    async () => {
-      const document = getDocumentById(page, documentId);
-      await document.waitFor();
-      await document.locator(`text="${newDocumentName}"`).waitFor({ timeout: 1000 });
-    }
-  );
+  await test.step(`Dokument (\`${documentId}\`) skal være omdøpt fra \`${documentName}\` til \`${newDocumentName}\``, async () => {
+    const document = getDocumentById(page, documentId);
+    await document.waitFor();
+    await document.locator(`text="${newDocumentName}"`).waitFor({ timeout: 1000 });
+  });
 
   return newDocumentName;
 };
@@ -137,16 +134,14 @@ export const deleteDocument = async (page: Page, documentName: string) => {
 export const setDocumentType = async (page: Page, documentName: string, type: DocumentType) => {
   const container = getDocumentByName(page, documentName);
 
-  const button = container.locator('data-testid=document-type-button');
-  await button.click();
+  const select = container.locator('data-testid=document-type-select');
+  await select.scrollIntoViewIfNeeded();
 
-  const dropdown = container.locator('data-testid=document-type-dropdown');
-  await dropdown.waitFor();
+  await select.selectOption({ value: type });
 
-  await dropdown.locator(`data-testid=document-set-type-${type}`).click();
+  const actual = await select.inputValue();
 
-  const selectedType = await button.getAttribute('data-value');
-  expect(selectedType).toBe(type);
+  expect(actual).toBe(type);
 };
 
 export const setDocumentAsAttachmentTo = async (page: Page, documentName: string, parentName: string) => {
