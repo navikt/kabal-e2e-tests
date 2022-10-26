@@ -66,6 +66,8 @@ export const renameDocument = async (page: Page, documentName: string, newDocume
 };
 
 export const finishDocument = async (page: Page, documentName: string) => {
+  await page.locator('data-testid=oppgavebehandling-documents-all-list').waitFor({ timeout: 120 * 1000 });
+
   const container = getDocumentByName(page, documentName);
   const actionButton = container.locator('data-testid=document-actions-button');
 
@@ -90,7 +92,7 @@ export const verifyFinishedDocument = async (page: Page, documentName: string) =
   const finishedList = page.locator('data-testid=oppgavebehandling-documents-all-list');
 
   await inProgressList.waitFor();
-  await finishedList.waitFor();
+  await finishedList.waitFor({ timeout: 120 * 1000 });
 
   const finishedDocument = finishedList.locator(`article[data-documentname="${documentName}"]`);
   await finishedDocument.waitFor({ timeout: 20 * 1000 });
