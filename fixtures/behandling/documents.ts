@@ -95,11 +95,11 @@ export const verifyFinishedDocument = async (page: Page, documentName: string) =
   await finishedList.waitFor({ timeout: 120 * 1000 });
 
   const finishedDocument = finishedList.locator(`article[data-documentname="${documentName}"]`);
-  await finishedDocument.waitFor({ timeout: 20 * 1000 });
+  await finishedDocument.waitFor({ timeout: 60 * 1000 });
 
   await finishedDocument
     .locator('[data-testid="journalfoert-document-checkbox"]:checked')
-    .waitFor({ timeout: 20 * 1000 });
+    .waitFor({ timeout: 60 * 1000 });
 
   await page.waitForTimeout(200);
 
