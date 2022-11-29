@@ -84,8 +84,8 @@ const assignBehandling = async (page: Page, behandling: Behandling) => {
 
         throw new Error(`Oppgave "${behandling.id}" not found.`);
       } else {
-        await behandlingRow.locator('data-testid=klagebehandling-tildel-button').click();
-        await behandlingRow.locator('data-testid=oppgave-tildel-success').waitFor();
+        await behandlingRow.locator('data-testid=behandling-tildel-button').click();
+        await page.locator(`[data-testid="oppgave-tildelt-toast"][data-oppgaveid="${behandling.id}"]`).waitFor();
 
         return;
       }
@@ -111,7 +111,7 @@ const deAssignBehandling = async (page: Page, behandlingId: string) => {
       throw new Error(`More than one behandling with ID "${behandlingId}" found in "Mine Oppgaver" table.`);
     }
 
-    await mineOppgaverRow.locator('data-testid=klagebehandling-fradel-button').click();
-    await mineOppgaverRow.locator('data-testid=oppgave-fradel-success').waitFor();
+    await mineOppgaverRow.locator('data-testid=behandling-fradel-button').click();
+    await page.locator(`[data-testid="oppgave-fradelt-toast"][data-oppgaveid="${behandlingId}"]`).waitFor();
   });
 };
