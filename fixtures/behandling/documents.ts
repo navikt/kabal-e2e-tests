@@ -35,6 +35,7 @@ export const uploadDocument = async (page: Page, filename: string, name: string)
 
 export const renameDocument = async (page: Page, documentName: string, newDocumentName: string) => {
   const container = getDocumentByName(page, documentName);
+  await container.hover();
   const renameButton = container.locator('data-testid=document-title-edit-save-button');
   const documentId = await container.getAttribute('data-documentid');
 
