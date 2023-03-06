@@ -7,8 +7,10 @@ test.describe('Dokumenter', () => {
 
     const { behandling } = klagebehandling;
 
-    const title = await behandling.uploadDocument(filename);
-    await behandling.deleteDocument(title);
+    const notat = await behandling.uploadDocument(DocumentType.NOTAT, filename);
+    await behandling.deleteDocument(notat);
+    const vedtaksbrev = await behandling.uploadDocument(DocumentType.VEDTAKSBREV, filename);
+    await behandling.deleteDocument(vedtaksbrev);
   });
 
   test('Opplasting, endre navn/type, ferdigstille, sette vedlegg', async ({ klagebehandling }) => {
@@ -21,7 +23,7 @@ test.describe('Dokumenter', () => {
     const DOCUMENTS_TO_UPLOAD = 5;
 
     for (let i = 0; i < DOCUMENTS_TO_UPLOAD; i++) {
-      const title = await behandling.uploadDocument(filename);
+      const title = await behandling.uploadDocument(DocumentType.NOTAT, filename);
       documents.push(title);
     }
 

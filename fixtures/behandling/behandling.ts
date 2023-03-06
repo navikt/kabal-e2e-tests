@@ -37,8 +37,8 @@ export class Behandling {
   public navigateTo = () => this.page.goto(`${UI_DOMAIN}/${this.getTypeName()}behandling/${this.id}`);
 
   // Documents
-  public uploadDocument = (filename: string, title = `e2e-${new Date().toISOString()}.pdf`) =>
-    uploadDocument(this.page, filename, title);
+  public uploadDocument = (type: DocumentType, filename: string, title = `e2e-${new Date().toISOString()}.pdf`) =>
+    uploadDocument(this.page, type, filename, title);
   public renameDocument = (title: string, newTitle: string) => renameDocument(this.page, title, newTitle);
   public finishDocument = (title: string) => finishDocument(this.page, title);
   public deleteDocument = (title: string) => deleteDocument(this.page, title);

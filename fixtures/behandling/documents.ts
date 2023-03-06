@@ -19,7 +19,12 @@ const getDocumentById = (page: Page, documentId: string) => {
   return newDocumentsList.locator(`article[data-documentid="${documentId}"]`);
 };
 
-export const uploadDocument = async (page: Page, filename: string, name: string) => {
+export const uploadDocument = async (page: Page, type: DocumentType, filename: string, name: string) => {
+  const select = page.locator('data-testid=upload-document-type-select');
+  await select.scrollIntoViewIfNeeded();
+
+  await select.selectOption({ value: type });
+
   const filePath = resolve(process.cwd(), `./test-pdf-documents/${filename}`);
   const buffer = fs.readFileSync(filePath);
   const mimeType = 'application/pdf';
@@ -29,6 +34,11 @@ export const uploadDocument = async (page: Page, filename: string, name: string)
 
   const container = getDocumentByName(page, name);
   await container.waitFor();
+
+  const uploadedSelect = container.locator('data-testid=document-type-select');
+  const selected = await uploadedSelect.inputValue();
+
+  expect(selected).toBe(type);
 
   return name;
 };
