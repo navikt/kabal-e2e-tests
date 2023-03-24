@@ -24,14 +24,14 @@ const globalSetup = async (config: FullConfig) => {
 export default globalSetup;
 
 const setLocalhostCookie = async (page: Page) => {
-  const cookies = await page.context().cookies('https://kabal.dev.nav.no');
+  const cookies = await page.context().cookies('https://kabal.intern.dev.nav.no');
 
   if (!Array.isArray(cookies) || cookies.length === 0) {
-    throw new Error('Did not find any cookies for kabal.dev.nav.no');
+    throw new Error('Did not find any cookies for kabal.intern.dev.nav.no');
   }
 
   if (cookies.length > 1) {
-    throw new Error('Found more than one cookie for kabal.dev.nav.no');
+    throw new Error('Found more than one cookie for kabal.intern.dev.nav.no');
   }
 
   await page.context().clearCookies();

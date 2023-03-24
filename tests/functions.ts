@@ -7,7 +7,7 @@ export const getParsedUrl = (url: string): URL => new URL(url);
 
 export const USE_DEV = process.env.NODE_ENV === 'test';
 
-export const DEV_DOMAIN = 'https://kabal.dev.nav.no';
+export const DEV_DOMAIN = 'https://kabal.intern.dev.nav.no';
 export const LOCAL_DOMAIN = 'http://localhost:8061';
 
 export const UI_DOMAIN = USE_DEV ? DEV_DOMAIN : LOCAL_DOMAIN;
