@@ -1,18 +1,16 @@
 # NetworkPolicy applied in dev-gcp
+# kubectl apply -f e2e-network-policy.yaml -n klage
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   labels:
-    app: kabal-e2e-job
+    app: kabal-e2e-tests
     team: klage
-  name: kabal-e2e-job
+  name: kabal-e2e-tests
   namespace: klage
 spec:
   egress:
     - to:
-        - namespaceSelector:
-            matchLabels:
-              linkerd.io/is-control-plane: "true"
         - namespaceSelector: {}
           podSelector:
             matchLabels:
@@ -31,24 +29,6 @@ spec:
           podSelector:
             matchLabels:
               app: prometheus
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              linkerd.io/is-control-plane: "true"
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              linkerd.io/extension: viz
-          podSelector:
-            matchLabels:
-              component: tap
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              linkerd.io/extension: viz
-          podSelector:
-            matchLabels:
-              component: prometheus
   podSelector:
     matchLabels:
       app: kabal-e2e-tests
