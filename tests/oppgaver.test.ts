@@ -9,6 +9,6 @@ test.describe('Oppgaver', () => {
   test('"Oppgaver"-siden vises', async ({ page }) => {
     const url = getParsedUrl(page.url());
     expect(url.pathname).toBe('/oppgaver');
-    await page.waitForSelector('data-testid=oppgave-table-rows');
+    await page.waitForSelector('[data-testid="oppgave-table-rows"][data-state="ready"]');
   });
 });
