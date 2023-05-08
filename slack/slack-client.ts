@@ -37,10 +37,10 @@ class SlackClient {
     message?: string,
     threadMessage?: ChatPostMessageResponse
   ) {
-    return await this.app.client.files.upload({
+    return await this.app.client.files.uploadV2({
       token: this.token,
       file: fileBuffer,
-      channels: threadMessage?.channel ?? this.channel,
+      channel_id: threadMessage?.channel ?? this.channel,
       filename,
       title,
       initial_comment: message,
@@ -95,11 +95,17 @@ export const getSlack = () => {
     return new SlackClient(token, channel, secret);
   }
 
+  console.warn(
+    'Could not create slack client. Missing env variables: slack_e2e_token, kaka_notifications_channel, slack_signing_secret'
+  );
+
   return null;
 };
 
 export class SlackMessageThread {
-  constructor(private app: SlackClient, private message: ChatPostMessageResponse) {}
+  constructor(private app: SlackClient, private message: ChatPostMessageResponse) {
+    /* Empty */
+  }
 
   update = (newMessage: string) => this.app.updateMessage(this.message, newMessage);
 
