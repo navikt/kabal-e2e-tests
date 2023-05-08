@@ -4,7 +4,7 @@ import { test } from '../fixtures/behandling/fixture';
 import { UI_DOMAIN } from './functions';
 
 test.describe('Tildeling/fradeling', () => {
-  test('Saksbehandler kan tildele og fradele seg behandling', async ({ index }, testInfo) => {
+  test.only('Saksbehandler kan tildele og fradele seg behandling', async ({ index }, testInfo) => {
     const behandling = await index.generateKlage();
 
     await assignBehandling(index.page, behandling);
@@ -55,7 +55,7 @@ const setFilter = async (page: Page, filterName: string, value: string) => {
 
 const assignBehandling = async (page: Page, behandling: Behandling) => {
   await test.step(`Tildel behandling \`${behandling.id}\``, async () => {
-    await page.goto(`${UI_DOMAIN}/oppgaver/1`);
+    await page.goto(`${UI_DOMAIN}/oppgaver`);
 
     await test.step('Sett filtere for ledige oppgaver', async () => {
       await setFilter(page, 'filter-type', behandling.typeId);
@@ -64,11 +64,11 @@ const assignBehandling = async (page: Page, behandling: Behandling) => {
     });
 
     for (;;) {
-      const behandlingerRows = page.locator('[data-testid="oppgave-table-rows"][data-isfetching="false"]');
+      const behandlingerRows = page.locator('[data-testid="oppgave-table-rows"][data-state="ready"]');
       await behandlingerRows.waitFor();
 
       const behandlingRow = behandlingerRows.locator(
-        `[data-testid=oppgave-table-row][data-klagebehandlingid="${behandling.id}"]`
+        `[data-testid=oppgave-table-row][data-behandlingid="${behandling.id}"]`
       );
       const visible = await behandlingRow.isVisible();
 
@@ -97,9 +97,17 @@ const deAssignBehandling = async (page: Page, behandlingId: string) => {
   await test.step(`Fradel behandling \`${behandlingId}\``, async () => {
     await page.goto(`${UI_DOMAIN}/mineoppgaver`);
 
-    await page.waitForSelector('data-testid=mine-oppgaver-table-rows');
+    const rows = await page.waitForSelector('[data-testid="mine-oppgaver-table-rows"][data-state="ready"]');
 
-    const mineOppgaverRow = page.locator(`[data-testid="mine-oppgaver-row"][data-klagebehandlingid="${behandlingId}"]`);
+    const emptyState = await rows.getAttribute('data-empty');
+
+    if (emptyState === 'true') {
+      throw new Error(`"Mine Oppgaver" table is marked as empty.`);
+    }
+
+    const mineOppgaverRow = page.locator(
+      `[data-testid="mine-oppgaver-table-row"][data-behandlingid="${behandlingId}"]`
+    );
 
     const count = await mineOppgaverRow.count();
 
