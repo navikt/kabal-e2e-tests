@@ -4,7 +4,7 @@ import { test } from '../fixtures/behandling/fixture';
 import { UI_DOMAIN } from './functions';
 
 test.describe('Tildeling/fradeling', () => {
-  test.only('Saksbehandler kan tildele og fradele seg behandling', async ({ index }, testInfo) => {
+  test('Saksbehandler kan tildele og fradele seg behandling', async ({ index }, testInfo) => {
     const behandling = await index.generateKlage();
 
     await assignBehandling(index.page, behandling);
@@ -104,6 +104,9 @@ const deAssignBehandling = async (page: Page, behandlingId: string) => {
     if (emptyState === 'true') {
       throw new Error(`"Mine Oppgaver" table is marked as empty.`);
     }
+
+    const rowsPerPage = page.locator('[data-testid="mine-oppgaver-table-footer-rows-per-page"]');
+    await rowsPerPage.locator('[data-value="-1"]').click();
 
     const mineOppgaverRow = page.locator(
       `[data-testid="mine-oppgaver-table-row"][data-behandlingid="${behandlingId}"]`
