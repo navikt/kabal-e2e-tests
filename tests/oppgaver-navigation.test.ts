@@ -8,13 +8,13 @@ test.describe('Navigering', () => {
     await page.goto(UI_DOMAIN);
   });
 
-  test('"Oppgaver"-lenke navigerer til `/oppgaver/1`', async ({ page }) => {
+  test('"Oppgaver"-lenke navigerer til `/oppgaver`', async ({ page }) => {
     const behandlingerLink = await page.waitForSelector('data-testid=oppgaver-nav-link', { timeout });
 
     await behandlingerLink.click();
 
     const url = getParsedUrl(page.url());
-    expect(url.pathname).toBe('/oppgaver/1');
+    expect(url.pathname).toBe('/oppgaver');
   });
 
   test('"Mine Oppgaver"-lenke navigerer til `/mineoppgaver`', async ({ page }) => {
