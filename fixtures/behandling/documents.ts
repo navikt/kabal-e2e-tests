@@ -5,22 +5,22 @@ import { test } from './fixture';
 import { DocumentType } from './types';
 
 const getDocumentByName = (page: Page, documentName: string) => {
-  const newDocumentsList = page.locator('data-testid=new-documents-list');
+  const newDocumentsList = page.getByTestId('new-documents-list');
   return newDocumentsList.locator(`article[data-documentname="${documentName}"]`);
 };
 
 const getDocumentListItemByName = (page: Page, documentName: string) => {
-  const newDocumentsList = page.locator('data-testid=new-documents-list');
+  const newDocumentsList = page.getByTestId('new-documents-list');
   return newDocumentsList.locator(`li[data-documentname="${documentName}"]`);
 };
 
 const getDocumentById = (page: Page, documentId: string) => {
-  const newDocumentsList = page.locator('data-testid=new-documents-list');
+  const newDocumentsList = page.getByTestId('new-documents-list');
   return newDocumentsList.locator(`article[data-documentid="${documentId}"]`);
 };
 
 export const uploadDocument = async (page: Page, type: DocumentType, filename: string, name: string) => {
-  const select = page.locator('data-testid=upload-document-type-select');
+  const select = page.getByTestId('upload-document-type-select');
   await select.scrollIntoViewIfNeeded();
 
   await select.selectOption({ value: type });
@@ -29,13 +29,13 @@ export const uploadDocument = async (page: Page, type: DocumentType, filename: s
   const buffer = fs.readFileSync(filePath);
   const mimeType = 'application/pdf';
 
-  const fileInput = page.locator('data-testid=upload-document-input');
+  const fileInput = page.getByTestId('upload-document-input');
   await fileInput.setInputFiles({ name, buffer, mimeType });
 
   const container = getDocumentByName(page, name);
   await container.waitFor();
 
-  const uploadedSelect = container.locator('data-testid=document-type-select');
+  const uploadedSelect = container.getByTestId('document-type-select');
   const selected = await uploadedSelect.inputValue();
 
   expect(selected).toBe(type);
@@ -46,7 +46,7 @@ export const uploadDocument = async (page: Page, type: DocumentType, filename: s
 export const renameDocument = async (page: Page, documentName: string, newDocumentName: string) => {
   const container = getDocumentByName(page, documentName);
   await container.hover();
-  const renameButton = container.locator('data-testid=document-title-edit-save-button');
+  const renameButton = container.getByTestId('document-title-edit-save-button');
   const documentId = await container.getAttribute('data-documentid');
 
   if (documentId === null) {
@@ -61,7 +61,7 @@ export const renameDocument = async (page: Page, documentName: string, newDocume
 
   await renameButton.click();
 
-  const input = container.locator('data-testid=document-filename-input');
+  const input = container.getByTestId('document-filename-input');
   await input.focus();
   await input.clear();
   await input.fill(newDocumentName);
@@ -77,10 +77,10 @@ export const renameDocument = async (page: Page, documentName: string, newDocume
 };
 
 export const finishDocument = async (page: Page, documentName: string) => {
-  await page.locator('data-testid=oppgavebehandling-documents-all-list').waitFor({ timeout: 120 * 1_000 });
+  await page.getByTestId('oppgavebehandling-documents-all-list').waitFor({ timeout: 120 * 1_000 });
 
   const container = getDocumentByName(page, documentName);
-  const actionButton = container.locator('data-testid=document-actions-button');
+  const actionButton = container.getByTestId('document-actions-button');
 
   const actionButtonCount = await actionButton.count();
 
@@ -90,17 +90,17 @@ export const finishDocument = async (page: Page, documentName: string) => {
 
   await actionButton.click();
 
-  await container.locator('data-testid=document-finish-button').click();
-  await container.locator('data-testid=document-finish-confirm').click();
+  await container.getByTestId('document-finish-button').click();
+  await container.getByTestId('document-finish-confirm').click();
 
-  await container.locator('data-testid=document-archiving').waitFor();
+  await container.getByTestId('document-archiving').waitFor();
 
   return documentName;
 };
 
 export const verifyFinishedDocument = async (page: Page, documentName: string) => {
-  const inProgressList = page.locator('data-testid=new-documents-list');
-  const finishedList = page.locator('data-testid=oppgavebehandling-documents-all-list');
+  const inProgressList = page.getByTestId('new-documents-list');
+  const finishedList = page.getByTestId('oppgavebehandling-documents-all-list');
 
   await inProgressList.waitFor();
   await finishedList.waitFor({ timeout: 120_000 });
@@ -118,7 +118,7 @@ export const verifyFinishedDocument = async (page: Page, documentName: string) =
 
 export const deleteDocument = async (page: Page, documentName: string) => {
   const container = getDocumentByName(page, documentName);
-  const actionButton = container.locator('data-testid=document-actions-button');
+  const actionButton = container.getByTestId('document-actions-button');
 
   const actionButtonCount = await actionButton.count();
 
@@ -129,8 +129,8 @@ export const deleteDocument = async (page: Page, documentName: string) => {
   await actionButton.click();
 
   const response = page.waitForResponse((res) => res.ok() && res.request().method() === 'DELETE');
-  await container.locator('data-testid=document-delete-button').click();
-  await container.locator('data-testid=document-delete-confirm').click();
+  await container.getByTestId('document-delete-button').click();
+  await container.getByTestId('document-delete-confirm').click();
   await response;
 
   const documentsCount = await container.count();
@@ -145,7 +145,7 @@ export const deleteDocument = async (page: Page, documentName: string) => {
 export const setDocumentType = async (page: Page, documentName: string, type: DocumentType) => {
   const container = getDocumentByName(page, documentName);
 
-  const select = container.locator('data-testid=document-type-select');
+  const select = container.getByTestId('document-type-select');
   await select.scrollIntoViewIfNeeded();
 
   await select.selectOption({ value: type });
@@ -158,7 +158,7 @@ export const setDocumentType = async (page: Page, documentName: string, type: Do
 export const setDocumentAsAttachmentTo = async (page: Page, documentName: string, parentName: string) => {
   const container = getDocumentListItemByName(page, documentName);
 
-  const actionButton = container.locator('data-testid=document-actions-button');
+  const actionButton = container.getByTestId('document-actions-button');
 
   const actionButtonCount = await actionButton.count();
 
@@ -166,7 +166,7 @@ export const setDocumentAsAttachmentTo = async (page: Page, documentName: string
 
   await actionButton.click();
 
-  const select = container.locator('data-testid=document-set-parent-document');
+  const select = container.getByTestId('document-set-parent-document');
   await select.waitFor();
 
   const response = page.waitForResponse(
@@ -178,7 +178,7 @@ export const setDocumentAsAttachmentTo = async (page: Page, documentName: string
   await response;
 
   const parent = getDocumentListItemByName(page, parentName);
-  const attachmentList = parent.locator('data-testid=new-attachments-list');
+  const attachmentList = parent.getByTestId('new-attachments-list');
   await attachmentList.waitFor();
   const attachments = attachmentList.locator(
     `[data-testid="new-document-list-item-content"][data-documentname="${documentName}"][data-documenttype="attachment"]`

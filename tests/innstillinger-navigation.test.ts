@@ -7,11 +7,10 @@ test.describe('Innstillinger-navigasjon', () => {
   });
 
   test('Navigerer til `/innstillinger`', async ({ page }) => {
-    const button = await page.waitForSelector(`data-testid=user-menu-button`);
+    const button = page.getByTestId('user-menu-button');
+    await button.click({ timeout: 5000 });
 
-    button.click();
-
-    const innstillingerLink = await page.waitForSelector('data-testid=innstillinger-link');
+    const innstillingerLink = page.getByTestId('innstillinger-link');
     await innstillingerLink.click();
 
     const url = getParsedUrl(page.url());

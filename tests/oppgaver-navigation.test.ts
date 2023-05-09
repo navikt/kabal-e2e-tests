@@ -9,38 +9,32 @@ test.describe('Navigering', () => {
   });
 
   test('"Oppgaver"-lenke navigerer til `/oppgaver`', async ({ page }) => {
-    const behandlingerLink = await page.waitForSelector('data-testid=oppgaver-nav-link', { timeout });
-
-    await behandlingerLink.click();
+    const behandlingerLink = page.getByTestId('oppgaver-nav-link');
+    await behandlingerLink.click({ timeout });
 
     const url = getParsedUrl(page.url());
     expect(url.pathname).toBe('/oppgaver');
   });
 
   test('"Mine Oppgaver"-lenke navigerer til `/mineoppgaver`', async ({ page }) => {
-    const link = await page.waitForSelector('data-testid=mine-oppgaver-nav-link', { timeout });
-
-    await link.click();
+    const link = page.getByTestId('mine-oppgaver-nav-link');
+    await link.click({ timeout });
 
     const url = getParsedUrl(page.url());
     expect(url.pathname).toBe('/mineoppgaver');
   });
 
   test('"Søk"-lenke navigerer til `/sok`', async ({ page }) => {
-    const link = await page.waitForSelector('data-testid=search-nav-link', { timeout });
-
-    await link.click();
+    const link = page.getByTestId('search-nav-link');
+    await link.click({ timeout });
 
     const url = getParsedUrl(page.url());
     expect(url.pathname).toBe('/sok');
   });
 
   test('"Enhetens oppgaver"-lenke navigerer til `/enhetensoppgaver`', async ({ page }) => {
-    const link = await page.waitForSelector('data-testid=enhetens-oppgaver-nav-link', {
-      timeout,
-    });
-
-    await link.click();
+    const link = page.getByTestId('enhetens-oppgaver-nav-link');
+    await link.click({ timeout });
 
     const url = getParsedUrl(page.url());
     expect(url.pathname).toBe('/enhetensoppgaver');
