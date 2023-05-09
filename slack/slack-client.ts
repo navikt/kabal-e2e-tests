@@ -1,4 +1,5 @@
 import { ReadStream, createReadStream } from 'fs';
+import { buffer } from 'stream/consumers';
 import { App } from '@slack/bolt';
 import { ChatPostMessageResponse } from '@slack/web-api';
 import { IS_DEPLOYED, envString } from '../config/env';
@@ -37,15 +38,30 @@ class SlackClient {
     message?: string,
     threadMessage?: ChatPostMessageResponse
   ) {
-    return await this.app.client.files.uploadV2({
-      token: this.token,
-      file: fileBuffer,
-      channel_id: threadMessage?.channel ?? this.channel,
-      filename,
-      title,
-      initial_comment: message,
-      thread_ts: threadMessage?.ts,
-    });
+    try {
+      return await this.app.client.files.uploadV2({
+        token: this.token,
+        file: fileBuffer,
+        channel_id: threadMessage?.channel ?? this.channel,
+        filename,
+        title,
+        initial_comment: message,
+        thread_ts: threadMessage?.ts,
+      });
+    } catch (error) {
+      const bufferSize = fileBuffer instanceof Buffer ? fileBuffer.byteLength : (await buffer(fileBuffer)).byteLength;
+      const errorMessage = `Failed to upload file (${bufferSize} bytes): ${filename ?? '<no filename>'}`;
+
+      console.error(errorMessage);
+
+      if (typeof threadMessage !== 'undefined') {
+        this.postReply(threadMessage, errorMessage);
+      } else {
+        this.postMessage(errorMessage);
+      }
+
+      throw error;
+    }
   }
 
   async updateMessage(message: ChatPostMessageResponse, newMessage: string) {
@@ -63,7 +79,8 @@ class SlackClient {
 
       return new SlackMessageThread(this, response);
     } catch (error) {
-      console.debug('Failed to update message with', newMessage);
+      console.error('Failed to update message with', newMessage);
+      this.postReply(message, `Failed to update Slack message to:\n\`\`\`${newMessage}\`\`\``);
       throw error;
     }
   }
