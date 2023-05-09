@@ -164,7 +164,7 @@ class SlackReporter implements Reporter {
 
     await asyncForEach(atttachments, async ({ name, path, body, contentType }) => {
       if (contentType === 'text/plain' && body instanceof Buffer) {
-        return await this.thread?.reply(`:warning: *Warning*\`\`\`${body.toString('utf-8')}\`\`\``);
+        return await this.thread?.reply([':warning: *Warning*', '```', body.toString('utf-8'), '```'].join('\n'));
       }
 
       if (typeof path === 'undefined') {
