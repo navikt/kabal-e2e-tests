@@ -127,7 +127,7 @@ class SlackReporter implements Reporter {
     data.steps.set(step, {
       title: step.title,
       icon: typeof step.error === 'undefined' ? SlackIcon.SUCCESS : SlackIcon.WARNING,
-      status: `${result.duration / 1000} seconds`,
+      status: `${result.duration / 1_000} seconds`,
       steps: new Map(),
     });
   }
@@ -135,7 +135,7 @@ class SlackReporter implements Reporter {
   async onTestEnd(test: TestCase, result: TestResult) {
     const icon = getTestStatusIcon(test, result.status);
     const title = getTestTitle(test);
-    this.updateTestMessage(test, { icon, status: `${result.duration / 1000} seconds` });
+    this.updateTestMessage(test, { icon, status: `${result.duration / 1_000} seconds` });
 
     const isFailed = result.status === 'failed' || result.status === 'timedOut';
 
@@ -146,7 +146,7 @@ class SlackReporter implements Reporter {
         const log = [`${title} - stacktrace`, '```', 'No stacktrace', '```'];
         await this.thread?.reply(log.join('\n'));
       } else {
-        const partLength = 3000;
+        const partLength = 3_000;
 
         const firstStack = result.error.stack.substring(0, partLength);
         const firstLog = [`${title} - stacktrace`, '```', firstStack, '```'];
@@ -190,7 +190,7 @@ class SlackReporter implements Reporter {
 
   async onEnd(result: FullResult) {
     const icon = getFullStatusIcon(result);
-    const duration = (Date.now() - this.startTime) / 1000;
+    const duration = (Date.now() - this.startTime) / 1_000;
 
     if (result.status === 'passed') {
       await this.updateMainMessage(`${icon} All ${this.totalTests} tests succeeded! \`${duration} seconds\``);

@@ -19,7 +19,7 @@ test.describe('Søk', () => {
     const searchField = await page.waitForSelector('data-testid=search-input');
     await searchField.fill(TEST_STRING);
 
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(1_000);
   });
 
   test('Søketekst med bare bokstaver søker etter flere personer', async ({ page }) => {
