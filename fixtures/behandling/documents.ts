@@ -63,11 +63,11 @@ export const renameDocument = async (page: Page, documentName: string, newDocume
 
   const input = container.locator('data-testid=document-filename-input');
   await input.focus();
-  await input.fill('');
+  await input.clear();
   await input.fill(newDocumentName);
   await input.press('Enter');
 
-  await test.step(`Dokument (\`${documentId}\`) skal være omdøpt fra \`${documentName}\` til \`${newDocumentName}\``, async () => {
+  await test.step(`Endre navn på dokument \`${documentId}\`.`, async () => {
     const document = getDocumentById(page, documentId);
     await document.waitFor();
     await document.locator(`text="${newDocumentName}"`).waitFor({ timeout: 1000 });
