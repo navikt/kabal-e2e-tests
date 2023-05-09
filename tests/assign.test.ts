@@ -84,7 +84,7 @@ const assignBehandling = async (page: Page, behandling: Behandling) => {
 
         throw new Error(`Oppgave "${behandling.id}" not found.`);
       } else {
-        await behandlingRow.locator('data-testid=behandling-tildel-button').click();
+        await behandlingRow.getByTestId('behandling-tildel-button').click();
         await page.locator(`[data-testid="oppgave-tildelt-toast"][data-oppgaveid="${behandling.id}"]`).waitFor();
 
         return;
@@ -97,7 +97,8 @@ const deAssignBehandling = async (page: Page, behandlingId: string) => {
   await test.step(`Fradel behandling \`${behandlingId}\``, async () => {
     await page.goto(`${UI_DOMAIN}/mineoppgaver`);
 
-    const rows = await page.waitForSelector('[data-testid="mine-oppgaver-table-rows"][data-state="ready"]');
+    const rows = page.locator('[data-testid="mine-oppgaver-table-rows"][data-state="ready"]');
+    await rows.waitFor();
 
     const emptyState = await rows.getAttribute('data-empty');
 
@@ -122,7 +123,7 @@ const deAssignBehandling = async (page: Page, behandlingId: string) => {
       throw new Error(`More than one behandling with ID "${behandlingId}" found in "Mine Oppgaver" table.`);
     }
 
-    await mineOppgaverRow.locator('data-testid=behandling-fradel-button').click();
+    await mineOppgaverRow.getByTestId('behandling-fradel-button').click();
     await page.locator(`[data-testid="oppgave-fradelt-toast"][data-oppgaveid="${behandlingId}"]`).waitFor();
   });
 };

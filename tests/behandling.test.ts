@@ -27,17 +27,17 @@ test.describe('Tildelt ankebehandling', () => {
 const changeUtfall = async (behandling: AnkebehandlingPage | KlagebehandlingPage) => {
   const { page } = behandling;
 
-  const select = page.locator('data-testid=select-utfall');
+  const select = page.getByTestId('select-utfall');
   await select.scrollIntoViewIfNeeded();
 
-  await page.waitForSelector('[data-testid="select-utfall"][data-ready="true"]');
+  await page.locator('[data-testid="select-utfall"][data-ready="true"]').waitFor();
   await select.selectOption({ label: 'Medhold' });
   await page.waitForTimeout(200);
 
   await page.reload();
   await select.scrollIntoViewIfNeeded();
 
-  await page.waitForSelector('[data-testid="select-utfall"][data-ready="true"]');
+  await page.locator('[data-testid="select-utfall"][data-ready="true"]').waitFor();
   const selected = await select.inputValue();
 
   expect(selected).toBe('4');
@@ -46,18 +46,18 @@ const changeUtfall = async (behandling: AnkebehandlingPage | KlagebehandlingPage
 const changeHjemmel = async (behandling: AnkebehandlingPage | KlagebehandlingPage) => {
   const { page } = behandling;
 
-  const lovhjemmelSelect = page.locator('data-testid=lovhjemmel-select');
-  await lovhjemmelSelect.locator('data-testid=lovhjemmel-button').click();
+  const lovhjemmelSelect = page.getByTestId('lovhjemmel-select');
+  await lovhjemmelSelect.getByTestId('lovhjemmel-button').click();
   const filterText = 'første ledd første';
-  await lovhjemmelSelect.locator('data-testid=header-filter').fill(filterText);
+  await lovhjemmelSelect.getByTestId('header-filter').fill(filterText);
 
-  const lovkildeList = lovhjemmelSelect.locator('data-testid=group-filter-list');
-  const hjemmelList = lovkildeList.locator('data-testid=filter-list');
+  const lovkildeList = lovhjemmelSelect.getByTestId('group-filter-list');
+  const hjemmelList = lovkildeList.getByTestId('filter-list');
 
   const firstHjemmelList = hjemmelList.first();
   await firstHjemmelList.scrollIntoViewIfNeeded();
 
-  const hjemler = firstHjemmelList.locator('data-testid=filter-list-item');
+  const hjemler = firstHjemmelList.getByTestId('filter-list-item');
   const firstHjemmel = hjemler.first();
 
   const filterId = await firstHjemmel.getAttribute('data-filterid');
@@ -84,7 +84,7 @@ const changeHjemmel = async (behandling: AnkebehandlingPage | KlagebehandlingPag
   await page.waitForTimeout(200);
   await page.reload();
 
-  const lovhjemmelButton = page.locator('data-testid=lovhjemmel-button');
+  const lovhjemmelButton = page.getByTestId('lovhjemmel-button');
   await lovhjemmelButton.scrollIntoViewIfNeeded();
   await lovhjemmelButton.click();
 
@@ -96,7 +96,7 @@ const changeHjemmel = async (behandling: AnkebehandlingPage | KlagebehandlingPag
 const changeMedunderskriver = async (behandling: AnkebehandlingPage | KlagebehandlingPage) => {
   const { page } = behandling;
 
-  const select = page.locator('data-testid=select-medunderskriver');
+  const select = page.getByTestId('select-medunderskriver');
   await select.scrollIntoViewIfNeeded();
 
   const [, secondValue] = await select
@@ -117,7 +117,7 @@ const changeMedunderskriver = async (behandling: AnkebehandlingPage | Klagebehan
 const showErrors = async (behandling: AnkebehandlingPage | KlagebehandlingPage) => {
   const { page } = behandling;
 
-  const select = page.locator('data-testid=select-utfall');
+  const select = page.getByTestId('select-utfall');
   await select.scrollIntoViewIfNeeded();
 
   await select.selectOption({ index: 0 });
@@ -125,9 +125,9 @@ const showErrors = async (behandling: AnkebehandlingPage | KlagebehandlingPage) 
 
   const ERROR_TEXT = 'Sett et utfall på vedtaket.';
 
-  const summary = page.locator('data-testid=validation-summary');
+  const summary = page.getByTestId('validation-summary');
   await summary.locator(`text="${ERROR_TEXT}"`).waitFor();
 
-  const utfallSection = page.locator('data-testid=utfall-section');
+  const utfallSection = page.getByTestId('utfall-section');
   await utfallSection.locator(`text="${ERROR_TEXT}"`).waitFor();
 };

@@ -17,7 +17,7 @@ test.describe('Mine Oppgaver', () => {
     await Promise.all(
       TABLES.map(([table, tableId]) =>
         test.step(table, async () => {
-          await page.waitForSelector(`[data-testid="${tableId}"][data-state="ready"]`);
+          await page.locator(`[data-testid="${tableId}"][data-state="ready"]`).waitFor();
         })
       )
     );

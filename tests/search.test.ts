@@ -16,7 +16,7 @@ test.describe('Søk', () => {
     });
 
     const TEST_STRING = 'tøffeldyr12121248484';
-    const searchField = await page.waitForSelector('data-testid=search-input');
+    const searchField = page.getByTestId('search-input');
     await searchField.fill(TEST_STRING);
 
     await page.waitForTimeout(1_000);
@@ -25,13 +25,13 @@ test.describe('Søk', () => {
   test('Søketekst med bare bokstaver søker etter flere personer', async ({ page }) => {
     const TEST_STRING = 'tøffeldyr';
 
-    const searchField = await page.waitForSelector('data-testid=search-input');
+    const searchField = page.getByTestId('search-input');
 
     const response = page.waitForResponse((res) => res.ok() && res.url().endsWith('/search/name'));
     await searchField.fill(TEST_STRING);
     await response;
 
-    const results = await page.locator('data-testid=search-result').count();
+    const results = await page.getByTestId('search-result').count();
 
     expect(results).toBeGreaterThan(0);
   });
@@ -39,9 +39,9 @@ test.describe('Søk', () => {
   test('Søketekst med 11 siffer skal søke etter saker på enkeltperson', async ({ page }) => {
     const TEST_STRING = '184969 00509';
 
-    const searchField = await page.waitForSelector('data-testid=search-input');
+    const searchField = await page.getByTestId('search-input');
     await searchField.fill(TEST_STRING);
 
-    await page.waitForSelector('data-testid=search-result');
+    await page.getByTestId('search-result').waitFor();
   });
 });
