@@ -80,7 +80,7 @@ class SlackClient {
       return new SlackMessageThread(this, response);
     } catch (error) {
       console.error('Failed to update message with', newMessage);
-      this.postReply(message, `Failed to update Slack message to:\n\`\`\`${newMessage}\`\`\``);
+      this.postReply(message, `Failed to update Slack message to:\n\`\`\`\n${newMessage}\n\`\`\``);
       throw error;
     }
   }

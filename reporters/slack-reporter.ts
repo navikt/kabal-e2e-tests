@@ -127,7 +127,7 @@ class SlackReporter implements Reporter {
     data.steps.set(step, {
       title: step.title,
       icon: typeof step.error === 'undefined' ? SlackIcon.SUCCESS : SlackIcon.WARNING,
-      status: `${result.duration}`,
+      status: result.duration.toString(10),
       steps: new Map(),
     });
   }
@@ -142,8 +142,22 @@ class SlackReporter implements Reporter {
     if (isFailed) {
       this.failedTestCount += 1;
 
-      const log = [`${title} - stacktrace`, '```', result?.error?.stack ?? 'No stacktrace', '```'];
-      await this.thread?.reply(log.join('\n'));
+      if (typeof result?.error?.stack === 'undefined') {
+        const log = [`${title} - stacktrace`, '```', 'No stacktrace', '```'];
+        await this.thread?.reply(log.join('\n'));
+      } else {
+        const partLength = 3000;
+
+        const firstStack = result.error.stack.substring(0, partLength);
+        const firstLog = [`${title} - stacktrace`, '```', firstStack, '```'];
+        await this.thread?.reply(firstLog.join('\n'));
+
+        for (let i = 1; i * partLength < result.error.stack.length; i++) {
+          const stack = result.error.stack.substring(i * partLength, (i + 1) * partLength);
+          const log = ['```', stack, '```'];
+          await this.thread?.reply(log.join('\n'));
+        }
+      }
     }
 
     const atttachments = isFailed ? prepareFailedResult(result) : preparePassedResult(result);
