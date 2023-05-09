@@ -6,21 +6,21 @@ test.describe('Mine Oppgaver', () => {
     await page.goto(`${UI_DOMAIN}/mineoppgaver`);
   });
 
+  const tables: [string, string][] = [
+    ['Mine Oppgaver', 'mine-oppgaver-table-rows'],
+    ['Oppgaver på vent', 'oppgaver-paa-vent-table-rows'],
+    ['Fullførte oppgaver', 'fullfoerte-oppgaver-table-rows'],
+  ];
+
   test('"Mine Oppgaver" laster og viser behandlinger', async ({ page }) => {
     const url = getParsedUrl(page.url());
-    expect(url.pathname).toBe('/mineoppgaver');
-    await page.waitForSelector('[data-testid="mine-oppgaver-table-rows"][data-state="ready"]');
-  });
 
-  test('"Oppgaver på vent" laster og viser behandlinger', async ({ page }) => {
-    const url = getParsedUrl(page.url());
     expect(url.pathname).toBe('/mineoppgaver');
-    await page.waitForSelector('[data-testid="oppgaver-paa-vent-table-rows"][data-state="ready"]');
-  });
 
-  test('"Fullførte oppgaver" laster og viser behandlinger', async ({ page }) => {
-    const url = getParsedUrl(page.url());
-    expect(url.pathname).toBe('/mineoppgaver');
-    await page.waitForSelector('[data-testid="fullfoerte-oppgaver-table-rows"][data-state="ready"]');
+    for (const [tableName, tableId] of tables) {
+      test.step(tableName, async () => {
+        await page.waitForSelector(`[data-testid="${tableId}"][data-state="ready"]`);
+      });
+    }
   });
 });
