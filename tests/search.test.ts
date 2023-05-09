@@ -26,9 +26,11 @@ test.describe('Søk', () => {
     const TEST_STRING = 'tøffeldyr';
 
     const searchField = await page.waitForSelector('data-testid=search-input');
-    await searchField.fill(TEST_STRING);
 
-    await page.waitForResponse((res) => res.ok() && res.url().endsWith('/search/name'));
+    const response = page.waitForResponse((res) => res.ok() && res.url().endsWith('/search/name'));
+    await searchField.fill(TEST_STRING);
+    await response;
+
     const results = await page.locator('data-testid=search-result').count();
 
     expect(results).toBeGreaterThan(0);

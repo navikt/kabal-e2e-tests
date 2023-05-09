@@ -130,10 +130,10 @@ export const deleteDocument = async (page: Page, documentName: string) => {
 
   await actionButton.click();
 
+  const response = page.waitForResponse((res) => res.ok() && res.request().method() === 'DELETE');
   await container.locator('data-testid=document-delete-button').click();
   await container.locator('data-testid=document-delete-confirm').click();
-
-  await page.waitForResponse((res) => res.ok() && res.request().method() === 'DELETE');
+  await response;
 
   const documentsCount = await container.count();
 
@@ -170,9 +170,14 @@ export const setDocumentAsAttachmentTo = async (page: Page, documentName: string
 
   const select = container.locator('data-testid=document-set-parent-document');
   await select.waitFor();
+
+  const response = page.waitForResponse(
+    (res) => res.ok() && res.request().method() === 'PUT' && res.url().endsWith('/parent')
+  );
+
   await select.selectOption({ label: parentName });
 
-  await page.waitForResponse((res) => res.ok() && res.request().method() === 'PUT' && res.url().endsWith('/parent'));
+  await response;
 
   const parent = getDocumentListItemByName(page, parentName);
   const attachmentList = parent.locator('data-testid=new-attachments-list');
