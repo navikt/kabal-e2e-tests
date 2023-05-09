@@ -127,7 +127,7 @@ class SlackReporter implements Reporter {
     data.steps.set(step, {
       title: step.title,
       icon: typeof step.error === 'undefined' ? SlackIcon.SUCCESS : SlackIcon.WARNING,
-      status: result.duration.toString(10),
+      status: `${result.duration / 1000} seconds`,
       steps: new Map(),
     });
   }
