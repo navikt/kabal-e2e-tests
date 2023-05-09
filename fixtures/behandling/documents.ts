@@ -70,14 +70,14 @@ export const renameDocument = async (page: Page, documentName: string, newDocume
   await test.step(`Endre navn på dokument \`${documentId}\`.`, async () => {
     const document = getDocumentById(page, documentId);
     await document.waitFor();
-    await document.locator(`text="${newDocumentName}"`).waitFor({ timeout: 1000 });
+    await document.locator(`text="${newDocumentName}"`).waitFor({ timeout: 1_000 });
   });
 
   return newDocumentName;
 };
 
 export const finishDocument = async (page: Page, documentName: string) => {
-  await page.locator('data-testid=oppgavebehandling-documents-all-list').waitFor({ timeout: 120 * 1000 });
+  await page.locator('data-testid=oppgavebehandling-documents-all-list').waitFor({ timeout: 120 * 1_000 });
 
   const container = getDocumentByName(page, documentName);
   const actionButton = container.locator('data-testid=document-actions-button');
@@ -103,14 +103,12 @@ export const verifyFinishedDocument = async (page: Page, documentName: string) =
   const finishedList = page.locator('data-testid=oppgavebehandling-documents-all-list');
 
   await inProgressList.waitFor();
-  await finishedList.waitFor({ timeout: 120 * 1000 });
+  await finishedList.waitFor({ timeout: 120_000 });
 
   const finishedDocument = finishedList.locator(`article[data-documentname="${documentName}"]`);
-  await finishedDocument.waitFor({ timeout: 60 * 1000 });
+  await finishedDocument.waitFor({ timeout: 60_000 });
 
-  await finishedDocument
-    .locator('[data-testid="journalfoert-document-checkbox"]:checked')
-    .waitFor({ timeout: 60 * 1000 });
+  await finishedDocument.locator('[data-testid="journalfoert-document-checkbox"]:checked').waitFor({ timeout: 60_000 });
 
   await page.waitForTimeout(200);
 
