@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 import { Behandling } from '../fixtures/behandling/behandling';
 import { test } from '../fixtures/behandling/fixture';
 import { UI_DOMAIN } from './functions';
@@ -6,6 +6,8 @@ import { UI_DOMAIN } from './functions';
 test.describe('Tildeling/fradeling', () => {
   test('Saksbehandler kan tildele og fradele seg behandling', async ({ index }, testInfo) => {
     const behandling = await index.generateKlage();
+
+    await index.page.goto(UI_DOMAIN);
 
     await assignBehandling(index.page, behandling);
     await deAssignBehandling(index.page, behandling.id);
@@ -28,6 +30,51 @@ test.describe('Tildeling/fradeling', () => {
   });
 });
 
+const assignBehandling = async (page: Page, behandling: Behandling) => {
+  const tableId = 'oppgave-table';
+
+  await test.step('Naviger til "Oppgaver"', async () => {
+    await page.getByTestId('oppgaver-nav-link').click();
+    await page.getByTestId(tableId).waitFor();
+    expect(page.url()).toBe(`${UI_DOMAIN}/oppgaver`);
+  });
+
+  await test.step('Sett filtere for ledige oppgaver', async () => {
+    await setFilter(page, 'filter-type', behandling.typeId);
+    await setFilter(page, 'filter-ytelse', behandling.ytelseId);
+    await setFilter(page, 'filter-hjemler', behandling.hjemmelId);
+
+    await page.locator(`[data-testid="${tableId}-rows"][data-state="ready"]`).waitFor();
+  });
+
+  await test.step(`Tildel behandling \`${behandling.id}\``, async () => {
+    const oppgaveRow = await findOppgaveRow({
+      page,
+      tableId,
+      behandlingId: behandling.id,
+      mode: 'pagination',
+    });
+    await oppgaveRow.getByTestId('behandling-tildel-button').click();
+    await page.locator(`[data-testid="oppgave-tildelt-toast"][data-oppgaveid="${behandling.id}"]`).waitFor();
+  });
+};
+
+const deAssignBehandling = async (page: Page, behandlingId: string) => {
+  const tableId = 'mine-oppgaver-table';
+
+  await test.step('Naviger til "Mine oppgaver"', async () => {
+    await page.getByTestId('mine-oppgaver-nav-link').click();
+    await page.getByTestId(tableId).waitFor();
+    expect(page.url()).toBe(`${UI_DOMAIN}/mineoppgaver`);
+  });
+
+  await test.step(`Fradel behandling \`${behandlingId}\``, async () => {
+    const oppgaveRow = await findOppgaveRow({ page, tableId, behandlingId, mode: 'all' });
+    await oppgaveRow.getByTestId('behandling-fradel-button').click();
+    await page.locator(`[data-testid="oppgave-fradelt-toast"][data-oppgaveid="${behandlingId}"]`).waitFor();
+  });
+};
+
 const setFilter = async (page: Page, filterName: string, value: string) => {
   const filterContainer = page.locator(`data-testid=${filterName}`);
   const filterToggleButton = filterContainer.locator('[data-testid="toggle-button"]');
@@ -36,94 +83,102 @@ const setFilter = async (page: Page, filterName: string, value: string) => {
   const filterList = filterContainer.locator('[data-testid="filter-list"]');
   await filterList.waitFor();
 
-  const filterItems = filterList.locator(`[data-testid="filter"]`);
+  await filterList.locator(`[data-testid="filter"][data-filterid="${value}"]`).check();
+  const filterItems = await filterList.locator(`[data-testid="filter"]`).all();
 
-  const count = await filterItems.count();
+  for (const filterItem of filterItems) {
+    const filterItemValue = await filterItem.getAttribute('data-filterid');
 
-  for (let i = 0; i < count; i++) {
-    const filter = filterItems.nth(i);
-    const filterId = await filter.getAttribute('data-filterid');
+    if (filterItemValue !== value) {
+      await filterItem.uncheck();
+    }
+  }
 
-    if (filterId === value) {
-      await filter.check();
-      continue;
+  await filterToggleButton.click();
+};
+
+interface IFindOppgaveRowOptions {
+  page: Page;
+  tableId: string;
+  behandlingId: string;
+  mode: 'all' | 'pagination';
+}
+
+const findOppgaveRow = async ({ page, tableId, mode, behandlingId }: IFindOppgaveRowOptions) => {
+  const rows = page.locator(`[data-testid="${tableId}-rows"][data-state="ready"]`);
+  await rows.waitFor();
+
+  const emptyState = await rows.getAttribute('data-empty');
+
+  if (emptyState === 'true') {
+    throw new Error(`"${tableId}" table is marked as empty.`);
+  }
+
+  const findFn = mode === 'pagination' ? findOppgaveRowInPages : findOppgaveRowInAllPage;
+
+  for (let tryCount = 0; tryCount < 3; tryCount++) {
+    const row = await findFn(page, tableId, behandlingId);
+
+    if (row !== null) {
+      return row;
     }
 
-    await filter.uncheck();
+    await refreshOppgaver(page, tableId);
+  }
+
+  throw new Error(`No behandling with ID "${behandlingId}" found in "${tableId}" table.`);
+};
+
+const refreshOppgaver = async (page: Page, tableId: string) => {
+  const pageOneButton = page.locator('button[page="1"]');
+  await pageOneButton.click();
+
+  await page.waitForTimeout(1000);
+
+  await page.getByTestId(`${tableId}-footer-refresh-button`).click();
+
+  await page.locator(`[data-testid="${tableId}-rows"][data-state="updating"]`).waitFor();
+  await page.locator(`[data-testid="${tableId}-rows"][data-state="ready"]`).waitFor();
+};
+
+const findOppgaveRowInPages = async (page: Page, tableId: string, behandlingId: string) => {
+  for (; ;) {
+    const row = await findOppgaveRowOnPage(page, tableId, behandlingId);
+
+    if (row !== null) {
+      return row;
+    }
+
+    const nextButton = page.locator('button[page]', { hasText: 'Neste' });
+
+    const hasNextButton = await nextButton.isVisible();
+
+    if (!hasNextButton) {
+      return null;
+    }
+
+    await nextButton.click();
   }
 };
 
-const assignBehandling = async (page: Page, behandling: Behandling) => {
-  await test.step(`Tildel behandling \`${behandling.id}\``, async () => {
-    await page.goto(`${UI_DOMAIN}/oppgaver`);
-
-    await test.step('Sett filtere for ledige oppgaver', async () => {
-      await setFilter(page, 'filter-type', behandling.typeId);
-      await setFilter(page, 'filter-ytelse', behandling.ytelseId);
-      await setFilter(page, 'filter-hjemler', behandling.hjemmelId);
-    });
-
-    for (;;) {
-      const behandlingerRows = page.locator('[data-testid="oppgave-table-rows"][data-state="ready"]');
-      await behandlingerRows.waitFor();
-
-      const behandlingRow = behandlingerRows.locator(
-        `[data-testid=oppgave-table-row][data-behandlingid="${behandling.id}"]`
-      );
-      const visible = await behandlingRow.isVisible();
-
-      if (!visible) {
-        const nextButton = page.locator('button[page]', { hasText: 'Neste' });
-
-        const hasNextButton = await nextButton.isVisible();
-
-        if (hasNextButton) {
-          await nextButton.click();
-          continue;
-        }
-
-        throw new Error(`Oppgave "${behandling.id}" not found.`);
-      } else {
-        await behandlingRow.getByTestId('behandling-tildel-button').click();
-        await page.locator(`[data-testid="oppgave-tildelt-toast"][data-oppgaveid="${behandling.id}"]`).waitFor();
-
-        return;
-      }
-    }
-  });
+const findOppgaveRowInAllPage = async (page: Page, tableId: string, behandlingId: string) => {
+  const rowsPerPage = page.locator('[data-testid="mine-oppgaver-table-footer-rows-per-page"]');
+  await rowsPerPage.locator('[data-value="-1"]').click();
+  return findOppgaveRowOnPage(page, tableId, behandlingId);
 };
 
-const deAssignBehandling = async (page: Page, behandlingId: string) => {
-  await test.step(`Fradel behandling \`${behandlingId}\``, async () => {
-    await page.goto(`${UI_DOMAIN}/mineoppgaver`);
+const findOppgaveRowOnPage = async (page: Page, tableId: string, behandlingId: string) => {
+  const row = page.locator(`[data-testid="${tableId}-row"][data-behandlingid="${behandlingId}"][data-state="ready"]`);
 
-    const rows = page.locator('[data-testid="mine-oppgaver-table-rows"][data-state="ready"]');
-    await rows.waitFor();
+  const count = await row.count();
 
-    const emptyState = await rows.getAttribute('data-empty');
+  if (count === 0) {
+    return null;
+  }
 
-    if (emptyState === 'true') {
-      throw new Error(`"Mine Oppgaver" table is marked as empty.`);
-    }
+  if (count > 1) {
+    throw new Error(`More than one behandling with ID "${behandlingId}" found in "${tableId}" table.`);
+  }
 
-    const rowsPerPage = page.locator('[data-testid="mine-oppgaver-table-footer-rows-per-page"]');
-    await rowsPerPage.locator('[data-value="-1"]').click();
-
-    const mineOppgaverRow = page.locator(
-      `[data-testid="mine-oppgaver-table-row"][data-behandlingid="${behandlingId}"]`
-    );
-
-    const count = await mineOppgaverRow.count();
-
-    if (count === 0) {
-      throw new Error(`No behandling with ID "${behandlingId}" found in "Mine Oppgaver" table.`);
-    }
-
-    if (count > 1) {
-      throw new Error(`More than one behandling with ID "${behandlingId}" found in "Mine Oppgaver" table.`);
-    }
-
-    await mineOppgaverRow.getByTestId('behandling-fradel-button').click();
-    await page.locator(`[data-testid="oppgave-fradelt-toast"][data-oppgaveid="${behandlingId}"]`).waitFor();
-  });
+  return row;
 };
