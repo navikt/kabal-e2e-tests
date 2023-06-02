@@ -141,8 +141,10 @@ const refreshOppgaver = async (page: Page, tableId: string) => {
   await page.locator(`[data-testid="${tableId}-rows"][data-state="ready"]`).waitFor();
 };
 
+const ALWAYS = true;
+
 const findOppgaveRowInPages = async (page: Page, tableId: string, behandlingId: string) => {
-  for (; ;) {
+  while (ALWAYS) {
     const row = await findOppgaveRowOnPage(page, tableId, behandlingId);
 
     if (row !== null) {
