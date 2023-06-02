@@ -1,14 +1,20 @@
-import { Page, chromium } from '@playwright/test';
+import { Page, ViewportSize, chromium } from '@playwright/test';
 import { FullConfig } from '@playwright/test/reporter';
+import { IS_DEPLOYED } from '../config/env';
 import { USE_DEV } from '../tests/functions';
 import { getLoggedInPage } from '../tests/helpers';
 import { userSaksbehandler } from '../tests/users';
 import { DEV_DOMAIN } from './../tests/functions';
 
+export const SCREEN_SIZE: ViewportSize = IS_DEPLOYED ? { width: 3440, height: 1440 } : { width: 2560, height: 1440 };
+
 const globalSetup = async (config: FullConfig) => {
   const { storageState } = config.projects[0].use;
   const browser = await chromium.launch();
-  const page = await browser.newPage();
+  const page = await browser.newPage({
+    viewport: SCREEN_SIZE,
+    screen: SCREEN_SIZE,
+  });
 
   await getLoggedInPage(page, userSaksbehandler);
 
