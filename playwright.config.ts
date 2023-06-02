@@ -1,4 +1,5 @@
 import { PlaywrightTestConfig } from '@playwright/test';
+import { SCREEN_SIZE } from './setup/global-setup';
 
 const config: PlaywrightTestConfig = {
   timeout: 600_000,
@@ -9,10 +10,11 @@ const config: PlaywrightTestConfig = {
   testDir: './tests',
   use: {
     actionTimeout: 10_000,
-    video: 'on',
+    video: { mode: 'on', size: SCREEN_SIZE },
     screenshot: 'on',
     trace: 'on',
     locale: 'no-NB',
+    viewport: SCREEN_SIZE,
     storageState: './state.json', // File for storing cookies and localStorage (per origin). Speeds up test execution, as the test browser no longer needs to log in for every test.
   },
   // https://playwright.dev/docs/test-advanced#global-setup-and-teardown
