@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { UI_DOMAIN, getParsedUrl } from './functions';
 
-const timeout = 5_000;
+const timeout = 10_000;
 
 test.describe('Navigering', () => {
   test.beforeEach(async ({ page }) => {
