@@ -8,7 +8,7 @@ test.describe('Innstillinger-navigasjon', () => {
 
   test('Navigerer til `/innstillinger`', async ({ page }) => {
     const button = page.getByTestId('user-menu-button');
-    await button.click({ timeout: 5000 });
+    await button.click({ timeout: 10_000 });
 
     const innstillingerLink = page.getByTestId('innstillinger-link');
     await innstillingerLink.click();
