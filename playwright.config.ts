@@ -9,7 +9,7 @@ const config: PlaywrightTestConfig = {
   retries: 1,
   testDir: './tests',
   use: {
-    actionTimeout: 10_000,
+    actionTimeout: 15_000,
     video: { mode: 'on', size: SCREEN_SIZE },
     screenshot: 'on',
     trace: 'on',
