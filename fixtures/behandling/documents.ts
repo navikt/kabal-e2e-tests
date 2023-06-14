@@ -90,8 +90,9 @@ export const finishDocument = async (page: Page, documentName: string) => {
 
   await actionButton.click();
 
-  await container.getByTestId('document-finish-button').click();
-  await container.getByTestId('document-finish-confirm').click();
+  const modal = page.getByTestId('document-actions-modal');
+  await modal.getByTestId('document-finish-button').click();
+  await modal.getByTestId('document-finish-confirm').click();
 
   await container.getByTestId('document-archiving').waitFor();
 
@@ -166,7 +167,9 @@ export const setDocumentAsAttachmentTo = async (page: Page, documentName: string
 
   await actionButton.click();
 
-  const select = container.getByTestId('document-set-parent-document');
+  const modal = page.getByTestId('document-actions-modal');
+
+  const select = modal.getByTestId('document-set-parent-document');
   await select.waitFor();
 
   const response = page.waitForResponse(
