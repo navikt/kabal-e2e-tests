@@ -47,6 +47,7 @@ class SlackClient {
         title,
         initial_comment: message,
         thread_ts: threadMessage?.ts,
+        request_file_info: false,
       });
     } catch (error) {
       const bufferSize = fileBuffer instanceof Buffer ? fileBuffer.byteLength : (await buffer(fileBuffer)).byteLength;
