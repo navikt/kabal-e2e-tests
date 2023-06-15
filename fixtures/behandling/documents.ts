@@ -129,10 +129,10 @@ export const deleteDocument = async (page: Page, documentName: string) => {
 
   await actionButton.click();
 
-  const response = page.waitForResponse((res) => res.ok() && res.request().method() === 'DELETE');
-  await container.getByTestId('document-delete-button').click();
-  await container.getByTestId('document-delete-confirm').click();
-  await response;
+  const modal = page.getByTestId('document-actions-modal');
+  await modal.getByTestId('document-delete-button').click();
+  await modal.getByTestId('document-delete-confirm').click();
+  await page.waitForResponse((res) => res.ok() && res.request().method() === 'DELETE');
 
   const documentsCount = await container.count();
 
