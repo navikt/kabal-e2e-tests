@@ -4,12 +4,11 @@ import { assignBehandling, deAssignBehandling } from './assign';
 import { deleteBehandling } from './delete';
 import {
   deleteDocument,
-  finishDocument,
+  finishAndVerifyDocument,
   renameDocument,
   setDocumentAsAttachmentTo,
   setDocumentType,
   uploadDocument,
-  verifyFinishedDocument,
 } from './documents';
 import { IGenerateResponse, SaksTypeName, Sakstype } from './generate';
 import { DocumentType } from './types';
@@ -40,9 +39,8 @@ export class Behandling {
   public uploadDocument = (type: DocumentType, filename: string, title = `e2e-${new Date().toISOString()}.pdf`) =>
     uploadDocument(this.page, type, filename, title);
   public renameDocument = (title: string, newTitle: string) => renameDocument(this.page, title, newTitle);
-  public finishDocument = (title: string) => finishDocument(this.page, title);
   public deleteDocument = (title: string) => deleteDocument(this.page, title);
-  public verifyFinishedDocument = (title: string) => verifyFinishedDocument(this.page, title);
+  public finishAndVerifyDocument = (title: string) => finishAndVerifyDocument(this.page, title);
   public setDocumentType = (title: string, type: DocumentType) => setDocumentType(this.page, title, type);
   public setDocumentAsAttachmentTo = (title: string, parentName: string) =>
     setDocumentAsAttachmentTo(this.page, title, parentName);

@@ -46,18 +46,12 @@ test.describe('Dokumenter', () => {
     const newTitle = `${vedlegg1}-again`;
     await behandling.renameDocument(vedlegg1, newTitle);
 
-    const afterAttachmentNames = renamedDocuments.map((n) => (n === vedlegg1 ? newTitle : n));
-
-    await behandling.setDocumentType(hoveddokument2, DocumentType.BREV);
+    await behandling.setDocumentType(hoveddokument2, DocumentType.VEDTAKSBREV);
     await behandling.setDocumentType(hoveddokument3, DocumentType.BESLUTNING);
 
     for (const hoveddokument of hoveddokumentmenter) {
-      await behandling.finishDocument(hoveddokument);
+      await behandling.finishAndVerifyDocument(hoveddokument);
     }
-
-    const journalfoerte = afterAttachmentNames.map(behandling.verifyFinishedDocument);
-
-    await Promise.all(journalfoerte);
 
     await behandling.deAssign();
   });
