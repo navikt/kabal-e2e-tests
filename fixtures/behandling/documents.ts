@@ -76,7 +76,12 @@ export const renameDocument = async (page: Page, documentName: string, newDocume
   return newDocumentName;
 };
 
-export const finishDocument = async (page: Page, documentName: string) => {
+export const finishAndVerifyDocument = async (page: Page, documentName: string) => {
+  const inProgressList = page.getByTestId('new-documents-list');
+  await inProgressList.waitFor();
+
+  const numberOfNewDocsBeforeFinish = await inProgressList.locator('li').count();
+
   await page.getByTestId('oppgavebehandling-documents-all-list').waitFor({ timeout: 120 * 1_000 });
 
   const container = getDocumentByName(page, documentName);
@@ -96,14 +101,8 @@ export const finishDocument = async (page: Page, documentName: string) => {
 
   await container.getByTestId('document-archiving').waitFor();
 
-  return documentName;
-};
-
-export const verifyFinishedDocument = async (page: Page, documentName: string) => {
-  const inProgressList = page.getByTestId('new-documents-list');
   const finishedList = page.getByTestId('oppgavebehandling-documents-all-list');
 
-  await inProgressList.waitFor();
   await finishedList.waitFor({ timeout: 120_000 });
 
   const finishedDocument = finishedList.locator(`article[data-documentname="${documentName}"]`);
@@ -111,10 +110,16 @@ export const verifyFinishedDocument = async (page: Page, documentName: string) =
 
   await finishedDocument.locator('[data-included="true"]').waitFor({ timeout: 60_000 });
 
-  await page.waitForTimeout(200);
-
-  const inNewList = await inProgressList.locator(`article[data-documentname="${documentName}"]`).count();
-  expect(inNewList === 0, 'Forventet at journalført dokument forsvinner fra "Under arbeid"-listen.').toBe(true);
+  if (numberOfNewDocsBeforeFinish > 1) {
+    const inNewList = await inProgressList.locator(`article[data-documentname="${documentName}"]`).count();
+    expect(inNewList === 0, 'Forventet at journalført dokument forsvinner fra "Under arbeid"-listen.').toBe(true);
+  } else {
+    const inProgressListCount = await inProgressList.count();
+    expect(
+      inProgressListCount === 0,
+      'Forventet at "Under arbeid"-listen ikke eksisterer, da det er 0 dokumenter under arbeid.'
+    ).toBe(true);
+  }
 };
 
 export const deleteDocument = async (page: Page, documentName: string) => {
@@ -169,16 +174,12 @@ export const setDocumentAsAttachmentTo = async (page: Page, documentName: string
 
   const modal = page.getByTestId('document-actions-modal');
 
-  const select = modal.getByTestId('document-set-parent-document');
-  await select.waitFor();
+  const toggleGroup = modal.getByTestId('document-set-parent-document');
+  await toggleGroup.waitFor();
 
-  const response = page.waitForResponse(
-    (res) => res.ok() && res.request().method() === 'PUT' && res.url().endsWith('/parent')
-  );
+  await toggleGroup.getByText(parentName).click();
 
-  await select.selectOption({ label: parentName });
-
-  await response;
+  await page.waitForResponse((res) => res.ok() && res.request().method() === 'PUT' && res.url().endsWith('/parent'));
 
   const parent = getDocumentListItemByName(page, parentName);
   const attachmentList = parent.getByTestId('new-attachments-list');
