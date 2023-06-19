@@ -2,9 +2,9 @@ import { expect, test } from '@playwright/test';
 import { UI_DOMAIN, getParsedUrl } from './functions';
 
 const TABLES: [string, string][] = [
-  ['Tildelte oppgaver', 'mine-oppgaver-table-rows'],
-  ['Oppgaver på vent', 'oppgaver-paa-vent-table-rows'],
-  ['Fullførte oppgaver', 'fullfoerte-oppgaver-table-rows'],
+  ['Tildelte', 'mine-oppgaver-table-rows'],
+  ['På vent', 'oppgaver-paa-vent-table-rows'],
+  ['Fullførte', 'fullfoerte-oppgaver-table-rows'],
 ];
 
 test.describe('Mine Oppgaver', () => {

@@ -2,26 +2,24 @@ import { expect } from '@playwright/test';
 import { test } from '../fixtures/behandling/fixture';
 import { AnkebehandlingPage, KlagebehandlingPage } from '../fixtures/behandling/page';
 
-test.describe('Tildelt klagebehandling', () => {
-  test('Saksbehandler kan endre utfall', ({ klagebehandling }) => changeUtfall(klagebehandling));
+test.describe('Klagebehandling', () => {
+  test('Endre utfall', ({ klagebehandling }) => changeUtfall(klagebehandling));
 
-  test('Saksbehandler kan endre hjemmel', ({ klagebehandling }) => changeHjemmel(klagebehandling));
+  test('Endre hjemmel', ({ klagebehandling }) => changeHjemmel(klagebehandling));
 
-  test('Saksbehandler kan endre medunderskriver', ({ klagebehandling }) => changeMedunderskriver(klagebehandling));
+  test('Endre medunderskriver', ({ klagebehandling }) => changeMedunderskriver(klagebehandling));
 
-  test('Skal vise feilmelding når en behandling uten utfall/resultat ferdigstilles', ({ klagebehandling }) =>
-    showErrors(klagebehandling));
+  test('Feilmelding når en behandling uten utfall ferdigstilles', ({ klagebehandling }) => showErrors(klagebehandling));
 });
 
-test.describe('Tildelt ankebehandling', () => {
-  test(`Saksbehandler kan endre utfall`, ({ ankebehandling }) => changeUtfall(ankebehandling));
+test.describe('Ankebehandling', () => {
+  test(`Endre utfall`, ({ ankebehandling }) => changeUtfall(ankebehandling));
 
-  test('Saksbehandler kan endre hjemmel', ({ ankebehandling }) => changeHjemmel(ankebehandling));
+  test('Endre hjemmel', ({ ankebehandling }) => changeHjemmel(ankebehandling));
 
-  test('Saksbehandler kan endre medunderskriver', ({ ankebehandling }) => changeMedunderskriver(ankebehandling));
+  test('Endre medunderskriver', ({ ankebehandling }) => changeMedunderskriver(ankebehandling));
 
-  test('Skal vise feilmelding når en behandling uten utfall/resultat ferdigstilles', ({ ankebehandling }) =>
-    showErrors(ankebehandling));
+  test('Feilmelding når en behandling uten utfall ferdigstilles', ({ ankebehandling }) => showErrors(ankebehandling));
 });
 
 const changeUtfall = async (behandling: AnkebehandlingPage | KlagebehandlingPage) => {

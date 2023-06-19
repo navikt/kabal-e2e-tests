@@ -4,7 +4,7 @@ import { test } from '../fixtures/behandling/fixture';
 import { UI_DOMAIN } from './functions';
 
 test.describe('Tildeling/fradeling', () => {
-  test('Saksbehandler kan tildele og fradele seg behandling', async ({ index }, testInfo) => {
+  test('Tildele og fradele seg behandling', async ({ index }, testInfo) => {
     const behandling = await index.generateKlage();
 
     await index.page.goto(UI_DOMAIN);
@@ -47,7 +47,7 @@ const assignBehandling = async (page: Page, behandling: Behandling) => {
     await page.locator(`[data-testid="${tableId}-rows"][data-state="ready"]`).waitFor();
   });
 
-  await test.step(`Tildel behandling \`${behandling.id}\``, async () => {
+  await test.step(`Tildel behandling \`${behandling.id.substring(0, 8)}...\``, async () => {
     const oppgaveRow = await findOppgaveRow({
       page,
       tableId,
