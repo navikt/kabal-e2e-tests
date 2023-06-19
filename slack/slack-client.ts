@@ -1,4 +1,5 @@
-import { ReadStream, createReadStream } from 'fs';
+import fs, { ReadStream, createReadStream } from 'fs';
+import path from 'path';
 import { buffer } from 'stream/consumers';
 import { App } from '@slack/bolt';
 import { ChatPostMessageResponse } from '@slack/web-api';
@@ -129,8 +130,14 @@ export class SlackMessageThread {
 
   reply = (reply: string) => this.app.postReply(this.message, reply);
 
-  replyFilePath = (filePath: string, reply?: string, title?: string, filename?: string) =>
-    this.app.uploadFile(filePath, filename, title, reply, this.message);
+  replyFilePath = (filePath: string, reply?: string, title?: string, filename?: string) => {
+    // https://github.com/microsoft/playwright/issues/12711
+    if (fs.existsSync(filePath)) {
+      return this.app.uploadFile(filePath, filename, title, reply, this.message);
+    }
+
+    console.error(`Tried to upload file ${filePath ?? ''}, but it did not exist.`);
+  };
 
   replyFileBuffer = (file: Buffer, reply?: string, title?: string, filename?: string) =>
     this.app.uploadFileBuffer(file, filename, title, reply, this.message);
