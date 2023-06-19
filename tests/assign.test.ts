@@ -68,7 +68,7 @@ const deAssignBehandling = async (page: Page, behandlingId: string) => {
     expect(page.url()).toBe(`${UI_DOMAIN}/mineoppgaver`);
   });
 
-  await test.step(`Fradel behandling \`${behandlingId}\``, async () => {
+  await test.step(`Fradel behandling \`${behandlingId.substring(0, 8)}...\``, async () => {
     const oppgaveRow = await findOppgaveRow({ page, tableId, behandlingId, mode: 'all' });
     await oppgaveRow.getByTestId('behandling-fradel-button').click();
     await page.locator(`[data-testid="oppgave-fradelt-toast"][data-oppgaveid="${behandlingId}"]`).waitFor();
