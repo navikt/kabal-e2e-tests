@@ -127,7 +127,7 @@ class SlackReporter implements Reporter {
     data.steps.set(step, {
       title: step.title,
       icon: typeof step.error === 'undefined' ? SlackIcon.SUCCESS : SlackIcon.WARNING,
-      status: `${result.duration / 1_000} seconds`,
+      status: `${result.duration / 1_000}s`,
       steps: new Map(),
     });
   }
@@ -135,7 +135,7 @@ class SlackReporter implements Reporter {
   async onTestEnd(test: TestCase, result: TestResult) {
     const icon = getTestStatusIcon(test, result.status);
     const title = getTestTitle(test);
-    this.updateTestMessage(test, { icon, status: `${result.duration / 1_000} seconds` });
+    this.updateTestMessage(test, { icon, status: `${result.duration / 1_000}s` });
 
     const isFailed = result.status === 'failed' || result.status === 'timedOut';
 
@@ -193,14 +193,14 @@ class SlackReporter implements Reporter {
     const duration = (Date.now() - this.startTime) / 1_000;
 
     if (result.status === 'passed') {
-      await this.updateMainMessage(`${icon} All ${this.totalTests} tests succeeded! \`${duration} seconds\``);
+      await this.updateMainMessage(`${icon} All ${this.totalTests} tests succeeded! \`${duration}s\``);
     } else if (result.status === 'failed') {
       await this.updateMainMessage(
-        `<!channel> ${icon} ${this.failedTestCount} of ${this.totalTests} tests failed! \`${duration} seconds\``
+        `<!channel> ${icon} ${this.failedTestCount} of ${this.totalTests} tests failed! \`${duration}s\``
       );
     } else if (result.status === 'timedout') {
       await this.updateMainMessage(
-        `<!channel> ${icon} Global timeout! ${this.failedTestCount} of ${this.totalTests} tests failed! \`${duration} seconds\``
+        `<!channel> ${icon} Global timeout! ${this.failedTestCount} of ${this.totalTests} tests failed! \`${duration}s\``
       );
     }
 

@@ -2,7 +2,7 @@ import { test } from '../fixtures/behandling/fixture';
 import { DocumentType } from '../fixtures/behandling/types';
 
 test.describe('Dokumenter', () => {
-  test('Saksbehandler kan laste opp og slette dokumenter', async ({ klagebehandling }) => {
+  test('Laste opp og slette', async ({ klagebehandling }) => {
     const filename = 'e2e-test-document.pdf';
 
     const { behandling } = klagebehandling;

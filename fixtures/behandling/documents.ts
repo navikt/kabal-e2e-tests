@@ -67,7 +67,7 @@ export const renameDocument = async (page: Page, documentName: string, newDocume
   await input.fill(newDocumentName);
   await input.press('Enter');
 
-  await test.step(`Endre navn på dokument \`${documentId}\`.`, async () => {
+  await test.step(`Endre navn \`${documentId.substring(0, 8)}...\``, async () => {
     const document = getDocumentById(page, documentId);
     await document.waitFor();
     await document.locator(`text="${newDocumentName}"`).waitFor({ timeout: 1_000 });
