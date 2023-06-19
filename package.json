@@ -9,7 +9,8 @@
     "dev": "NODE_ENV=test playwright test --headed --retries 0 --workers 1",
     "local": "playwright test --headed --retries 0 --workers 1",
     "lint": "eslint . --color",
-    "lint-fix": "eslint . --color --fix"
+    "lint-fix": "eslint . --color --fix",
+    "tsc": "tsc"
   },
   "dependencies": {
     "@playwright/test": "^1.35.1",
