@@ -54,7 +54,7 @@ const assignBehandling = async (page: Page, behandling: Behandling) => {
       behandlingId: behandling.id,
       mode: 'pagination',
     });
-    await oppgaveRow.getByTestId('behandling-tildel-button').click();
+    await oppgaveRow?.getByTestId('behandling-tildel-button').click();
     await page.locator(`[data-testid="oppgave-tildelt-toast"][data-oppgaveid="${behandling.id}"]`).waitFor();
   });
 };
@@ -70,7 +70,7 @@ const deAssignBehandling = async (page: Page, behandlingId: string) => {
 
   await test.step(`Fradel behandling \`${behandlingId.substring(0, 8)}...\``, async () => {
     const oppgaveRow = await findOppgaveRow({ page, tableId, behandlingId, mode: 'all' });
-    await oppgaveRow.getByTestId('behandling-fradel-button').click();
+    await oppgaveRow?.getByTestId('behandling-fradel-button').click();
     await page.locator(`[data-testid="oppgave-fradelt-toast"][data-oppgaveid="${behandlingId}"]`).waitFor();
   });
 };
