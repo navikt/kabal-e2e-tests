@@ -39,8 +39,7 @@ test.describe('Søk', () => {
   test('Søketekst med 11 siffer skal søke etter saker på enkeltperson', async ({ page }) => {
     const TEST_STRING = '184969 00509';
 
-    const searchField = await page.getByTestId('search-input');
-    await searchField.fill(TEST_STRING);
+    await page.getByTestId('search-input').fill(TEST_STRING);
 
     await page.getByTestId('search-result').waitFor();
   });
