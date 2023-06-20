@@ -131,7 +131,7 @@ const findOppgaveRow = async ({ page, tableId, mode, behandlingId }: IFindOppgav
 
 const refreshOppgaver = async (page: Page, tableId: string) => {
   const pagination = page.getByTestId(`${tableId}-pagination`);
-  const pageOneButton = pagination.locator('button[page="1"]');
+  const pageOneButton = pagination.locator('button[page="1"]').first();
   await pageOneButton.click();
 
   await page.waitForTimeout(1000);
