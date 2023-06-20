@@ -130,7 +130,8 @@ const findOppgaveRow = async ({ page, tableId, mode, behandlingId }: IFindOppgav
 };
 
 const refreshOppgaver = async (page: Page, tableId: string) => {
-  const pageOneButton = page.locator('button[page="1"]');
+  const pagination = page.getByTestId(`${tableId}-pagination`);
+  const pageOneButton = pagination.locator('button[page="1"]');
   await pageOneButton.click();
 
   await page.waitForTimeout(1000);
@@ -151,7 +152,8 @@ const findOppgaveRowInPages = async (page: Page, tableId: string, behandlingId: 
       return row;
     }
 
-    const nextButton = page.locator('button[page]', { hasText: 'Neste' });
+    const pagination = page.getByTestId(`${tableId}-pagination`);
+    const nextButton = pagination.locator('button[page]', { hasText: 'Neste' });
 
     const hasNextButton = await nextButton.isVisible();
 
