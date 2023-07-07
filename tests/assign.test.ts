@@ -1,4 +1,4 @@
-import { Page, expect } from '@playwright/test';
+import { Locator, Page, expect } from '@playwright/test';
 import { Behandling } from '../fixtures/behandling/behandling';
 import { test } from '../fixtures/behandling/fixture';
 import { UI_DOMAIN } from './functions';
@@ -130,7 +130,7 @@ const findOppgaveRow = async ({ page, tableId, mode, behandlingId }: IFindOppgav
 };
 
 const refreshOppgaver = async (page: Page, tableId: string) => {
-  const pagination = page.getByTestId(`${tableId}-pagination`);
+  const pagination = page.getByTestId(`${tableId}-footer-pagination`);
   const pageOneButton = pagination.locator('button[page="1"]').first();
   await pageOneButton.click();
 
@@ -142,9 +142,11 @@ const refreshOppgaver = async (page: Page, tableId: string) => {
   await page.locator(`[data-testid="${tableId}-rows"][data-state="ready"]`).waitFor();
 };
 
+type FindFnType = (page: Page, tableId: string, behandlingId: string) => Promise<Locator | null>;
+
 const ALWAYS = true;
 
-const findOppgaveRowInPages = async (page: Page, tableId: string, behandlingId: string) => {
+const findOppgaveRowInPages: FindFnType = async (page, tableId, behandlingId) => {
   while (ALWAYS) {
     const row = await findOppgaveRowOnPage(page, tableId, behandlingId);
 
@@ -152,7 +154,7 @@ const findOppgaveRowInPages = async (page: Page, tableId: string, behandlingId: 
       return row;
     }
 
-    const pagination = page.getByTestId(`${tableId}-pagination`);
+    const pagination = page.getByTestId(`${tableId}-footer-pagination`);
     const nextButton = pagination.locator('button[page]', { hasText: 'Neste' });
 
     const hasNextButton = await nextButton.isVisible();
@@ -163,10 +165,12 @@ const findOppgaveRowInPages = async (page: Page, tableId: string, behandlingId: 
 
     await nextButton.click();
   }
+
+  return null;
 };
 
-const findOppgaveRowInAllPage = async (page: Page, tableId: string, behandlingId: string) => {
-  const rowsPerPage = page.locator('[data-testid="mine-oppgaver-table-footer-rows-per-page"]');
+const findOppgaveRowInAllPage: FindFnType = async (page, tableId, behandlingId) => {
+  const rowsPerPage = page.getByTestId(`${tableId}-footer-rows-per-page`);
   await rowsPerPage.locator('[data-value="-1"]').click();
   return findOppgaveRowOnPage(page, tableId, behandlingId);
 };
