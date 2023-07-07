@@ -134,12 +134,13 @@ const refreshOppgaver = async (page: Page, tableId: string) => {
   const pageOneButton = pagination.locator('button[page="1"]').first();
   await pageOneButton.click();
 
-  await page.waitForTimeout(1000);
+  const refreshButton = page.getByTestId(`${tableId}-footer-refresh-button`).first();
+  const updating = page.locator(`[data-testid="${tableId}-rows"][data-state="updating"]`);
+  const ready = page.locator(`[data-testid="${tableId}-rows"][data-state="ready"]`);
 
-  await page.getByTestId(`${tableId}-footer-refresh-button`).click();
-
-  await page.locator(`[data-testid="${tableId}-rows"][data-state="updating"]`).waitFor();
-  await page.locator(`[data-testid="${tableId}-rows"][data-state="ready"]`).waitFor();
+  await refreshButton.click();
+  await updating.waitFor();
+  await ready.waitFor();
 };
 
 type FindFnType = (page: Page, tableId: string, behandlingId: string) => Promise<Locator | null>;
