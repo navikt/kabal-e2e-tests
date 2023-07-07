@@ -130,7 +130,7 @@ const findOppgaveRow = async ({ page, tableId, mode, behandlingId }: IFindOppgav
 };
 
 const refreshOppgaver = async (page: Page, tableId: string) => {
-  const pagination = page.getByTestId(`${tableId}-pagination`);
+  const pagination = page.getByTestId(`${tableId}-footer-pagination`);
   const pageOneButton = pagination.locator('button[page="1"]').first();
   await pageOneButton.click();
 
@@ -166,7 +166,7 @@ const findOppgaveRowInPages = async (page: Page, tableId: string, behandlingId: 
 };
 
 const findOppgaveRowInAllPage = async (page: Page, tableId: string, behandlingId: string) => {
-  const rowsPerPage = page.locator('[data-testid="mine-oppgaver-table-footer-rows-per-page"]');
+  const rowsPerPage = page.getByTestId(`${tableId}-footer-rows-per-page`);
   await rowsPerPage.locator('[data-value="-1"]').click();
   return findOppgaveRowOnPage(page, tableId, behandlingId);
 };
