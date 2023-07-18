@@ -177,7 +177,9 @@ const findOppgaveRowInAllPage: FindFnType = async (page, tableId, behandlingId) 
 };
 
 const findOppgaveRowOnPage = async (page: Page, tableId: string, behandlingId: string) => {
-  const row = page.locator(`[data-testid="${tableId}-row"][data-behandlingid="${behandlingId}"][data-state="ready"]`);
+  const row = page.locator(
+    `[data-testid="${tableId}-rows-row"][data-behandlingid="${behandlingId}"][data-state="ready"]`
+  );
 
   const count = await row.count();
 
