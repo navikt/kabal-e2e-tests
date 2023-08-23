@@ -185,6 +185,8 @@ export const setDocumentAsAttachmentTo = async (page: Page, documentName: string
   await toggleGroup.getByText(parentName).click();
   await response;
 
+  page.keyboard.press('Escape');
+
   const parent = getDocumentListItemByName(page, parentName);
   const attachmentList = parent.getByTestId('new-attachments-list');
   await attachmentList.waitFor();
