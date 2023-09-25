@@ -10,7 +10,10 @@ export class KabalPage {
 }
 
 export class BehandlingPage {
-  constructor(public readonly page: Page, public readonly behandling: Behandling) {}
+  constructor(
+    public readonly page: Page,
+    public readonly behandling: Behandling,
+  ) {}
 }
 
 export class AnkebehandlingPage extends BehandlingPage {

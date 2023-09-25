@@ -18,8 +18,8 @@ test.describe('Mine Oppgaver', () => {
       TABLES.map(([table, tableId]) =>
         test.step(table, async () => {
           await page.locator(`[data-testid="${tableId}"][data-state="ready"]`).waitFor();
-        })
-      )
+        }),
+      ),
     );
   });
 });

@@ -1,5 +1,4 @@
 import fs, { ReadStream, createReadStream } from 'fs';
-import path from 'path';
 import { buffer } from 'stream/consumers';
 import { App } from '@slack/bolt';
 import { ChatPostMessageResponse } from '@slack/web-api';
@@ -8,7 +7,11 @@ import { IS_DEPLOYED, envString } from '../config/env';
 class SlackClient {
   private app: App;
 
-  constructor(private token: string, private channel: string, signingSecret: string) {
+  constructor(
+    private token: string,
+    private channel: string,
+    signingSecret: string,
+  ) {
     this.app = new App({ token, signingSecret });
   }
 
@@ -27,7 +30,7 @@ class SlackClient {
     filename: string = filePath,
     title: string = filePath,
     message?: string,
-    threadMessage?: ChatPostMessageResponse
+    threadMessage?: ChatPostMessageResponse,
   ) {
     return await this.uploadFileBuffer(createReadStream(filePath), filename, title, message, threadMessage);
   }
@@ -37,7 +40,7 @@ class SlackClient {
     filename?: string,
     title?: string,
     message?: string,
-    threadMessage?: ChatPostMessageResponse
+    threadMessage?: ChatPostMessageResponse,
   ) {
     try {
       return await this.app.client.files.uploadV2({
@@ -115,14 +118,17 @@ export const getSlack = () => {
   }
 
   console.warn(
-    'Could not create slack client. Missing env variables: slack_e2e_token, kaka_notifications_channel, slack_signing_secret'
+    'Could not create slack client. Missing env variables: slack_e2e_token, kaka_notifications_channel, slack_signing_secret',
   );
 
   return null;
 };
 
 export class SlackMessageThread {
-  constructor(private app: SlackClient, private message: ChatPostMessageResponse) {
+  constructor(
+    private app: SlackClient,
+    private message: ChatPostMessageResponse,
+  ) {
     /* Empty */
   }
 

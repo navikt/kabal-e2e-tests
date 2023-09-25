@@ -93,7 +93,7 @@ class SlackReporter implements Reporter {
         title: getTestTitle(test),
         status: 'Waiting...',
         steps: new Map(),
-      })
+      }),
     );
     this.updateMessage();
   }
@@ -178,7 +178,7 @@ class SlackReporter implements Reporter {
           path,
           `${title} - \`${name}\`\n\`npx playwright show-trace ${filename}\``,
           test.title,
-          filename
+          filename,
         );
       }
 
@@ -196,11 +196,11 @@ class SlackReporter implements Reporter {
       await this.updateMainMessage(`${icon} All ${this.totalTests} tests succeeded! \`${duration}s\``);
     } else if (result.status === 'failed') {
       await this.updateMainMessage(
-        `<!channel> ${icon} ${this.failedTestCount} of ${this.totalTests} tests failed! \`${duration}s\``
+        `<!channel> ${icon} ${this.failedTestCount} of ${this.totalTests} tests failed! \`${duration}s\``,
       );
     } else if (result.status === 'timedout') {
       await this.updateMainMessage(
-        `<!channel> ${icon} Global timeout! ${this.failedTestCount} of ${this.totalTests} tests failed! \`${duration}s\``
+        `<!channel> ${icon} Global timeout! ${this.failedTestCount} of ${this.totalTests} tests failed! \`${duration}s\``,
       );
     }
 
