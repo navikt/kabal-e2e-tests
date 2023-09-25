@@ -117,7 +117,7 @@ export const finishAndVerifyDocument = async (page: Page, documentName: string) 
     const inProgressListCount = await inProgressList.count();
     expect(
       inProgressListCount === 0,
-      'Forventet at "Under arbeid"-listen ikke eksisterer, da det er 0 dokumenter under arbeid.'
+      'Forventet at "Under arbeid"-listen ikke eksisterer, da det er 0 dokumenter under arbeid.',
     ).toBe(true);
   }
 };
@@ -180,7 +180,7 @@ export const setDocumentAsAttachmentTo = async (page: Page, documentName: string
   await toggleGroup.waitFor();
 
   const response = page.waitForResponse(
-    (res) => res.ok() && res.request().method() === 'PUT' && res.url().endsWith('/parent')
+    (res) => res.ok() && res.request().method() === 'PUT' && res.url().endsWith('/parent'),
   );
   await toggleGroup.getByText(parentName).click();
   await response;
@@ -191,7 +191,7 @@ export const setDocumentAsAttachmentTo = async (page: Page, documentName: string
   const attachmentList = parent.getByTestId('new-attachments-list');
   await attachmentList.waitFor();
   const attachments = attachmentList.locator(
-    `[data-testid="new-document-list-item-content"][data-documentname="${documentName}"][data-documenttype="attachment"]`
+    `[data-testid="new-document-list-item-content"][data-documentname="${documentName}"][data-documenttype="attachment"]`,
   );
   const count = await attachments.count();
   expect(count, `Forventet å finne dokument ${documentName} som vedlegg til ${parentName}.`).toBe(1);

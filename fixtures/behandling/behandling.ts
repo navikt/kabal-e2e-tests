@@ -19,7 +19,10 @@ export class Behandling {
   public readonly ytelseId: string;
   public readonly hjemmelId: string;
 
-  constructor(private page: Page, { id, typeId, ytelseId, hjemmelId }: IGenerateResponse) {
+  constructor(
+    private page: Page,
+    { id, typeId, ytelseId, hjemmelId }: IGenerateResponse,
+  ) {
     this.id = id;
     this.typeId = typeId;
     this.ytelseId = ytelseId;

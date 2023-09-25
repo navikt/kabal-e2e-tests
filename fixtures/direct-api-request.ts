@@ -7,7 +7,7 @@ export const makeDirectApiRequest = async <T>(
   api: 'kabal-api' | 'kabal-innstillinger',
   path: string,
   method: 'POST' | 'GET' | 'PUT' | 'DELETE',
-  body?: T
+  body?: T,
 ) => {
   const url = createApiUrl(api, path);
 
