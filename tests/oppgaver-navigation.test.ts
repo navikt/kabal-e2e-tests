@@ -32,11 +32,11 @@ test.describe('Navigering', () => {
     expect(url.pathname).toBe('/sok');
   });
 
-  test('"Enhetens oppgaver"-lenke navigerer til `/enhetensoppgaver`', async ({ page }) => {
-    const link = page.getByTestId('enhetens-oppgaver-nav-link');
+  test('"Oppgavestyring"-lenke navigerer til `/oppgavestyring`', async ({ page }) => {
+    const link = page.getByTestId('oppgavestyring-nav-link');
     await link.click({ timeout });
 
     const url = getParsedUrl(page.url());
-    expect(url.pathname).toBe('/enhetensoppgaver');
+    expect(url.pathname).toBe('/oppgavestyring');
   });
 });
