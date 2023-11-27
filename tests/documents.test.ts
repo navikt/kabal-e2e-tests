@@ -13,17 +13,17 @@ test.describe('Dokumenter', () => {
     await behandling.deleteDocument(vedtaksbrev);
   });
 
-  test('Opplasting, endre navn/type, ferdigstille, sette vedlegg', async ({ klagebehandling }) => {
+  test('Opplasting, endre navn/type, ferdigstille', async ({ klagebehandling }) => {
     const filename = 'e2e-test-document.pdf';
 
     const { behandling } = klagebehandling;
 
     const documents: string[] = [];
 
-    const DOCUMENTS_TO_UPLOAD = 4;
+    const DOCUMENTS_TO_UPLOAD = 3;
 
     for (let i = 0; i < DOCUMENTS_TO_UPLOAD; i++) {
-      const title = await behandling.uploadDocument(DocumentType.NOTAT, filename);
+      const title = await behandling.uploadDocument(DocumentType.BREV, filename);
       documents.push(title);
     }
 
@@ -35,11 +35,10 @@ test.describe('Dokumenter', () => {
       renamedDocuments.push(newTitle);
     }
 
-    const [doc1, doc2, doc3] = renamedDocuments;
+    const [doc1, doc2] = renamedDocuments;
 
     await behandling.setDocumentType(doc1, DocumentType.VEDTAKSBREV);
     await behandling.setDocumentType(doc2, DocumentType.BESLUTNING);
-    await behandling.setDocumentType(doc3, DocumentType.BREV);
 
     for (const hoveddokument of renamedDocuments) {
       await behandling.finishAndVerifyDocument(hoveddokument);

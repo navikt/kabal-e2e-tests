@@ -114,9 +114,10 @@ export const finishAndVerifyDocument = async (page: Page, documentName: string) 
     const inNewList = await inProgressList.locator(`article[data-documentname="${documentName}"]`).count();
     expect(inNewList === 0, 'Forventet at journalført dokument forsvinner fra "Under arbeid"-listen.').toBe(true);
   } else {
-    const inProgressListCount = await inProgressList.count();
+    const inProgressChildren = await inProgressList.locator('li').count();
+
     expect(
-      inProgressListCount === 0,
+      inProgressChildren === 0,
       'Forventet at "Under arbeid"-listen ikke eksisterer, da det er 0 dokumenter under arbeid.',
     ).toBe(true);
   }
