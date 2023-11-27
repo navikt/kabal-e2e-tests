@@ -20,16 +20,12 @@ test.describe('Dokumenter', () => {
 
     const documents: string[] = [];
 
-    const DOCUMENTS_TO_UPLOAD = 5;
+    const DOCUMENTS_TO_UPLOAD = 4;
 
     for (let i = 0; i < DOCUMENTS_TO_UPLOAD; i++) {
-      const title = await behandling.uploadDocument(DocumentType.BREV, filename);
+      const title = await behandling.uploadDocument(DocumentType.NOTAT, filename);
       documents.push(title);
     }
-
-    const [parent, vedlegg] = documents;
-
-    await behandling.setDocumentAsAttachmentTo(vedlegg, parent);
 
     const renamedDocuments: string[] = [];
 
@@ -39,17 +35,13 @@ test.describe('Dokumenter', () => {
       renamedDocuments.push(newTitle);
     }
 
-    const [hoveddokument1, vedlegg1, vedlegg2, hoveddokument2, hoveddokument3] = renamedDocuments;
-    const hoveddokumentmenter = [hoveddokument1, hoveddokument2, hoveddokument3];
+    const [doc1, doc2, doc3] = renamedDocuments;
 
-    await behandling.setDocumentAsAttachmentTo(vedlegg2, hoveddokument1);
-    const newTitle = `${vedlegg1}-again`;
-    await behandling.renameDocument(vedlegg1, newTitle);
+    await behandling.setDocumentType(doc1, DocumentType.VEDTAKSBREV);
+    await behandling.setDocumentType(doc2, DocumentType.BESLUTNING);
+    await behandling.setDocumentType(doc3, DocumentType.BREV);
 
-    await behandling.setDocumentType(hoveddokument2, DocumentType.VEDTAKSBREV);
-    await behandling.setDocumentType(hoveddokument3, DocumentType.BESLUTNING);
-
-    for (const hoveddokument of hoveddokumentmenter) {
+    for (const hoveddokument of renamedDocuments) {
       await behandling.finishAndVerifyDocument(hoveddokument);
     }
 
