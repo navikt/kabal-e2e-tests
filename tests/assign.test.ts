@@ -71,6 +71,10 @@ const deAssignBehandling = async (page: Page, behandlingId: string) => {
   await test.step(`Fradel behandling \`${behandlingId.substring(0, 8)}...\``, async () => {
     const oppgaveRow = await findOppgaveRow({ page, tableId, behandlingId, mode: 'all' });
     await oppgaveRow?.getByTestId('behandling-fradel-button').click();
+
+    await oppgaveRow.getByText('Inhabil').click();
+    await oppgaveRow.getByTestId('deassign-oppgave-popup').getByText('Legg tilbake').click();
+
     await page.locator(`[data-testid="oppgave-fradelt-toast"][data-oppgaveid="${behandlingId}"]`).waitFor();
   });
 };
