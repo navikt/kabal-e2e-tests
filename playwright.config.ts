@@ -2,7 +2,7 @@ import { PlaywrightTestConfig } from '@playwright/test';
 import { SCREEN_SIZE } from './setup/global-setup';
 
 const config: PlaywrightTestConfig = {
-  workers: 2,
+  workers: 4,
   timeout: 600_000,
   globalTimeout: 600_000,
   name: 'KABAL',
