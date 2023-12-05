@@ -44,37 +44,25 @@ const changeUtfall = async (behandling: AnkebehandlingPage | KlagebehandlingPage
 const changeHjemmel = async (behandling: AnkebehandlingPage | KlagebehandlingPage) => {
   const { page } = behandling;
 
-  const lovhjemmelSelect = page.getByTestId('lovhjemmel-select');
-  await lovhjemmelSelect.getByTestId('lovhjemmel-button').click();
+  const hjemmelName = '§ 22-15 første ledd første punktum';
+
+  const lovhjemmelButton = page.getByTestId('lovhjemmel-button');
+  await lovhjemmelButton.scrollIntoViewIfNeeded();
+  await lovhjemmelButton.click();
+
   const filterText = 'første ledd første';
-  await lovhjemmelSelect.getByTestId('header-filter').fill(filterText);
+  await page.getByPlaceholder('Søk').fill(filterText);
 
-  const lovkildeList = lovhjemmelSelect.getByTestId('group-filter-list');
-  const hjemmelList = lovkildeList.getByTestId('filter-list');
-
-  const firstHjemmelList = hjemmelList.first();
-  await firstHjemmelList.scrollIntoViewIfNeeded();
-
-  const hjemler = firstHjemmelList.getByTestId('filter-list-item');
-  const firstHjemmel = hjemler.first();
-
-  const filterId = await firstHjemmel.getAttribute('data-filterid');
-
-  if (filterId === null) {
-    expect(filterId).not.toBeNull();
-    return;
-  }
-
-  const hjemmelText = await firstHjemmel.textContent();
-
+  const lovkildeList = page.getByTestId('filter-group');
   const lovkildeCount = await lovkildeList.count();
-  const hjemmelCount = await hjemmelList.count();
-
   expect(lovkildeCount).toBe(1);
-  expect(hjemmelCount).toBe(1);
-  expect(hjemmelText).toMatch(filterText);
 
-  const checkbox = firstHjemmelList.locator(`[data-testid=filter][data-filterid="${filterId}"]`);
+  const inputs = lovkildeList.getByTestId('filter');
+  const inputCount = await inputs.count();
+  expect(inputCount).toBe(1);
+
+  await page.getByText(hjemmelName).click();
+  const checkbox = page.locator(`input[data-label="${hjemmelName}"]`);
 
   const checked = await checkbox.isChecked();
   await checkbox.setChecked(!checked);
@@ -82,10 +70,8 @@ const changeHjemmel = async (behandling: AnkebehandlingPage | KlagebehandlingPag
   await page.waitForTimeout(200);
   await page.reload();
 
-  const lovhjemmelButton = page.getByTestId('lovhjemmel-button');
   await lovhjemmelButton.scrollIntoViewIfNeeded();
   await lovhjemmelButton.click();
-
   const checkedAfterToggle = await checkbox.isChecked();
 
   expect(checkedAfterToggle).toBe(!checked);
