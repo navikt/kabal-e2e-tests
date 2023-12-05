@@ -1,5 +1,4 @@
 import { Page } from '@playwright/test';
-import fetch from 'node-fetch';
 import { createApiUrl } from '../tests/functions';
 
 export const makeDirectApiRequest = async <T>(

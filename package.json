@@ -2,7 +2,7 @@
   "name": "e2e",
   "version": "1.0.0",
   "engines": {
-    "node": ">=16"
+    "node": ">=20"
   },
   "scripts": {
     "test": "playwright test",
@@ -15,14 +15,13 @@
   "dependencies": {
     "@playwright/test": "^1.40.1",
     "@slack/bolt": "^3.16.0",
-    "node-fetch": "^2.7.0",
     "playwright": "^1.40.1"
   },
   "devDependencies": {
     "@types/node": "^20.10.3",
     "@types/node-fetch": "^2.6.9",
-    "@typescript-eslint/eslint-plugin": "^6.13.1",
-    "@typescript-eslint/parser": "^6.13.1",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
     "dotenv": "^16.3.1",
     "eslint": "^8.55.0",
     "eslint-config-prettier": "^9.1.0",
