@@ -27,9 +27,9 @@ test.describe('Søk', () => {
 
     const searchField = page.getByTestId('search-input');
 
-    const response = page.waitForResponse((res) => res.ok() && res.url().endsWith('/search/name'));
     await searchField.fill(TEST_STRING);
-    await response;
+
+    await page.getByTestId('search-result-list').waitFor();
 
     const results = await page.getByTestId('search-result').count();
 
