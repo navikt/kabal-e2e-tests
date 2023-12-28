@@ -8,9 +8,6 @@ inputs:
   nais_workload_identity_provider:
     description: 'Identity provider for nais/login'
     required: true
-  nais_deploy_api_key:
-    description: 'API key for nais/deploy'
-    required: true
   e2e_tag:
     description: 'Tag for E2E image'
     required: false
@@ -64,9 +61,8 @@ runs:
       run: echo "image=${{ steps.image-registry.outputs.registry }}/kabal-e2e-tests:${{ steps.image-tag.outputs.tag }}" >> $GITHUB_OUTPUT
 
     - name: Run E2E tests
-      uses: nais/deploy/actions/deploy@v1
+      uses: nais/deploy/actions/deploy@v2
       env:
-        APIKEY: ${{ inputs.nais_deploy_api_key }}
         CLUSTER: dev-gcp
         VAR: jobid=${{ steps.uuid.outputs.uuid }},image=${{ steps.image.outputs.image }}
         TEAM: klage

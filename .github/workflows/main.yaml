@@ -87,9 +87,8 @@ jobs:
         run: echo "uuid=$(uuidgen)" >> $GITHUB_OUTPUT
 
       - name: Run E2E tests
-        uses: nais/deploy/actions/deploy@v1
+        uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_API_KEY }}
           CLUSTER: dev-gcp
           VAR: jobid=${{ steps.uuid.outputs.uuid }},image=${{ needs.build.outputs.image }}
           TEAM: klage
