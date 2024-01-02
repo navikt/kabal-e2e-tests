@@ -3,9 +3,12 @@ import { Page, expect, test } from '@playwright/test';
 import EventSource from 'eventsource';
 import { UI_DOMAIN } from './functions';
 
-const NUMBER_OF_CONNECTIONS = 10;
+const NUMBER_OF_CONNECTIONS = 500;
 const MESSAGE_TEXT = 'Hello world!';
 const BEHANDLING_ID = '563b9561-a46d-4aa2-95df-a187aad10834';
+const SSE_TIMEOUT = 25;
+const WAIT_FOR_TIMEOUT = 25;
+const CONNECT_STAGGER = 10;
 
 test.describe('Events', () => {
   test.only(`Alle (${NUMBER_OF_CONNECTIONS}) SSE subscribers får events`, async ({ page }) => {
@@ -21,6 +24,8 @@ test.describe('Events', () => {
     const second = now.getSeconds();
     const prefix = `${year}_${month}_${date}_${hour}_${minute}_${second}`;
 
+    console.log(`Prefix: ${prefix}`);
+
     const sseClients = await connectSSE(
       page,
       `${UI_DOMAIN}/api/kabal-api/behandlinger/${BEHANDLING_ID}/events`,
@@ -29,9 +34,11 @@ test.describe('Events', () => {
 
     console.log(`Connected ${NUMBER_OF_CONNECTIONS} SSE clients in ${time(connectStart)}.`);
 
-    console.log(`Waiting for 10 seconds...`);
-    await page.waitForTimeout(10_000);
-    console.log(`Waited for 10 seconds.`);
+    const timeout = Math.max(WAIT_FOR_TIMEOUT * NUMBER_OF_CONNECTIONS, 3_000);
+
+    console.log(`Waiting for ${formatTime(timeout)}...`);
+    await page.waitForTimeout(timeout);
+    console.log(`Waited for ${formatTime(timeout)}.`);
 
     sendMessage(page);
 
@@ -112,7 +119,7 @@ const connectSSE = async (page: Page, url: string, prefix: string): Promise<Even
           console.error(`Failed to connect SSE client ${i + 1} after ${time(start)}`, e);
           reject(e);
         }
-      }, 25 * i);
+      }, CONNECT_STAGGER * i);
     }
   }).catch((e) => {
     closeSSE(sseClients);
@@ -120,26 +127,24 @@ const connectSSE = async (page: Page, url: string, prefix: string): Promise<Even
   });
 };
 
-const SSE_TIMEOUT = 15_000;
-
 const waitForSSE = async (sseClients: EventSource[]): Promise<void> => {
   let received = 0;
 
   return new Promise<void>((resolve, reject) => {
+    const timeoutMs = Math.max(SSE_TIMEOUT * NUMBER_OF_CONNECTIONS, 3_000);
     const timeout = setTimeout(() => {
       for (const sse of sseClients) {
         sse.close();
       }
 
-      reject(
-        new Error(`Timed out waiting for SSE after ${SSE_TIMEOUT} ms. Got ${received} of ${NUMBER_OF_CONNECTIONS}`),
-      );
-    }, SSE_TIMEOUT);
+      reject(new Error(`Timed out waiting for SSE after ${timeoutMs} ms. Got ${received} of ${NUMBER_OF_CONNECTIONS}`));
+    }, timeoutMs);
 
     for (const sse of sseClients) {
       const start = performance.now();
       sse.addEventListener('MESSAGE_ADDED', (event) => {
-        console.log(`SSE client ${received + 1} received message in ${time(start)}.`);
+        const index = sseClients.indexOf(sse);
+        console.log(`SSE client ${index} received message in ${time(start)}.`);
 
         if (isServerSentEvent(event)) {
           const data = parseJSON<IMessage>(event.data);
@@ -172,6 +177,10 @@ const closeSSE = async (sseClients: EventSource[]): Promise<void> => {
 const time = (start: number): string => {
   const ms = performance.now() - start;
 
+  return formatTime(ms);
+};
+
+const formatTime = (ms: number): string => {
   if (ms < 1000) {
     return `${ms.toFixed(2)} ms`;
   }
@@ -180,7 +189,7 @@ const time = (start: number): string => {
     return `${(ms / 1000).toFixed(2)} s`;
   }
 
-  return `${Math.floor(ms / 60_000)} min, ${(ms % 60_000).toFixed(2)} s`;
+  return `${Math.floor(ms / 60_000)} min, ${((ms % 60_000) / 1_000).toFixed(2)} s`;
 };
 
 interface IMessage {
