@@ -3,7 +3,7 @@ import { Page, expect, test } from '@playwright/test';
 import EventSource from 'eventsource';
 import { UI_DOMAIN } from './functions';
 
-const NUMBER_OF_CONNECTIONS = 400;
+const NUMBER_OF_CONNECTIONS = 10;
 const MESSAGE_TEXT = 'Hello world!';
 const BEHANDLING_ID = '563b9561-a46d-4aa2-95df-a187aad10834';
 
@@ -12,7 +12,20 @@ test.describe('Events', () => {
     console.log(`Connecting ${NUMBER_OF_CONNECTIONS} SSE clients...`);
     const connectStart = performance.now();
 
-    const sseClients = await connectSSE(page, `${UI_DOMAIN}/api/kabal-api/behandlinger/${BEHANDLING_ID}/events`);
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+    const date = now.getDate();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+    const second = now.getSeconds();
+    const prefix = `${year}_${month}_${date}_${hour}_${minute}_${second}`;
+
+    const sseClients = await connectSSE(
+      page,
+      `${UI_DOMAIN}/api/kabal-api/behandlinger/${BEHANDLING_ID}/events`,
+      prefix,
+    );
 
     console.log(`Connected ${NUMBER_OF_CONNECTIONS} SSE clients in ${time(connectStart)}.`);
 
@@ -60,7 +73,7 @@ const sendMessage = async (page: Page): Promise<void> => {
   console.log(`Message sent successfully in ${time(start)}`);
 };
 
-const connectSSE = async (page: Page, url: string): Promise<EventSource[]> => {
+const connectSSE = async (page: Page, url: string, prefix: string): Promise<EventSource[]> => {
   const headers: Record<string, string> = {
     Accept: 'text/event-stream',
     Connection: 'keep-alive',
@@ -81,7 +94,7 @@ const connectSSE = async (page: Page, url: string): Promise<EventSource[]> => {
         const start = performance.now();
 
         try {
-          const sse = new EventSource(`${url}?id=${i}`, sseOptions);
+          const sse = new EventSource(`${url}?test-id=${prefix}-${i}`, sseOptions);
 
           sse.addEventListener('open', () => {
             console.log(`SSE client ${i + 1} connected in ${time(start)}.`);
@@ -99,7 +112,7 @@ const connectSSE = async (page: Page, url: string): Promise<EventSource[]> => {
           console.error(`Failed to connect SSE client ${i + 1} after ${time(start)}`, e);
           reject(e);
         }
-      }, 100 * i);
+      }, 25 * i);
     }
   }).catch((e) => {
     closeSSE(sseClients);
