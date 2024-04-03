@@ -11,10 +11,6 @@ test.describe('Innstillinger', () => {
 
     expect(url.pathname).toBe('/innstillinger');
 
-    await Promise.all([
-      page.getByTestId('typer-settings').waitFor(),
-      page.getByTestId('ytelser-settings').waitFor(),
-      page.getByTestId('hjemler-settings').waitFor(),
-    ]);
+    await Promise.all([page.getByTestId('ytelser-settings').waitFor(), page.getByTestId('hjemler-settings').waitFor()]);
   });
 });
