@@ -3,7 +3,7 @@ import { makeDirectApiRequest } from '../direct-api-request';
 import { Behandling } from './behandling';
 
 export const generateBehandling = async (page: Page, type: SaksTypeName): Promise<Behandling> => {
-  const res = await makeDirectApiRequest(page, 'kabal-api', `/mockdata/random${type}`, 'POST');
+  const res = await makeDirectApiRequest(page, 'kabal-api', `/mockdata/random${type}`, 'POST', { ytelse: 'SYK_SYK' });
 
   if (!res.ok) {
     throw new Error(`Failed to generate "${type}" behandling. ${res.status} - ${res.statusText}`);
