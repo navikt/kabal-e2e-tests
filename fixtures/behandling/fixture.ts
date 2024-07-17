@@ -35,6 +35,8 @@ const getKlageBehandling = async (page: Page) => {
 
   const behandlingPage = new KlagebehandlingPage(page, behandling);
 
+  await page.waitForTimeout(2000);
+
   await behandling.assign();
   await behandling.navigateTo();
 
@@ -45,6 +47,8 @@ const getAnkeBehandling = async (page: Page) => {
   const behandling = await generateBehandling(page, SaksTypeName.ANKE);
 
   const behandlingPage = new AnkebehandlingPage(page, behandling);
+
+  await page.waitForTimeout(2000);
 
   await behandling.assign();
   await behandling.navigateTo();
