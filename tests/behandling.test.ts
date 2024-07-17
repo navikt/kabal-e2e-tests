@@ -107,7 +107,7 @@ const showErrors = async (behandling: AnkebehandlingPage | KlagebehandlingPage) 
   await select.selectOption({ index: 0 });
   await page.click('data-testid=complete-button');
 
-  const ERROR_TEXT = 'Sett et utfall på vedtaket.';
+  const ERROR_TEXT = 'Sett et utfall på saken.';
 
   const summary = page.getByTestId('validation-summary');
   await summary.locator(`text="${ERROR_TEXT}"`).waitFor();
