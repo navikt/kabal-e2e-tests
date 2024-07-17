@@ -30,10 +30,14 @@ export const test = base.extend<Pages>({
   },
 });
 
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const getKlageBehandling = async (page: Page) => {
   const behandling = await generateBehandling(page, SaksTypeName.KLAGE);
 
   const behandlingPage = new KlagebehandlingPage(page, behandling);
+
+  await wait(3000);
 
   await behandling.assign();
   await behandling.navigateTo();
@@ -45,6 +49,8 @@ const getAnkeBehandling = async (page: Page) => {
   const behandling = await generateBehandling(page, SaksTypeName.ANKE);
 
   const behandlingPage = new AnkebehandlingPage(page, behandling);
+
+  await wait(3000);
 
   await behandling.assign();
   await behandling.navigateTo();
