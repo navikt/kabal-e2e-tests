@@ -191,16 +191,17 @@ class SlackReporter implements Reporter {
   async onEnd(result: FullResult) {
     const icon = getFullStatusIcon(result);
     const duration = (Date.now() - this.startTime) / 1_000;
+    const tag = this.slack?.tagChannelOnError === 'true' ? '<!channel> ' : '';
 
     if (result.status === 'passed') {
       await this.updateMainMessage(`${icon} All ${this.totalTests} tests succeeded! \`${duration}s\``);
     } else if (result.status === 'failed') {
       await this.updateMainMessage(
-        `<!channel> ${icon} ${this.failedTestCount} of ${this.totalTests} tests failed! \`${duration}s\``,
+        `${tag} ${icon} ${this.failedTestCount} of ${this.totalTests} tests failed! \`${duration}s\``,
       );
     } else if (result.status === 'timedout') {
       await this.updateMainMessage(
-        `<!channel> ${icon} Global timeout! ${this.failedTestCount} of ${this.totalTests} tests failed! \`${duration}s\``,
+        `${tag} ${icon} Global timeout! ${this.failedTestCount} of ${this.totalTests} tests failed! \`${duration}s\``,
       );
     }
 
