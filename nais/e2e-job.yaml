@@ -25,6 +25,10 @@ spec:
       containers:
         - image: {{image}}
           name: kabal-e2e-tests
+          resources:
+            requests:
+              cpu: 4000m
+              memory: 1Gi
           securityContext:
             allowPrivilegeEscalation: false
           envFrom:
