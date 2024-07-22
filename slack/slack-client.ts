@@ -2,7 +2,7 @@ import fs, { ReadStream, createReadStream } from 'fs';
 import { buffer } from 'stream/consumers';
 import { App } from '@slack/bolt';
 import { ChatPostMessageResponse } from '@slack/web-api';
-import { IS_DEPLOYED, envString } from '../config/env';
+import { IS_DEPLOYED, envString, requiredEnvString } from '../config/env';
 
 class SlackClient {
   private app: App;
@@ -11,6 +11,7 @@ class SlackClient {
     private token: string,
     private channel: string,
     signingSecret: string,
+    public tagChannelOnError: string,
   ) {
     this.app = new App({ token, signingSecret });
   }
@@ -110,15 +111,21 @@ export type SlackClientType = InstanceType<typeof SlackClient>;
 
 export const getSlack = () => {
   const token = envString('slack_e2e_token', IS_DEPLOYED);
-  const channel = envString('kaka_notifications_channel', IS_DEPLOYED);
+  const channel = envString('kabal_notifications_channel', IS_DEPLOYED);
   const secret = envString('slack_signing_secret', IS_DEPLOYED);
+  const tagChannelOnError = requiredEnvString('tag_channel_on_error', 'true');
 
-  if (typeof token === 'string' && typeof channel === 'string' && typeof secret === 'string') {
-    return new SlackClient(token, channel, secret);
+  if (
+    typeof token === 'string' &&
+    typeof channel === 'string' &&
+    typeof secret === 'string' &&
+    typeof tagChannelOnError === 'string'
+  ) {
+    return new SlackClient(token, channel, secret, tagChannelOnError);
   }
 
   console.warn(
-    'Could not create slack client. Missing env variables: slack_e2e_token, kaka_notifications_channel, slack_signing_secret',
+    'Could not create slack client. Missing env variables: slack_e2e_token, kabal_notifications_channel, slack_signing_secret',
   );
 
   return null;
