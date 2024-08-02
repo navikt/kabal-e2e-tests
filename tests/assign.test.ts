@@ -48,12 +48,7 @@ const assignBehandling = async (page: Page, behandling: Behandling) => {
   });
 
   await test.step(`Tildel behandling \`${behandling.id.substring(0, 8)}...\``, async () => {
-    const oppgaveRow = await findOppgaveRow({
-      page,
-      tableId,
-      behandlingId: behandling.id,
-      mode: 'pagination',
-    });
+    const oppgaveRow = await findOppgaveRow({ page, tableId, behandlingId: behandling.id });
     await oppgaveRow?.getByTestId('behandling-tildel-button').click();
     await page.locator(`[data-testid="oppgave-tildelt-toast"][data-oppgaveid="${behandling.id}"]`).waitFor();
   });
@@ -69,7 +64,7 @@ const deAssignBehandling = async (page: Page, behandlingId: string) => {
   });
 
   await test.step(`Fradel behandling \`${behandlingId.substring(0, 8)}...\``, async () => {
-    const oppgaveRow = await findOppgaveRow({ page, tableId, behandlingId, mode: 'all' });
+    const oppgaveRow = await findOppgaveRow({ page, tableId, behandlingId });
     await oppgaveRow?.getByTestId('behandling-fradel-button').click();
 
     await oppgaveRow.getByText('Inhabil').click();
@@ -105,10 +100,9 @@ interface IFindOppgaveRowOptions {
   page: Page;
   tableId: string;
   behandlingId: string;
-  mode: 'all' | 'pagination';
 }
 
-const findOppgaveRow = async ({ page, tableId, mode, behandlingId }: IFindOppgaveRowOptions) => {
+const findOppgaveRow = async ({ page, tableId, behandlingId }: IFindOppgaveRowOptions) => {
   const rows = page.locator(`[data-testid="${tableId}-rows"][data-state="ready"]`);
   await rows.waitFor();
 
@@ -118,10 +112,8 @@ const findOppgaveRow = async ({ page, tableId, mode, behandlingId }: IFindOppgav
     throw new Error(`"${tableId}" table is marked as empty.`);
   }
 
-  const findFn = mode === 'pagination' ? findOppgaveRowInPages : findOppgaveRowInAllPage;
-
   for (let tryCount = 0; tryCount < 3; tryCount++) {
-    const row = await findFn(page, tableId, behandlingId);
+    const row = await findOppgaveRowInPages(page, tableId, behandlingId);
 
     if (row !== null) {
       return row;
@@ -172,12 +164,6 @@ const findOppgaveRowInPages: FindFnType = async (page, tableId, behandlingId) =>
   }
 
   return null;
-};
-
-const findOppgaveRowInAllPage: FindFnType = async (page, tableId, behandlingId) => {
-  const rowsPerPage = page.getByTestId(`${tableId}-footer-rows-per-page`);
-  await rowsPerPage.locator('[data-value="-1"]').click();
-  return findOppgaveRowOnPage(page, tableId, behandlingId);
 };
 
 const findOppgaveRowOnPage = async (page: Page, tableId: string, behandlingId: string) => {
