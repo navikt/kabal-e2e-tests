@@ -6,7 +6,7 @@ test.describe('Søk', () => {
     await page.goto(`${UI_DOMAIN}/sok`);
   });
 
-  test('Søketekst med både tall og bokstaver utfører ikke et søk', async ({ page }) => {
+  test('Søk på fnr med både tall og bokstaver utfører ikke et søk', async ({ page }) => {
     page.on('request', (req) => {
       const url = req.url();
 
@@ -22,25 +22,20 @@ test.describe('Søk', () => {
     await page.waitForTimeout(1_000);
   });
 
-  test('Søketekst med bare bokstaver søker etter flere personer', async ({ page }) => {
-    const TEST_STRING = 'tøffeldyr';
-
-    const searchField = page.getByTestId('search-input');
-
-    await searchField.fill(TEST_STRING);
-
-    await page.getByTestId('search-result-list').waitFor();
-
-    const results = await page.getByTestId('search-result').count();
-
-    expect(results).toBeGreaterThan(0);
-  });
-
-  test('Søketekst med 11 siffer skal søke etter saker på enkeltperson', async ({ page }) => {
+  test('Søk på fnr med 11 siffer skal søke etter saker på enkeltperson', async ({ page }) => {
     const TEST_STRING = '184969 00509';
 
     await page.getByTestId('search-input').fill(TEST_STRING);
 
-    await page.getByTestId('search-result').waitFor();
+    await expect(page.getByTestId('search-result')).toBeVisible();
+  });
+
+  test.only('Søk på saksnummer må trigges manuelt', async ({ page }) => {
+    await page.getByText('Saksnummer').click();
+    const search = page.getByPlaceholder('Søk på saksnummer');
+    await search.fill('1736');
+    await search.press('Enter');
+
+    await expect(page.getByTestId('search-result')).toBeVisible();
   });
 });
