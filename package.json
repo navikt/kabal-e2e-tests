@@ -13,22 +13,22 @@
     "tsc": "tsc"
   },
   "dependencies": {
-    "@playwright/test": "^1.46.0",
-    "@slack/bolt": "^3.19.0",
-    "playwright": "^1.46.0"
+    "@playwright/test": "^1.47.2",
+    "@slack/bolt": "^3.21.4",
+    "playwright": "^1.47.2"
   },
   "devDependencies": {
-    "@types/node": "^22.1.0",
+    "@types/node": "^22.7.2",
     "@types/node-fetch": "^2.6.11",
-    "@typescript-eslint/eslint-plugin": "^8.0.1",
-    "@typescript-eslint/parser": "^8.0.1",
+    "@typescript-eslint/eslint-plugin": "^8.7.0",
+    "@typescript-eslint/parser": "^8.7.0",
     "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-import": "^2.30.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-prettier": "^5.2.1",
     "prettier": "^3.3.3",
-    "typescript": "^5.5.4"
+    "typescript": "^5.6.2"
   }
 }
