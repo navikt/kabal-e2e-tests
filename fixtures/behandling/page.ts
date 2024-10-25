@@ -1,5 +1,5 @@
-import { Page } from '@playwright/test';
-import { Behandling } from './behandling';
+import type { Page } from '@playwright/test';
+import type { Behandling } from './behandling';
 import { SaksTypeName, generateBehandling } from './generate';
 
 export class KabalPage {

@@ -1,4 +1,4 @@
-import { Page, test as base } from '@playwright/test';
+import { type Page, test as base } from '@playwright/test';
 import { SaksTypeName, generateBehandling } from './generate';
 import { AnkebehandlingPage, KabalPage, KlagebehandlingPage } from './page';
 

@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { makeDirectApiRequest } from '../direct-api-request';
 import { Behandling } from './behandling';
 

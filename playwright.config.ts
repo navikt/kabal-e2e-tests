@@ -1,4 +1,4 @@
-import { PlaywrightTestConfig } from '@playwright/test';
+import type { PlaywrightTestConfig } from '@playwright/test';
 import { SCREEN_SIZE } from './setup/global-setup';
 
 const config: PlaywrightTestConfig = {

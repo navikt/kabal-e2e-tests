@@ -1,5 +1,5 @@
-import { join } from 'path';
-import { URL } from 'url';
+import { join } from 'node:path';
+import { URL } from 'node:url';
 
 export const isNotUndefined = <T>(v: T | undefined): v is T => typeof v !== 'undefined';
 
