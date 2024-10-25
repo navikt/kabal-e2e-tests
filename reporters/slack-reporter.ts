@@ -144,7 +144,7 @@ class SlackReporter implements Reporter {
     const isFailed = result.status === 'failed' || result.status === 'timedOut';
 
     if (isFailed) {
-      if (typeof result?.error?.stack === 'undefined') {
+      if (result?.error?.stack === undefined) {
         const log = [`${title} - stacktrace`, '```', 'No stacktrace', '```'];
         await testThread?.reply(log.join('\n'));
       } else {

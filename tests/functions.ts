@@ -1,7 +1,7 @@
 import { join } from 'node:path';
 import { URL } from 'node:url';
 
-export const isNotUndefined = <T>(v: T | undefined): v is T => typeof v !== 'undefined';
+export const isNotUndefined = <T>(v: T | undefined): v is T => v !== undefined;
 
 export const getParsedUrl = (url: string): URL => new URL(url);
 
