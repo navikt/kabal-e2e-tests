@@ -65,7 +65,7 @@ class SlackClient {
 
       console.error(errorMessage);
 
-      if (typeof threadMessage !== 'undefined') {
+      if (threadMessage !== undefined) {
         this.postReply(threadMessage, errorMessage);
       } else {
         this.postMessage(errorMessage);
@@ -76,7 +76,7 @@ class SlackClient {
   }
 
   async updateMessage(message: ChatPostMessageResponse | ChatUpdateResponse, newMessage: string) {
-    if (typeof message.ts === 'undefined') {
+    if (message.ts === undefined) {
       throw new Error('Could not update message.');
     }
 
@@ -100,7 +100,7 @@ class SlackClient {
   }
 
   async postReply(threadMessage: ChatPostMessageResponse | ChatUpdateResponse, reply: string) {
-    if (typeof threadMessage.ts === 'undefined') {
+    if (threadMessage.ts === undefined) {
       throw new Error('Could not reply to message.');
     }
 
