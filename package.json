@@ -1,9 +1,6 @@
 {
   "name": "e2e",
   "version": "1.0.0",
-  "engines": {
-    "node": ">=20"
-  },
   "scripts": {
     "test": "playwright test",
     "dev": "NODE_ENV=test playwright test --headed --retries 0 --workers 1",
