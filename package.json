@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@playwright/test": "1.48.1",
-    "@slack/bolt": "3.21.4",
+    "@slack/bolt": "4.0.1",
     "playwright": "1.48.1"
   },
   "devDependencies": {
