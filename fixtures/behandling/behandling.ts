@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { UI_DOMAIN } from '../../tests/functions';
 import { assignBehandling, deAssignBehandling } from './assign';
 import { deleteBehandling } from './delete';
@@ -10,8 +10,8 @@ import {
   setDocumentType,
   uploadDocument,
 } from './documents';
-import { IGenerateResponse, SaksTypeName, Sakstype } from './generate';
-import { DocumentType } from './types';
+import { type IGenerateResponse, SaksTypeName, Sakstype } from './generate';
+import type { DocumentType } from './types';
 
 export class Behandling {
   public readonly id: string;

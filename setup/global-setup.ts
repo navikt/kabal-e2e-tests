@@ -1,5 +1,5 @@
-import { Page, ViewportSize, chromium } from '@playwright/test';
-import { FullConfig } from '@playwright/test/reporter';
+import { type Page, type ViewportSize, chromium } from '@playwright/test';
+import type { FullConfig } from '@playwright/test/reporter';
 import { IS_DEPLOYED } from '../config/env';
 import { USE_DEV } from '../tests/functions';
 import { getLoggedInPage } from '../tests/helpers';

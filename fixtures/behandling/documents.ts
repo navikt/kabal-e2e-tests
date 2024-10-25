@@ -1,8 +1,8 @@
-import fs from 'fs';
-import { resolve } from 'path';
-import { Page, expect } from '@playwright/test';
+import fs from 'node:fs';
+import { resolve } from 'node:path';
+import { type Page, expect } from '@playwright/test';
 import { test } from './fixture';
-import { DocumentType } from './types';
+import type { DocumentType } from './types';
 
 const getDocumentByName = (page: Page, documentName: string) => {
   const newDocumentsList = page.getByTestId('new-documents-list');

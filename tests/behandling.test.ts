@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { test } from '../fixtures/behandling/fixture';
-import { AnkebehandlingPage, KlagebehandlingPage } from '../fixtures/behandling/page';
+import type { AnkebehandlingPage, KlagebehandlingPage } from '../fixtures/behandling/page';
 
 test.describe('Klagebehandling', () => {
   test('Endre utfall', ({ klagebehandling }) => changeUtfall(klagebehandling));
@@ -13,7 +13,7 @@ test.describe('Klagebehandling', () => {
 });
 
 test.describe('Ankebehandling', () => {
-  test(`Endre utfall`, ({ ankebehandling }) => changeUtfall(ankebehandling));
+  test('Endre utfall', ({ ankebehandling }) => changeUtfall(ankebehandling));
 
   test('Endre hjemmel', ({ ankebehandling }) => changeHjemmel(ankebehandling));
 

@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { makeDirectApiRequest } from '../direct-api-request';
 
 let cachedBrukerdata: IBrukerdata | null = null;
@@ -10,7 +10,7 @@ export const getBrukerData = async (page: Page) => {
     return cachedBrukerdata;
   }
 
-  const brukerInfo = await makeDirectApiRequest(page, 'kabal-innstillinger', `/me/brukerdata`, 'GET');
+  const brukerInfo = await makeDirectApiRequest(page, 'kabal-innstillinger', '/me/brukerdata', 'GET');
   const json: unknown = await brukerInfo.json();
 
   if (isBrukerdata(json)) {

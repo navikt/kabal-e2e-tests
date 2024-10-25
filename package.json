@@ -8,27 +8,19 @@
     "test": "playwright test",
     "dev": "NODE_ENV=test playwright test --headed --retries 0 --workers 1",
     "local": "playwright test --headed --retries 0 --workers 1",
-    "lint": "eslint . --color",
-    "lint-fix": "eslint . --color --fix",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "lint": "biome check"
   },
   "dependencies": {
-    "@playwright/test": "^1.47.2",
-    "@slack/bolt": "^3.21.4",
-    "playwright": "^1.47.2"
+    "@playwright/test": "1.47.2",
+    "@slack/bolt": "3.21.4",
+    "playwright": "1.47.2"
   },
   "devDependencies": {
-    "@types/node": "^22.7.2",
-    "@types/node-fetch": "^2.6.11",
-    "@typescript-eslint/eslint-plugin": "^8.7.0",
-    "@typescript-eslint/parser": "^8.7.0",
-    "dotenv": "^16.4.5",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-import": "^2.30.0",
-    "eslint-plugin-prefer-arrow": "^1.2.3",
-    "eslint-plugin-prettier": "^5.2.1",
-    "prettier": "^3.3.3",
-    "typescript": "^5.6.2"
+    "@biomejs/biome": "1.9.4",
+    "@types/node": "22.7.2",
+    "@types/node-fetch": "2.6.11",
+    "dotenv": "16.4.5",
+    "typescript": "5.6.2"
   }
 }
