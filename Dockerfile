@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.47.2-focal
+FROM mcr.microsoft.com/playwright:v1.48.1-focal
 
 ENV NODE_ENV=test
 ENV FORCE_COLOR=0
