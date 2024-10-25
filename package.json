@@ -5,7 +5,7 @@
     "test": "playwright test",
     "dev": "NODE_ENV=test playwright test --headed --retries 0 --workers 1",
     "local": "playwright test --headed --retries 0 --workers 1",
-    "tsc": "tsc",
+    "typecheck": "tsc",
     "lint": "biome check"
   },
   "dependencies": {
