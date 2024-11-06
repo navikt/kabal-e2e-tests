@@ -23,4 +23,5 @@ const config: PlaywrightTestConfig = {
   globalSetup: require.resolve('./setup/global-setup'),
 };
 
+// biome-ignore lint/style/noDefaultExport: https://playwright.dev/docs/test-configuration
 export default config;

@@ -10,8 +10,8 @@ export const isNotNull = <T>(v: T | null): v is T => v !== null;
 export const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 export const asyncForEach = async <T>(array: T[], callback: (element: T) => Promise<unknown>): Promise<void> => {
-  for (let i = 0; i < array.length; i++) {
-    await callback(array[i]);
+  for (const element of array) {
+    await callback(element);
   }
 };
 
