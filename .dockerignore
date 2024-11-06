@@ -3,6 +3,6 @@
 nais/
 test-results/
 .editorconfig
-.eslintrc
+biome.json
 .gitignore
 *.md

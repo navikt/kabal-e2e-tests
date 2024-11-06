@@ -29,6 +29,7 @@ const globalSetup = async (config: FullConfig) => {
   await browser.close();
 };
 
+// biome-ignore lint/style/noDefaultExport: https://playwright.dev/docs/test-global-setup-teardown
 export default globalSetup;
 
 const setLocalhostCookie = async (page: Page) => {
