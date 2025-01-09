@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { test } from '../fixtures/behandling/fixture';
 import type { AnkebehandlingPage, KlagebehandlingPage } from '../fixtures/behandling/page';
+import { finishedRequest } from './helpers';
 
 test.describe('Klagebehandling', () => {
   test('Endre utfall', ({ klagebehandling }) => changeUtfall(klagebehandling));
@@ -29,7 +30,11 @@ const changeUtfall = async (behandling: AnkebehandlingPage | KlagebehandlingPage
   await select.scrollIntoViewIfNeeded();
 
   await page.locator('[data-testid="select-utfall"][data-ready="true"]').waitFor();
+
+  const requestPromise = page.waitForRequest('**/behandlinger/**/resultat/utfall');
   await select.selectOption({ label: 'Medhold' });
+  await finishedRequest(requestPromise);
+
   await page.waitForTimeout(200);
 
   await page.reload();
@@ -87,9 +92,10 @@ const changeMedunderskriver = async (behandling: AnkebehandlingPage | Klagebehan
     .locator('option')
     .evaluateAll<string[], HTMLOptionElement>((options) => options.map((option) => option.value));
 
+  const requestPromise = page.waitForRequest('**/behandlinger/**/medunderskrivernavident');
   await select.selectOption({ value: secondValue });
+  await finishedRequest(requestPromise);
 
-  await page.waitForTimeout(200);
   await page.reload();
   await select.scrollIntoViewIfNeeded();
 

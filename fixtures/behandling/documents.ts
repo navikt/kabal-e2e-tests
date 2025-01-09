@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import { resolve } from 'node:path';
 import { type Page, expect } from '@playwright/test';
+import { finishedRequest } from '../../tests/helpers';
 import { test } from './fixture';
 import type { DocumentType } from './types';
 
@@ -157,7 +158,9 @@ export const setDocumentType = async (page: Page, documentName: string, type: Do
   const select = container.getByTestId('document-type-select');
   await select.scrollIntoViewIfNeeded();
 
+  const requestPromise = page.waitForRequest('**/behandlinger/**/dokumenter/**/dokumenttype');
   await select.selectOption({ value: type });
+  await finishedRequest(requestPromise);
 
   const actual = await select.inputValue();
 

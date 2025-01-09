@@ -1,4 +1,5 @@
-import { type Page, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import type { Page, Request } from '@playwright/test';
 import { DEV_DOMAIN, LOCAL_DOMAIN, UI_DOMAIN, USE_DEV } from './functions';
 import type { User } from './users';
 
@@ -37,4 +38,20 @@ export const getLoggedInPage = async (page: Page, { username, password }: User, 
   expect(azurePage.url()).toMatch(`${UI_DOMAIN}${path}`);
 
   return azurePage;
+};
+
+export const finishedRequest = async (requestPromise: Promise<Request>) => {
+  const request = await requestPromise;
+  const response = await request.response();
+
+  if (response === null) {
+    throw new Error('No response');
+  }
+
+  if (!response.ok()) {
+    const text = await response.text();
+    throw new Error(`Request failed: ${response.status()} - ${text}`);
+  }
+
+  return response.finished();
 };
