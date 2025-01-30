@@ -4,7 +4,7 @@ import { makeDirectApiRequest } from '../direct-api-request';
 
 export const deleteBehandling = async (page: Page, behandlingId: string) => {
   const api = 'kabal-api';
-  const path = `/internal/behandlinger/${behandlingId}`;
+  const path = `/internal/dev/behandlinger/${behandlingId}`;
   const method = 'DELETE';
 
   const res = await makeDirectApiRequest(page, api, path, method);
