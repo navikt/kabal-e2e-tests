@@ -65,7 +65,9 @@ const deAssignBehandling = async (page: Page, behandlingId: string) => {
 
   await test.step(`Fradel behandling \`${behandlingId.substring(0, 8)}...\``, async () => {
     const oppgaveRow = await findOppgaveRow({ page, tableId, behandlingId });
-    await oppgaveRow?.getByTestId('behandling-fradel-button').click();
+
+    // Angre button replaces fradel button the first 10 seconds
+    await oppgaveRow.getByTestId('behandling-fradel-button').click({ timeout: 20_000 });
 
     await oppgaveRow.getByText('Inhabil').click();
     await oppgaveRow.getByTestId('deassign-oppgave-popup').getByText('Legg tilbake').click();
