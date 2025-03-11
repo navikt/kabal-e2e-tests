@@ -1,10 +1,10 @@
 {
-  "name": "e2e",
+  "name": "kabal-e2e-tests",
   "version": "1.0.0",
   "scripts": {
     "test": "playwright test",
-    "dev": "NODE_ENV=test playwright test -c playwright.config.dev.ts",
-    "local": "bun run dev",
+    "dev": "playwright test -c playwright.config.dev.ts",
+    "local": "TEST_ENV=local bun run dev",
     "lint": "biome check",
     "typecheck": "tsc"
   },

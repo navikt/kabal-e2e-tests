@@ -7,7 +7,6 @@ export const baseConfig = defineConfig({
   name: 'KABAL',
   testDir: './tests',
   use: {
-    actionTimeout: 15_000,
     trace: 'on',
     locale: 'no-NB',
   },
