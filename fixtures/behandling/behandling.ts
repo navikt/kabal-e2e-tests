@@ -5,6 +5,7 @@ import { deleteBehandling } from './delete';
 import {
   deleteDocument,
   finishAndVerifyDocument,
+  initSmartEditor,
   renameDocument,
   setDocumentAsAttachmentTo,
   setDocumentType,
@@ -47,4 +48,5 @@ export class Behandling {
   public setDocumentType = (title: string, type: DocumentType) => setDocumentType(this.page, title, type);
   public setDocumentAsAttachmentTo = (title: string, parentName: string) =>
     setDocumentAsAttachmentTo(this.page, title, parentName);
+  public initSmartEditor = () => initSmartEditor(this.page);
 }
