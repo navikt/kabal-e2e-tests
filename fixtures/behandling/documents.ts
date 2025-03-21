@@ -200,3 +200,18 @@ export const setDocumentAsAttachmentTo = async (page: Page, documentName: string
   const count = await attachments.count();
   expect(count, `Forventet å finne dokument ${documentName} som vedlegg til ${parentName}.`).toBe(1);
 };
+
+export const initSmartEditor = async (page: Page) => {
+  await page.getByLabel('Opprett nytt dokument').click();
+  const section = page.locator('section').filter({ hasText: 'Opprett nytt dokument' }).first();
+  await section.waitFor();
+  await section.getByText('Generelt brev').click();
+
+  const smartEditor = page.locator('[data-area="content"]');
+  await smartEditor.waitFor();
+
+  const p = smartEditor.locator('.slate-p').last();
+  await p.click();
+
+  return smartEditor;
+};
