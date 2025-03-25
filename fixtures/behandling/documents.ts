@@ -1,10 +1,11 @@
 import fs from 'node:fs';
 import { resolve } from 'node:path';
 import { type Page, expect } from '@playwright/test';
+import { UI_DOMAIN } from '../../tests/functions';
 import { finishedRequest } from '../../tests/helpers';
+import { SAKEN_GJELDER_DATA } from '../../tests/users';
 import { test } from './fixture';
 import type { DocumentType } from './types';
-
 const getDocumentByName = (page: Page, documentName: string) => {
   const newDocumentsList = page.getByTestId('new-documents-list');
   return newDocumentsList.locator(`article[data-documentname="${documentName}"]`);
@@ -77,6 +78,32 @@ export const renameDocument = async (page: Page, documentName: string, newDocume
   return newDocumentName;
 };
 
+const NYTT_DOKUMENT_REGEX = /\/nytt-dokument\/(.*)\/(.*)/;
+
+export const downloadPdf = async (page: Page, documentName: string) => {
+  const container = getDocumentByName(page, documentName);
+  const href = await container.locator('a').getAttribute('href');
+  const match = href?.match(NYTT_DOKUMENT_REGEX);
+
+  if (match === null || match === undefined) {
+    throw new Error(`Could not find path to PDF to be downloaded: ${documentName}, href: ${href}`);
+  }
+
+  const [behandlingId, documentId] = match.slice(1);
+
+  const url = `${UI_DOMAIN}/api/kabal-api/behandlinger/${behandlingId}/dokumenter/${documentId}/pdf`;
+
+  const cookies = await page.context().cookies();
+
+  const res = await fetch(url, {
+    headers: { cookie: cookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ') },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch PDF from ${url}, response: ${res.status} - ${res.statusText}`);
+  }
+};
+
 export const finishAndVerifyDocument = async (page: Page, documentName: string) => {
   const inProgressList = page.getByTestId('new-documents-list');
   await inProgressList.waitFor();
@@ -97,6 +124,9 @@ export const finishAndVerifyDocument = async (page: Page, documentName: string) 
   await actionButton.click();
 
   const modal = page.getByTestId('document-actions-modal');
+
+  await selectSuggestedMottaker(page, SAKEN_GJELDER_DATA.name);
+
   await modal.getByTestId('document-finish-button').click();
   await modal.getByTestId('document-finish-confirm').click();
 
@@ -201,17 +231,22 @@ export const setDocumentAsAttachmentTo = async (page: Page, documentName: string
   expect(count, `Forventet å finne dokument ${documentName} som vedlegg til ${parentName}.`).toBe(1);
 };
 
-export const initSmartEditor = async (page: Page) => {
+export const initSmartEditor = async (page: Page, templateName: string) => {
   await page.getByLabel('Opprett nytt dokument').click();
   const section = page.locator('section').filter({ hasText: 'Opprett nytt dokument' }).first();
   await section.waitFor();
-  await section.getByText('Generelt brev').click();
+  await section.getByText(templateName).click();
 
   const smartEditor = page.locator('[data-area="content"]');
   await smartEditor.waitFor();
 
-  const p = smartEditor.locator('.slate-p').last();
-  await p.click();
-
   return smartEditor;
+};
+
+const selectSuggestedMottaker = async (page: Page, name: string) => {
+  const suggestedMottakere = page.locator('fieldset').filter({ hasText: 'Foreslåtte mottakere fra saken' });
+
+  const promise = page.waitForRequest('**/behandlinger/**/dokumenter/**/mottakere');
+  await suggestedMottakere.getByText(name).click();
+  await finishedRequest(promise);
 };

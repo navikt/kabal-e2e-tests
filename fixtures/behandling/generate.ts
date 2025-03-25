@@ -1,9 +1,14 @@
 import type { Page } from '@playwright/test';
+import { FULLMEKTIG, KLAGER, SAKEN_GJELDER } from '../../tests/users';
 import { makeDirectApiRequest } from '../direct-api-request';
 import { Behandling } from './behandling';
 
 export const generateBehandling = async (page: Page, type: SaksTypeName): Promise<Behandling> => {
-  const res = await makeDirectApiRequest(page, 'kabal-api', `/mockdata/random${type}`, 'POST', { ytelse: 'SYK_SYK' });
+  const res = await makeDirectApiRequest(page, 'kabal-api', `/mockdata/random${type}`, 'POST', {
+    ytelse: 'SYK_SYK',
+    sakenGjelder: SAKEN_GJELDER,
+    klager: { ...KLAGER, klagersProsessfullmektig: FULLMEKTIG },
+  });
 
   if (!res.ok) {
     throw new Error(`Failed to generate "${type}" behandling. ${res.status} - ${res.statusText}`);

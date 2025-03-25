@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { test } from '../fixtures/behandling/fixture';
 import type { AnkebehandlingPage, KlagebehandlingPage } from '../fixtures/behandling/page';
+import { UtfallLabel } from '../fixtures/behandling/types';
 import { finishedRequest } from './helpers';
 
 test.describe('Klagebehandling', () => {
@@ -32,7 +33,7 @@ const changeUtfall = async (behandling: AnkebehandlingPage | KlagebehandlingPage
   await page.locator('[data-testid="select-utfall"][data-ready="true"]').waitFor();
 
   const requestPromise = page.waitForRequest('**/behandlinger/**/resultat/utfall');
-  await select.selectOption({ label: 'Medhold' });
+  await select.selectOption({ label: UtfallLabel.MEDHOLD });
   await finishedRequest(requestPromise);
 
   await page.waitForTimeout(200);
