@@ -3,7 +3,7 @@ import { test } from '../../fixtures/behandling/fixture';
 
 test.describe('Smart editor - Grunnleggende funksjonalitet', () => {
   test('Skrive et avsnitt', async ({ klagebehandling }) => {
-    const smartEditor = await klagebehandling.behandling.initSmartEditor();
+    const smartEditor = await klagebehandling.behandling.initSmartEditor('Generelt brev');
 
     const p = smartEditor.locator('.slate-p').last();
 
@@ -14,7 +14,10 @@ test.describe('Smart editor - Grunnleggende funksjonalitet', () => {
   });
 
   test('Lage en liste', async ({ page, klagebehandling }) => {
-    const smartEditor = await klagebehandling.behandling.initSmartEditor();
+    const smartEditor = await klagebehandling.behandling.initSmartEditor('Generelt brev');
+
+    const p = smartEditor.locator('.slate-p').last();
+    await p.click();
 
     await page.keyboard.type('- Dette er et punkt');
     await page.keyboard.press('Enter');

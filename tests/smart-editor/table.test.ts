@@ -3,7 +3,10 @@ import { test } from '../../fixtures/behandling/fixture';
 
 test.describe('Smart editor -Tabell', () => {
   test('Enkel innfylling', async ({ page, klagebehandling }) => {
-    const smartEditor = await klagebehandling.behandling.initSmartEditor();
+    const smartEditor = await klagebehandling.behandling.initSmartEditor('Generelt brev');
+
+    const p = smartEditor.locator('.slate-p').last();
+    await p.click();
 
     await page.getByLabel('Sett inn tabell').click();
 
@@ -36,7 +39,10 @@ test.describe('Smart editor -Tabell', () => {
   });
 
   test('Manipulering av rader', async ({ page, klagebehandling }) => {
-    const smartEditor = await klagebehandling.behandling.initSmartEditor();
+    const smartEditor = await klagebehandling.behandling.initSmartEditor('Generelt brev');
+
+    const p = smartEditor.locator('.slate-p').last();
+    await p.click();
 
     await page.getByLabel('Sett inn tabell').click();
 
@@ -111,7 +117,10 @@ test.describe('Smart editor -Tabell', () => {
   });
 
   test('Manipulering av kolonner', async ({ page, klagebehandling }) => {
-    const smartEditor = await klagebehandling.behandling.initSmartEditor();
+    const smartEditor = await klagebehandling.behandling.initSmartEditor('Generelt brev');
+
+    const p = smartEditor.locator('.slate-p').last();
+    await p.click();
 
     await page.getByLabel('Sett inn tabell').click();
 
