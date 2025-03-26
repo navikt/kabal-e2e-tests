@@ -48,5 +48,5 @@ export class Behandling {
   public setDocumentType = (title: string, type: DocumentType) => setDocumentType(this.page, title, type);
   public setDocumentAsAttachmentTo = (title: string, parentName: string) =>
     setDocumentAsAttachmentTo(this.page, title, parentName);
-  public initSmartEditor = () => initSmartEditor(this.page);
+  public initSmartEditor = (templateName: string) => initSmartEditor(this.page, templateName);
 }

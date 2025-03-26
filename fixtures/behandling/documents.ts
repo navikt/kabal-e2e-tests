@@ -97,6 +97,9 @@ export const finishAndVerifyDocument = async (page: Page, documentName: string) 
   await actionButton.click();
 
   const modal = page.getByTestId('document-actions-modal');
+
+  await selectAllSuggestedMottakere(page);
+
   await modal.getByTestId('document-finish-button').click();
   await modal.getByTestId('document-finish-confirm').click();
 
@@ -106,10 +109,14 @@ export const finishAndVerifyDocument = async (page: Page, documentName: string) 
 
   await finishedList.waitFor({ timeout: 120_000 });
 
-  const finishedDocument = finishedList.locator(`article[data-documentname="${documentName}"]`);
-  await finishedDocument.waitFor({ timeout: 60_000 });
+  const finishedDocuments = await finishedList.locator(`article[data-documentname="${documentName}"]`).all();
 
-  await finishedDocument.locator('[data-included="true"]').waitFor({ timeout: 60_000 });
+  const promises = finishedDocuments.map(async (d) => {
+    await d.waitFor({ timeout: 60_000 });
+    await d.locator('[data-included="true"]').waitFor({ timeout: 60_000 });
+  });
+
+  await Promise.all(promises);
 
   if (numberOfNewDocsBeforeFinish > 1) {
     const inNewList = await inProgressList.locator(`article[data-documentname="${documentName}"]`).count();
@@ -201,17 +208,24 @@ export const setDocumentAsAttachmentTo = async (page: Page, documentName: string
   expect(count, `Forventet å finne dokument ${documentName} som vedlegg til ${parentName}.`).toBe(1);
 };
 
-export const initSmartEditor = async (page: Page) => {
+export const initSmartEditor = async (page: Page, templateName: string) => {
   await page.getByLabel('Opprett nytt dokument').click();
   const section = page.locator('section').filter({ hasText: 'Opprett nytt dokument' }).first();
   await section.waitFor();
-  await section.getByText('Generelt brev').click();
+  await section.getByText(templateName).click();
 
   const smartEditor = page.locator('[data-area="content"]');
   await smartEditor.waitFor();
 
-  const p = smartEditor.locator('.slate-p').last();
-  await p.click();
-
   return smartEditor;
+};
+
+const selectAllSuggestedMottakere = async (page: Page) => {
+  const suggestedMottakere = page.locator('fieldset').filter({ hasText: 'Foreslåtte mottakere fra saken' });
+
+  const suggestions = await suggestedMottakere.locator('input[type="checkbox"]').all();
+
+  for (const suggestion of suggestions) {
+    await suggestion.click();
+  }
 };
