@@ -84,57 +84,62 @@ const viewPdf = async (modal: Locator) =>
 
 export const finishAndVerifyDocument = async (_page: Page, documentName: string) => {
   const headedBrowser = await chromium.launch({ headless: false });
-  const page = await headedBrowser.newPage();
-  const journalførteDokumenterPromise = page.waitForRequest('**/behandlinger/**/arkivertedokumenter?**');
-  await page.goto(_page.url());
-  await finishedRequest(journalførteDokumenterPromise);
 
-  const inProgressList = page.getByTestId('new-documents-list');
-  await inProgressList.waitFor();
+  try {
+    const page = await headedBrowser.newPage();
+    const journalførteDokumenterPromise = page.waitForRequest('**/behandlinger/**/arkivertedokumenter?**');
+    await page.goto(_page.url());
+    await finishedRequest(journalførteDokumenterPromise);
 
-  const numberOfNewDocsBeforeFinish = await inProgressList.locator('li').count();
+    const inProgressList = page.getByTestId('new-documents-list');
+    await inProgressList.waitFor();
 
-  const container = getDocumentByName(page, documentName);
-  const actionButton = container.getByTestId('document-actions-button');
+    const numberOfNewDocsBeforeFinish = await inProgressList.locator('li').count();
 
-  const actionButtonCount = await actionButton.count();
+    const container = getDocumentByName(page, documentName);
+    const actionButton = container.getByTestId('document-actions-button');
 
-  if (actionButtonCount !== 1) {
-    throw new Error(`Forventet 1 kontekstknapp, fant ${actionButtonCount}`);
-  }
+    const actionButtonCount = await actionButton.count();
 
-  await actionButton.click();
+    if (actionButtonCount !== 1) {
+      throw new Error(`Forventet 1 kontekstknapp, fant ${actionButtonCount}`);
+    }
 
-  const modal = page.getByTestId('document-actions-modal');
+    await actionButton.click();
 
-  await viewPdf(modal);
+    const modal = page.getByTestId('document-actions-modal');
 
-  await selectSuggestedMottaker(page, SAKEN_GJELDER_DATA.name);
+    await viewPdf(modal);
 
-  await modal.getByTestId('document-finish-button').click();
-  await modal.getByTestId('document-finish-confirm').click();
+    await selectSuggestedMottaker(page, SAKEN_GJELDER_DATA.name);
 
-  await container.getByTestId('document-archiving').waitFor();
+    await modal.getByTestId('document-finish-button').click();
+    await modal.getByTestId('document-finish-confirm').click();
 
-  const finishedList = page.getByTestId('oppgavebehandling-documents-all-list');
+    await container.getByTestId('document-archiving').waitFor();
 
-  await finishedList.waitFor({ timeout: 120_000 });
+    const finishedList = page.getByTestId('oppgavebehandling-documents-all-list');
 
-  const finishedDocument = finishedList.locator(`article[data-documentname="${documentName}"]`);
-  await finishedDocument.waitFor({ timeout: 60_000 });
+    await finishedList.waitFor({ timeout: 120_000 });
 
-  await finishedDocument.locator('[data-included="true"]').waitFor({ timeout: 60_000 });
+    const finishedDocument = finishedList.locator(`article[data-documentname="${documentName}"]`);
+    await finishedDocument.waitFor({ timeout: 60_000 });
 
-  if (numberOfNewDocsBeforeFinish > 1) {
-    const inNewList = await inProgressList.locator(`article[data-documentname="${documentName}"]`).count();
-    expect(inNewList === 0, 'Forventet at journalført dokument forsvinner fra "Under arbeid"-listen.').toBe(true);
-  } else {
-    const inProgressChildren = await inProgressList.locator('li').count();
+    await finishedDocument.locator('[data-included="true"]').waitFor({ timeout: 60_000 });
 
-    expect(
-      inProgressChildren === 0,
-      'Forventet at "Under arbeid"-listen ikke eksisterer, da det er 0 dokumenter under arbeid.',
-    ).toBe(true);
+    if (numberOfNewDocsBeforeFinish > 1) {
+      const inNewList = await inProgressList.locator(`article[data-documentname="${documentName}"]`).count();
+      expect(inNewList === 0, 'Forventet at journalført dokument forsvinner fra "Under arbeid"-listen.').toBe(true);
+    } else {
+      const inProgressChildren = await inProgressList.locator('li').count();
+
+      expect(
+        inProgressChildren === 0,
+        'Forventet at "Under arbeid"-listen ikke eksisterer, da det er 0 dokumenter under arbeid.',
+      ).toBe(true);
+    }
+  } finally {
+    await headedBrowser.close();
   }
 };
 
