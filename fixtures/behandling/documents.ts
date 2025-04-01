@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import { resolve } from 'node:path';
-import { type Page, expect } from '@playwright/test';
-import { UI_DOMAIN } from '../../tests/functions';
+import { type Locator, type Page, chromium, expect } from '@playwright/test';
 import { finishedRequest } from '../../tests/helpers';
 import { SAKEN_GJELDER_DATA } from '../../tests/users';
 import { test } from './fixture';
@@ -78,39 +77,22 @@ export const renameDocument = async (page: Page, documentName: string, newDocume
   return newDocumentName;
 };
 
-const NYTT_DOKUMENT_REGEX = /\/nytt-dokument\/(.*)\/(.*)/;
+const viewPdf = async (modal: Locator) =>
+  modal
+    .locator('object')
+    .evaluate((element) => new Promise<void>((resolve) => element.addEventListener('load', () => resolve())));
 
-export const downloadPdf = async (page: Page, documentName: string) => {
-  const container = getDocumentByName(page, documentName);
-  const href = await container.locator('a').getAttribute('href');
-  const match = href?.match(NYTT_DOKUMENT_REGEX);
+export const finishAndVerifyDocument = async (_page: Page, documentName: string) => {
+  const headedBrowser = await chromium.launch({ headless: false });
+  const page = await headedBrowser.newPage();
+  const journalførteDokumenterPromise = page.waitForRequest('**/behandlinger/**/arkivertedokumenter?**');
+  await page.goto(_page.url());
+  await finishedRequest(journalførteDokumenterPromise);
 
-  if (match === null || match === undefined) {
-    throw new Error(`Could not find path to PDF to be downloaded: ${documentName}, href: ${href}`);
-  }
-
-  const [behandlingId, documentId] = match.slice(1);
-
-  const url = `${UI_DOMAIN}/api/kabal-api/behandlinger/${behandlingId}/dokumenter/${documentId}/pdf`;
-
-  const cookies = await page.context().cookies();
-
-  const res = await fetch(url, {
-    headers: { cookie: cookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ') },
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch PDF from ${url}, response: ${res.status} - ${res.statusText}`);
-  }
-};
-
-export const finishAndVerifyDocument = async (page: Page, documentName: string) => {
   const inProgressList = page.getByTestId('new-documents-list');
   await inProgressList.waitFor();
 
   const numberOfNewDocsBeforeFinish = await inProgressList.locator('li').count();
-
-  await page.getByTestId('oppgavebehandling-documents-all-list').waitFor({ timeout: 120 * 1_000 });
 
   const container = getDocumentByName(page, documentName);
   const actionButton = container.getByTestId('document-actions-button');
@@ -124,6 +106,8 @@ export const finishAndVerifyDocument = async (page: Page, documentName: string) 
   await actionButton.click();
 
   const modal = page.getByTestId('document-actions-modal');
+
+  await viewPdf(modal);
 
   await selectSuggestedMottaker(page, SAKEN_GJELDER_DATA.name);
 
