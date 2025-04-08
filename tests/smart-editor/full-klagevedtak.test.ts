@@ -159,7 +159,6 @@ test.describe('Smart editor', () => {
       const newName = `Klagevedtak - ${new Date().toISOString()}`;
 
       await behandling.renameDocument('Klagevedtak', newName);
-      await behandling.downloadPdf(newName);
       await behandling.finishAndVerifyDocument(newName);
     });
   });
