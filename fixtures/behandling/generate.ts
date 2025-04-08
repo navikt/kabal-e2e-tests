@@ -7,7 +7,8 @@ export const generateBehandling = async (page: Page, type: SaksTypeName): Promis
   const res = await makeDirectApiRequest(page, 'kabal-api', `/mockdata/random${type}`, 'POST', {
     ytelse: 'SYK_SYK',
     sakenGjelder: SAKEN_GJELDER,
-    klager: { ...KLAGER, klagersProsessfullmektig: FULLMEKTIG },
+    klager: KLAGER,
+    prosessfullmektig: FULLMEKTIG,
   });
 
   if (!res.ok) {
