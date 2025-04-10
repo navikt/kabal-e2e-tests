@@ -1,5 +1,5 @@
-apiVersion: nais.io/v1
-kind: Naisjob
+apiVersion: batch/v1
+kind: Job
 metadata:
   labels:
     team: klage
@@ -7,21 +7,20 @@ metadata:
   name: kabal-e2e-tests-{{jobid}}
   namespace: klage
 spec:
-  backoffLimit: 0
-  concurrencyPolicy: Forbid
-  resources:
-    requests:
-      cpu: 500m
-      memory: 512Mi
-    limits:
-      cpu: 8000m
-      memory: 8Gi  
-  image: {{image}}
-  envFrom:
-  - secret: kabal-e2e-test-users
-  - secret: slack-e2e-secrets
-  - configmap: slack-e2e-configmap
-  accessPolicy:
-    outbound:
-      external:
-      - host: kabal.intern.dev.nav.no
+  template:
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: kabal-e2e
+          image: {{image}}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+      imagePullSecrets:
+        - name: gpr-credentials
+      restartPolicy: Never
