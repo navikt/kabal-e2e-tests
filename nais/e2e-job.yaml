@@ -7,8 +7,17 @@ metadata:
   name: kabal-e2e-tests-{{jobid}}
   namespace: klage
 spec:
-  backoffLimit: 0
-  concurrencyPolicy: Forbid
+  readiness:
+    failureThreshold: 1
+    initialDelay: 1
+    path: /isready
+    port: 8080
+  liveness:
+    failureThreshold: 1
+    initialDelay: 1
+    periodSeconds: 1
+    path: /isalive
+    port: 8080
   resources:
     requests:
       cpu: 500m
@@ -16,6 +25,8 @@ spec:
     limits:
       cpu: 8000m
       memory: 8Gi  
+  backoffLimit: 0
+  concurrencyPolicy: Forbid 
   image: {{image}}
   envFrom:
   - secret: kabal-e2e-test-users

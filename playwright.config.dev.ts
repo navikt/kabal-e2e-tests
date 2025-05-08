@@ -5,6 +5,7 @@ import { baseConfig } from './playwright.config.base';
 export default defineConfig({
   ...baseConfig,
   maxFailures: 1,
+  reporter: [['./reporters/gha.ts']],
 
   use: {
     ...baseConfig.use,
