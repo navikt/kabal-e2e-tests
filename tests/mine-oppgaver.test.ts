@@ -12,6 +12,8 @@ test.describe('Mine Oppgaver', () => {
     await page.goto(`${UI_DOMAIN}/mineoppgaver`);
     const url = getParsedUrl(page.url());
 
+    expect(true, 'Failing on purpose. GitHub Action should fail now.').toBe(false);
+
     expect(url.pathname).toBe('/mineoppgaver');
 
     await Promise.all(

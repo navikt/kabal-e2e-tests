@@ -7,6 +7,7 @@ export default defineConfig({
   outputDir: '/tmp/test-results',
   reporter: [['list'], ['./reporters/slack-reporter.ts']],
   retries: 1,
+  maxFailures: 1,
 
   use: {
     ...baseConfig.use,
