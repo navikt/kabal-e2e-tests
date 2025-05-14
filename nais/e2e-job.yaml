@@ -17,6 +17,9 @@ spec:
       cpu: 8000m
       memory: 8Gi  
   image: {{image}}
+  env:
+  - name: JOB_ID
+    value: {{jobid}}
   envFrom:
   - secret: kabal-e2e-test-users
   - secret: slack-e2e-secrets
