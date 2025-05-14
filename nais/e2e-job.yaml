@@ -18,13 +18,13 @@ spec:
       memory: 8Gi  
   image: {{image}}
   env:
-  - name: JOB_ID
-    value: {{jobid}}
+    - name: JOB_ID
+      value: {{jobid}}
   envFrom:
-  - secret: kabal-e2e-test-users
-  - secret: slack-e2e-secrets
-  - configmap: slack-e2e-configmap
+    - secret: kabal-e2e-test-users
+    - secret: slack-e2e-secrets
+    - configmap: slack-e2e-configmap
   accessPolicy:
     outbound:
       external:
-      - host: kabal.intern.dev.nav.no
+        - host: kabal.intern.dev.nav.no
