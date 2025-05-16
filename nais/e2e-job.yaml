@@ -24,6 +24,7 @@ spec:
     - secret: kabal-e2e-test-users
     - secret: slack-e2e-secrets
     - configmap: slack-e2e-configmap
+    - secret: klage-job-status-write-api-key
   accessPolicy:
     outbound:
       external:

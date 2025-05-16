@@ -2,6 +2,9 @@ name: 'E2E'
 description: 'Run E2E tests'
 
 inputs:
+  status_api_key:
+    description: 'API key to read job status'
+    required: true
   nais_management_project_id:
     description: 'Project ID for nais/logins'
     required: true
@@ -72,8 +75,7 @@ runs:
     - name: Check E2E job status
       uses: navikt/klage-job-status/action@main
       with:
-        api_key: api_key
-        namespace: klage
+        api_key: ${{ inputs.status_api_key }}
         job_id: ${{ steps.uuid.outputs.uuid }}
         fail: true
         fail_on_unknown: true
