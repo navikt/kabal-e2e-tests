@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import { resolve } from 'node:path';
-import { type Page, expect } from '@playwright/test';
-import { UI_DOMAIN } from '../../tests/functions';
+import { type Locator, type Page, chromium, expect } from '@playwright/test';
 import { finishedRequest } from '../../tests/helpers';
 import { SAKEN_GJELDER_DATA } from '../../tests/users';
 import { test } from './fixture';
@@ -78,79 +77,69 @@ export const renameDocument = async (page: Page, documentName: string, newDocume
   return newDocumentName;
 };
 
-const NYTT_DOKUMENT_REGEX = /\/nytt-dokument\/(.*)\/(.*)/;
+const viewPdf = async (modal: Locator) =>
+  modal
+    .locator('object')
+    .evaluate((element) => new Promise<void>((resolve) => element.addEventListener('load', () => resolve())));
 
-export const downloadPdf = async (page: Page, documentName: string) => {
-  const container = getDocumentByName(page, documentName);
-  const href = await container.locator('a').getAttribute('href');
-  const match = href?.match(NYTT_DOKUMENT_REGEX);
+export const finishAndVerifyDocument = async (_page: Page, documentName: string) => {
+  const headedBrowser = await chromium.launch({ headless: false });
 
-  if (match === null || match === undefined) {
-    throw new Error(`Could not find path to PDF to be downloaded: ${documentName}, href: ${href}`);
-  }
+  try {
+    const page = await headedBrowser.newPage();
+    const journalførteDokumenterPromise = page.waitForRequest('**/behandlinger/**/arkivertedokumenter?**');
+    await page.goto(_page.url());
+    await finishedRequest(journalførteDokumenterPromise);
 
-  const [behandlingId, documentId] = match.slice(1);
+    const inProgressList = page.getByTestId('new-documents-list');
+    await inProgressList.waitFor();
 
-  const url = `${UI_DOMAIN}/api/kabal-api/behandlinger/${behandlingId}/dokumenter/${documentId}/pdf`;
+    const numberOfNewDocsBeforeFinish = await inProgressList.locator('li').count();
 
-  const cookies = await page.context().cookies();
+    const container = getDocumentByName(page, documentName);
+    const actionButton = container.getByTestId('document-actions-button');
 
-  const res = await fetch(url, {
-    headers: { cookie: cookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ') },
-  });
+    const actionButtonCount = await actionButton.count();
 
-  if (!res.ok) {
-    throw new Error(`Failed to fetch PDF from ${url}, response: ${res.status} - ${res.statusText}`);
-  }
-};
+    if (actionButtonCount !== 1) {
+      throw new Error(`Forventet 1 kontekstknapp, fant ${actionButtonCount}`);
+    }
 
-export const finishAndVerifyDocument = async (page: Page, documentName: string) => {
-  const inProgressList = page.getByTestId('new-documents-list');
-  await inProgressList.waitFor();
+    await actionButton.click();
 
-  const numberOfNewDocsBeforeFinish = await inProgressList.locator('li').count();
+    const modal = page.getByTestId('document-actions-modal');
 
-  await page.getByTestId('oppgavebehandling-documents-all-list').waitFor({ timeout: 120 * 1_000 });
+    await viewPdf(modal);
 
-  const container = getDocumentByName(page, documentName);
-  const actionButton = container.getByTestId('document-actions-button');
+    await selectSuggestedMottaker(page, SAKEN_GJELDER_DATA.name);
 
-  const actionButtonCount = await actionButton.count();
+    await modal.getByTestId('document-finish-button').click();
+    await modal.getByTestId('document-finish-confirm').click();
 
-  if (actionButtonCount !== 1) {
-    throw new Error(`Forventet 1 kontekstknapp, fant ${actionButtonCount}`);
-  }
+    await container.getByTestId('document-archiving').waitFor();
 
-  await actionButton.click();
+    const finishedList = page.getByTestId('oppgavebehandling-documents-all-list');
 
-  const modal = page.getByTestId('document-actions-modal');
+    await finishedList.waitFor({ timeout: 120_000 });
 
-  await selectSuggestedMottaker(page, SAKEN_GJELDER_DATA.name);
+    const finishedDocument = finishedList.locator(`article[data-documentname="${documentName}"]`);
+    await finishedDocument.waitFor({ timeout: 60_000 });
 
-  await modal.getByTestId('document-finish-button').click();
-  await modal.getByTestId('document-finish-confirm').click();
+    await finishedDocument.locator('[data-included="true"]').waitFor({ timeout: 60_000 });
 
-  await container.getByTestId('document-archiving').waitFor();
+    if (numberOfNewDocsBeforeFinish > 1) {
+      const inNewList = await inProgressList.locator(`article[data-documentname="${documentName}"]`).count();
+      expect(inNewList === 0, 'Forventet at journalført dokument forsvinner fra "Under arbeid"-listen.').toBe(true);
+    } else {
+      const inProgressChildren = await inProgressList.locator('li').count();
 
-  const finishedList = page.getByTestId('oppgavebehandling-documents-all-list');
-
-  await finishedList.waitFor({ timeout: 120_000 });
-
-  const finishedDocument = finishedList.locator(`article[data-documentname="${documentName}"]`);
-  await finishedDocument.waitFor({ timeout: 60_000 });
-
-  await finishedDocument.locator('[data-included="true"]').waitFor({ timeout: 60_000 });
-
-  if (numberOfNewDocsBeforeFinish > 1) {
-    const inNewList = await inProgressList.locator(`article[data-documentname="${documentName}"]`).count();
-    expect(inNewList === 0, 'Forventet at journalført dokument forsvinner fra "Under arbeid"-listen.').toBe(true);
-  } else {
-    const inProgressChildren = await inProgressList.locator('li').count();
-
-    expect(
-      inProgressChildren === 0,
-      'Forventet at "Under arbeid"-listen ikke eksisterer, da det er 0 dokumenter under arbeid.',
-    ).toBe(true);
+      expect(
+        inProgressChildren === 0,
+        'Forventet at "Under arbeid"-listen ikke eksisterer, da det er 0 dokumenter under arbeid.',
+      ).toBe(true);
+    }
+  } finally {
+    await headedBrowser.close();
   }
 };
 
