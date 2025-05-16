@@ -2,13 +2,14 @@ import { expect } from 'playwright/test';
 import { test } from '../../fixtures/behandling/fixture';
 
 test.describe('Smart editor - Grunnleggende funksjonalitet', () => {
-  test('Skrive et avsnitt', async ({ klagebehandling }) => {
+  test('Skrive et avsnitt', async ({ page, klagebehandling }) => {
     const smartEditor = await klagebehandling.behandling.initSmartEditor('Generelt brev');
 
     const p = smartEditor.locator('.slate-p').last();
+    await p.click();
 
     const text = 'Dette er et avsnitt';
-    await p.fill(text);
+    await page.keyboard.type(text);
 
     expect(await p.textContent()).toBe(text);
   });

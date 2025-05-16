@@ -31,21 +31,13 @@ test.describe('Smart editor', () => {
     });
 
     await test.step('Parter og saksnummer', async () => {
-      const section = smartEditor
-        .locator('[data-slate-node="element"]')
-        .filter({ hasText: 'Saken gjelder' })
-        .filter({ hasText: 'Fødselsnummer' })
-        .filter({ hasText: 'Klager' })
-        .filter({ hasText: 'Fullmektig' })
-        .filter({ hasText: 'Saksnummer' });
-
       const saksnummer = await page.locator('#behandling-section-saksnummer').getByRole('button').textContent();
 
-      expect(section.getByText(`Saken gjelder: ${SAKEN_GJELDER_DATA.name}`)).toBeVisible();
-      expect(section.getByText(`Fødselsnummer: ${SAKEN_GJELDER_DATA.id}`)).toBeVisible();
-      expect(section.getByText(`Klager: ${KLAGER_DATA.name}`)).toBeVisible();
-      expect(section.getByText(`Fullmektig: ${FULLMEKTIG_DATA.name}`)).toBeVisible();
-      expect(section.getByText(`Saksnummer: ${saksnummer}`)).toBeVisible();
+      expect(smartEditor.getByText(`Saken gjelder: ${SAKEN_GJELDER_DATA.name}`)).toBeVisible();
+      expect(smartEditor.getByText(`Fødselsnummer: ${SAKEN_GJELDER_DATA.id}`)).toBeVisible();
+      expect(smartEditor.getByText(`Klager: ${KLAGER_DATA.name}`)).toBeVisible();
+      expect(smartEditor.getByText(`Fullmektig: ${FULLMEKTIG_DATA.name}`)).toBeVisible();
+      expect(smartEditor.getByText(`Saksnummer: ${saksnummer}`)).toBeVisible();
     });
 
     await test.step('Sett utfall', async () => {
