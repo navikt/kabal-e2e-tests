@@ -101,8 +101,7 @@ jobs:
       - name: Check E2E job status
         uses: navikt/klage-job-status/action@main
         with:
-          api_key: api_key
-          namespace: klage
+          api_key: ${{ secrets.STATUS_API_TOKEN }}
           job_id: ${{ steps.uuid.outputs.uuid }}
           fail: true
           fail_on_unknown: true

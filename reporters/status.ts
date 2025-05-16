@@ -1,7 +1,8 @@
 import type { FullResult, Reporter, TestCase, TestResult } from '@playwright/test/reporter';
 
+const API_KEY = process.env.WRITE_API_KEY;
 const JOB_ID = process.env.JOB_ID ?? crypto.randomUUID();
-const CREATE_URL = `https://klage-job-status.ekstern.dev.nav.no/jobs/klage/${JOB_ID}`;
+const CREATE_URL = `https://klage-job-status.ekstern.dev.nav.no/jobs/${JOB_ID}`;
 const UPDATE_URL = `${CREATE_URL}/status`;
 
 enum Status {
@@ -24,11 +25,11 @@ const NAME = 'Kabal E2E tests';
 const TIMEOUT = 15 * 60 * 1000; // 15 minutes
 
 const update = async (status: Status) => {
-  if (JOB_ID === undefined) {
+  if (JOB_ID === undefined || API_KEY === undefined) {
     return;
   }
 
-  await fetch(UPDATE_URL, { method: 'PUT', body: status });
+  await fetch(UPDATE_URL, { method: 'PUT', headers: { API_KEY }, body: status });
 };
 
 class StatusReporter implements Reporter {
@@ -38,9 +39,15 @@ class StatusReporter implements Reporter {
       return;
     }
 
+    if (API_KEY === undefined) {
+      console.warn('WRITE_API_KEY is not set. Skipping status reporter.');
+      return;
+    }
+
     await fetch(CREATE_URL, {
       method: 'POST',
       headers: {
+        API_KEY,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body(NAME, TIMEOUT)),
