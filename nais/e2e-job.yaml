@@ -1,11 +1,12 @@
 apiVersion: nais.io/v1
 kind: Naisjob
 metadata:
+  name: kabal-e2e-tests-{{jobid}}
+  namespace: klage
   labels:
     team: klage
     e2e: kabal
-  name: kabal-e2e-tests-{{jobid}}
-  namespace: klage
+    job_id: {{jobid}}
 spec:
   backoffLimit: 0
   concurrencyPolicy: Forbid
