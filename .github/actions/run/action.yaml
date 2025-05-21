@@ -24,6 +24,9 @@ outputs:
   image:
     description: 'E2E image'
     value: ${{ steps.image.outputs.image }}
+  status:
+    description: 'E2E job status'
+    value: ${{ steps.status.outputs.status }}
 
 runs:
   using: "composite"
