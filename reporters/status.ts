@@ -22,7 +22,7 @@ const body = (name?: string, timeout?: number): CreateJob => ({
 });
 
 const NAME = 'Kabal E2E tests';
-const TIMEOUT = 15 * 60 * 1000; // 15 minutes
+const TIMEOUT = 15 * 60; // 15 minutes
 
 const update = async (status: Status) => {
   if (JOB_ID === undefined || API_KEY === undefined) {
