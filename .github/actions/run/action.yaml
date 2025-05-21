@@ -76,6 +76,7 @@ runs:
         IMAGE: ${{ steps.image.outputs.image }}
 
     - name: Check E2E job status
+      id: status
       uses: navikt/klage-job-status/action@main
       with:
         api_key: ${{ inputs.status_api_key }}
