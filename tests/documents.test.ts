@@ -13,7 +13,7 @@ test.describe('Dokumenter', () => {
     await behandling.deleteDocument(vedtaksbrev);
   });
 
-  test('Opplasting, endre navn/type, ferdigstille', async ({ klagebehandling }) => {
+  test('Opplasting, endre navn/type, ferdigstille', async ({ klagebehandling, page }) => {
     const filename = 'e2e-test-document.pdf';
 
     const { behandling } = klagebehandling;
@@ -39,6 +39,14 @@ test.describe('Dokumenter', () => {
 
     await behandling.setDocumentType(doc1, DocumentType.VEDTAKSBREV);
     await behandling.setDocumentType(doc2, DocumentType.BESLUTNING);
+
+    await page
+      .getByTestId('oppgavebehandling-documents-all-list-item')
+      .first()
+      .waitFor({ timeout: 10_000 })
+      .catch(() => {
+        throw new Error('Listen over journalførte dokumenter lastet ikke i tide');
+      });
 
     for (const hoveddokument of renamedDocuments) {
       await behandling.finishAndVerifyDocument(hoveddokument);

@@ -133,12 +133,8 @@ const refreshOppgaver = async (page: Page, tableId: string) => {
   await pageOneButton.click();
 
   const refreshButton = page.getByTestId(`${tableId}-footer-refresh-button`).first();
-  const updating = page.locator(`[data-testid="${tableId}-rows"][data-state="updating"]`);
-  const ready = page.locator(`[data-testid="${tableId}-rows"][data-state="ready"]`);
 
   await refreshButton.click();
-  await updating.waitFor();
-  await ready.waitFor();
 };
 
 type FindFnType = (page: Page, tableId: string, behandlingId: string) => Promise<Locator | null>;

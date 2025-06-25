@@ -95,8 +95,7 @@ test.describe('Smart editor', () => {
     await test.step('Anførsler: Skrive i redigerbar maltekst', async () => {
       const maltekstseksjon = smartEditor.locator('[data-element="maltekstseksjon"][data-section="section-ulv"]');
 
-      await maltekstseksjon.getByText('I klagen din har du lagt vekt på').click();
-      await page.keyboard.press('ArrowDown');
+      await maltekstseksjon.locator('li').first().click();
       await page.keyboard.type('Alt som er feil');
       await page.keyboard.press('Enter');
       await page.keyboard.type('Alt som ikke er riktig');

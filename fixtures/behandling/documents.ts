@@ -238,7 +238,8 @@ export const initSmartEditor = async (page: Page, templateName: string) => {
   await section.getByText(templateName).click();
 
   const smartEditor = page.locator('[data-area="content"]');
-  await smartEditor.waitFor();
+  // Wait for actual content to load
+  await smartEditor.locator('[class="slate-current-date"]').waitFor();
 
   return smartEditor;
 };
