@@ -21,11 +21,11 @@ test.describe('Smart editor -Tabell', () => {
 
     await a1.click();
     await a1.fill('A1');
-    await page.keyboard.press('Tab');
+    await page.keyboard.press('ArrowRight');
     await a2.fill('A2');
-    await page.keyboard.press('Tab');
+    await page.keyboard.press('ArrowRight');
     await b1.fill('B1');
-    await page.keyboard.press('Tab');
+    await page.keyboard.press('ArrowRight');
     await b2.fill('B2');
 
     expect(await table.locator('tr').count()).toBe(2);
@@ -62,11 +62,11 @@ test.describe('Smart editor -Tabell', () => {
 
     await test.step('Fyll inn data i initiell 2x2-tabell', async () => {
       await a1.fill('A1');
-      await page.keyboard.press('Tab');
+      await page.keyboard.press('ArrowRight');
       await a2.fill('A2');
-      await page.keyboard.press('Tab');
+      await page.keyboard.press('ArrowRight');
       await b1.fill('B1');
-      await page.keyboard.press('Tab');
+      await page.keyboard.press('ArrowRight');
       await b2.fill('B2');
     });
 
@@ -75,14 +75,14 @@ test.describe('Smart editor -Tabell', () => {
     });
 
     await test.step('Naviger til starten av den nye raden', async () => {
-      await page.keyboard.press('Shift+Tab');
-      await page.keyboard.press('Shift+Tab');
-      await page.keyboard.press('Shift+Tab');
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
+      await page.keyboard.press('ArrowLeft');
     });
 
     await test.step('Fyll inn data', async () => {
       await b1.fill('New B1');
-      await page.keyboard.press('Tab');
+      await page.keyboard.press('ArrowRight');
       await b2.fill('New B2');
     });
 
@@ -97,9 +97,9 @@ test.describe('Smart editor -Tabell', () => {
     });
 
     await test.step('Fyll inn data i den nye raden', async () => {
-      await page.keyboard.press('Tab');
+      await page.keyboard.press('ArrowRight');
       await c1.fill('C1');
-      await page.keyboard.press('Tab');
+      await page.keyboard.press('ArrowRight');
       await c2.fill('C2');
     });
 
@@ -139,11 +139,11 @@ test.describe('Smart editor -Tabell', () => {
 
     await test.step('Fyll inn data i initiell 2x2-tabell', async () => {
       await a1.fill('A1');
-      await page.keyboard.press('Tab');
+      await page.keyboard.press('ArrowRight');
       await a2.fill('A2');
-      await page.keyboard.press('Tab');
+      await page.keyboard.press('ArrowRight');
       await b1.fill('B1');
-      await page.keyboard.press('Tab');
+      await page.keyboard.press('ArrowRight');
       await b2.fill('B2');
     });
 
@@ -152,7 +152,7 @@ test.describe('Smart editor -Tabell', () => {
     });
 
     await test.step('Naviger til starten av ny kolonne', async () => {
-      await page.keyboard.press('Shift+Tab');
+      await page.keyboard.press('ArrowLeft');
       await page.waitForTimeout(100);
       await page.keyboard.press('ArrowUp');
       await page.waitForTimeout(100);
