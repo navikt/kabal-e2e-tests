@@ -8,6 +8,7 @@ metadata:
     e2e: kabal
     job_id: {{jobid}}
 spec:
+  ttl: 11m
   backoffLimit: 0
   concurrencyPolicy: Forbid
   resources:
