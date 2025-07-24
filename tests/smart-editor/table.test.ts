@@ -203,4 +203,37 @@ test.describe('Smart editor -Tabell', () => {
     expect(await b2.textContent()).toBe('New B2');
     expect(await b3.textContent()).toBe('B3');
   });
+
+  test('Sette inn stor tabell', async ({ page, klagebehandling }) => {
+    await page.setViewportSize({ width: 1366, height: 768 });
+
+    const smartEditor = await klagebehandling.behandling.initSmartEditor('Generelt brev');
+
+    const p = smartEditor.locator('.slate-p').last();
+    await p.click();
+
+    await page.getByLabel('Sett inn tabell').click();
+    await page.getByTitle('Sett inn tabell med 4 rader og 4 kolonner').hover();
+    await page.getByTitle('Sett inn tabell med 5 rader og 5 kolonner').hover();
+    await page.getByTitle('Sett inn tabell med 6 rader og 6 kolonner').hover();
+    await page.getByTitle('Sett inn tabell med 7 rader og 7 kolonner').hover();
+    await page.getByTitle('Sett inn tabell med 8 rader og 8 kolonner').hover();
+    await page.getByTitle('Sett inn tabell med 9 rader og 9 kolonner').hover();
+    await page.getByTitle('Sett inn tabell med 10 rader og 10 kolonner').hover();
+    await page.getByTitle('Sett inn tabell med 11 rader og 11 kolonner').hover();
+    await page.getByTitle('Sett inn tabell med 12 rader og 12 kolonner').hover();
+    await page.getByTitle('Sett inn tabell med 13 rader og 12 kolonner').hover();
+    await page.getByTitle('Sett inn tabell med 14 rader og 12 kolonner').hover();
+    await page.getByTitle('Sett inn tabell med 15 rader og 12 kolonner').hover();
+    await page.getByTitle('Sett inn tabell med 16 rader og 12 kolonner').click();
+
+    const table = smartEditor.locator('table');
+    const rows = table.locator('tr');
+
+    expect(await rows.count()).toBe(16);
+
+    const cells = await rows.first().locator('td').count();
+
+    expect(cells).toBe(12);
+  });
 });
