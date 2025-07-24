@@ -9,6 +9,7 @@ test.describe('Smart editor -Tabell', () => {
     await p.click();
 
     await page.getByLabel('Sett inn tabell').click();
+    await page.getByTitle('Sett inn tabell med 2 rader og 2 kolonner').click();
 
     const table = smartEditor.locator('table');
     const row1 = table.locator('tr').nth(0);
@@ -45,6 +46,7 @@ test.describe('Smart editor -Tabell', () => {
     await p.click();
 
     await page.getByLabel('Sett inn tabell').click();
+    await page.getByTitle('Sett inn tabell med 2 rader og 2 kolonner').click();
 
     const table = smartEditor.locator('table');
     const row1 = table.locator('tr').nth(0);
@@ -123,6 +125,7 @@ test.describe('Smart editor -Tabell', () => {
     await p.click();
 
     await page.getByLabel('Sett inn tabell').click();
+    await page.getByTitle('Sett inn tabell med 2 rader og 2 kolonner').click();
 
     const table = smartEditor.locator('table');
     const row1 = table.locator('tr').nth(0);
