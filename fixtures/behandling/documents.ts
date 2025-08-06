@@ -1,11 +1,12 @@
 import fs from 'node:fs';
 import { resolve } from 'node:path';
-import { type Page, expect } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { UI_DOMAIN } from '../../tests/functions';
 import { finishedRequest } from '../../tests/helpers';
 import { SAKEN_GJELDER_DATA } from '../../tests/users';
 import { test } from './fixture';
 import type { DocumentType } from './types';
+
 const getDocumentByName = (page: Page, documentName: string) => {
   const newDocumentsList = page.getByTestId('new-documents-list');
   return newDocumentsList.locator(`article[data-documentname="${documentName}"]`);

@@ -8,6 +8,7 @@
     "source.organizeImports.biome": "always",
     "source.addMissingImports.ts": "never"
   },
+  "biome.configurationPath": "./biome.json",
   "editor.acceptSuggestionOnCommitCharacter": false,
   "typescript.validate.enable": true,
   "typescript.tsdk": "node_modules/typescript/lib",

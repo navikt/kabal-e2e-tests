@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { UI_DOMAIN, getParsedUrl } from './functions';
+import { getParsedUrl, UI_DOMAIN } from './functions';
 
 const TABLES: [string, string][] = [
   ['Tildelte', 'mine-oppgaver-table-rows'],

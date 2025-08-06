@@ -1,4 +1,4 @@
-import { type Locator, type Page, expect } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 import type { Behandling } from '../fixtures/behandling/behandling';
 import { test } from '../fixtures/behandling/fixture';
 import { UI_DOMAIN } from './functions';
