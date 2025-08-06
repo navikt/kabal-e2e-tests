@@ -9,7 +9,7 @@ test.describe('Smart editor -Tabell', () => {
     await p.click();
 
     await page.getByLabel('Sett inn tabell').click();
-    await page.getByTitle('Sett inn tabell med 2 rader og 2 kolonner').click();
+    await page.getByLabel('Sett inn tabell med 2 rader og 2 kolonner').click();
 
     const table = smartEditor.locator('table');
     const row1 = table.locator('tr').nth(0);
@@ -46,7 +46,7 @@ test.describe('Smart editor -Tabell', () => {
     await p.click();
 
     await page.getByLabel('Sett inn tabell').click();
-    await page.getByTitle('Sett inn tabell med 2 rader og 2 kolonner').click();
+    await page.getByLabel('Sett inn tabell med 2 rader og 2 kolonner').click();
 
     const table = smartEditor.locator('table');
     const row1 = table.locator('tr').nth(0);
@@ -125,7 +125,7 @@ test.describe('Smart editor -Tabell', () => {
     await p.click();
 
     await page.getByLabel('Sett inn tabell').click();
-    await page.getByTitle('Sett inn tabell med 2 rader og 2 kolonner').click();
+    await page.getByLabel('Sett inn tabell med 2 rader og 2 kolonner').click();
 
     const table = smartEditor.locator('table');
     const row1 = table.locator('tr').nth(0);
@@ -213,19 +213,19 @@ test.describe('Smart editor -Tabell', () => {
     await p.click();
 
     await page.getByLabel('Sett inn tabell').click();
-    await page.getByTitle('Sett inn tabell med 4 rader og 4 kolonner').hover();
-    await page.getByTitle('Sett inn tabell med 5 rader og 5 kolonner').hover();
-    await page.getByTitle('Sett inn tabell med 6 rader og 6 kolonner').hover();
-    await page.getByTitle('Sett inn tabell med 7 rader og 7 kolonner').hover();
-    await page.getByTitle('Sett inn tabell med 8 rader og 8 kolonner').hover();
-    await page.getByTitle('Sett inn tabell med 9 rader og 9 kolonner').hover();
-    await page.getByTitle('Sett inn tabell med 10 rader og 10 kolonner').hover();
-    await page.getByTitle('Sett inn tabell med 11 rader og 11 kolonner').hover();
-    await page.getByTitle('Sett inn tabell med 12 rader og 12 kolonner').hover();
-    await page.getByTitle('Sett inn tabell med 13 rader og 12 kolonner').hover();
-    await page.getByTitle('Sett inn tabell med 14 rader og 12 kolonner').hover();
-    await page.getByTitle('Sett inn tabell med 15 rader og 12 kolonner').hover();
-    await page.getByTitle('Sett inn tabell med 16 rader og 12 kolonner').click();
+    await page.getByLabel('Sett inn tabell med 4 rader og 4 kolonner').hover();
+    await page.getByLabel('Sett inn tabell med 5 rader og 5 kolonner').hover();
+    await page.getByLabel('Sett inn tabell med 6 rader og 6 kolonner').hover();
+    await page.getByLabel('Sett inn tabell med 7 rader og 7 kolonner').hover();
+    await page.getByLabel('Sett inn tabell med 8 rader og 8 kolonner').hover();
+    await page.getByLabel('Sett inn tabell med 9 rader og 9 kolonner').hover();
+    await page.getByLabel('Sett inn tabell med 10 rader og 10 kolonner').hover();
+    await page.getByLabel('Sett inn tabell med 11 rader og 11 kolonner').hover();
+    await page.getByLabel('Sett inn tabell med 12 rader og 12 kolonner').hover();
+    await page.getByLabel('Sett inn tabell med 13 rader og 12 kolonner').hover();
+    await page.getByLabel('Sett inn tabell med 14 rader og 12 kolonner').hover();
+    await page.getByLabel('Sett inn tabell med 15 rader og 12 kolonner').hover();
+    await page.getByLabel('Sett inn tabell med 16 rader og 12 kolonner').click();
 
     const table = smartEditor.locator('table');
     const rows = table.locator('tr');
