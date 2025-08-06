@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { UI_DOMAIN, getParsedUrl } from './functions';
+import { getParsedUrl, UI_DOMAIN } from './functions';
 
 test.describe('Innstillinger-navigasjon', () => {
   test.beforeEach(async ({ page }) => {

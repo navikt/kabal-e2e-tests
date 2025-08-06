@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
 import type { Behandling } from './behandling';
-import { SaksTypeName, generateBehandling } from './generate';
+import { generateBehandling, SaksTypeName } from './generate';
 
 export class KabalPage {
   constructor(public readonly page: Page) {}
