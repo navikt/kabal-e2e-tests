@@ -24,12 +24,6 @@ test.describe('Smart editor', () => {
       );
     });
 
-    await test.step('Dokumenttittel', () => {
-      const maltekstseksjon = smartEditor.locator('[data-element="maltekstseksjon"][data-section="section-esel"]');
-
-      expect(maltekstseksjon.getByText('Nav klageinstans har behandlet klagen din')).toBeVisible();
-    });
-
     await test.step('Parter og saksnummer', async () => {
       const saksnummer = await page.locator('#behandling-section-saksnummer').getByRole('button').textContent();
 
@@ -45,7 +39,7 @@ test.describe('Smart editor', () => {
       expect(smartEditor.getByText(`Ankeinfo${NO_MALTEKSTSEKSJON_TEXT}`)).toBeVisible();
       expect(smartEditor.getByText(`Sakskostnader${NO_MALTEKSTSEKSJON_TEXT}`)).toBeVisible();
 
-      expect(smartEditor.getByText('Vi har omgjort vedtaket, slik at')).not.toBeVisible();
+      expect(smartEditor.getByText('Derfor har vi omgjort vedtaket.')).not.toBeVisible();
       expect(smartEditor.getByText('Du har rett til å anke')).not.toBeVisible();
       expect(smartEditor.getByText('Informasjon om dekning av sakskostnader')).not.toBeVisible();
 
@@ -55,9 +49,15 @@ test.describe('Smart editor', () => {
       expect(smartEditor.getByText(`Ankeinfo${NO_MALTEKSTSEKSJON_TEXT}`)).not.toBeVisible();
       expect(smartEditor.getByText(`Sakskostnader${NO_MALTEKSTSEKSJON_TEXT}`)).not.toBeVisible();
 
-      expect(smartEditor.getByText('Vi har omgjort vedtaket, slik at')).toBeVisible();
+      expect(smartEditor.getByText('Derfor har vi omgjort vedtaket.')).toBeVisible();
       expect(smartEditor.getByText('Du har rett til å anke')).toBeVisible();
       expect(smartEditor.getByText('Informasjon om dekning av sakskostnader')).toBeVisible();
+    });
+
+    await test.step('Dokumenttittel', () => {
+      const maltekstseksjon = smartEditor.locator('[data-element="maltekstseksjon"][data-section="section-esel"]');
+
+      expect(maltekstseksjon.getByText('Klageinstans har fattet vedtak i klagesaken din')).toBeVisible();
     });
 
     await test.step('Introduksjon: Oppdatere innfyllingsfelter', async () => {
@@ -70,51 +70,38 @@ test.describe('Smart editor', () => {
       await page.keyboard.press('ControlOrMeta+J');
       await page.keyboard.type('14/37-1337.');
       await page.keyboard.press('ControlOrMeta+J');
-      await page.keyboard.type('du kan få tilbake penger.');
+      await page.keyboard.type('Ønsker å få tilbake penger.');
 
       expect(
         maltekstseksjon.getByText(
           'Saken gjelder: Klagen din av 13/37-1337 over Nav Vikafossen sitt vedtak av 14/37-1337.',
         ),
       ).toBeVisible();
-      expect(maltekstseksjon.getByText('Om du kan få tilbake penger.')).toBeVisible();
+      expect(maltekstseksjon.getByText('Ønsker å få tilbake penger.')).toBeVisible();
     });
 
     await test.step('Avgjørelse: Slette innfyllingsfelter', async () => {
       const maltekstseksjon = smartEditor.locator('[data-element="maltekstseksjon"][data-section="section-mår"]');
 
-      await maltekstseksjon.locator('[data-placeholder="fyll ut"]').getByTitle('Slett innfyllingsfelt').click();
+      await maltekstseksjon
+        .locator('[data-placeholder^="Her formulerer du deg kortfattet og presist"]')
+        .getByTitle('Slett innfyllingsfelt')
+        .click();
       await maltekstseksjon.locator('[data-placeholder="lov"]').getByTitle('Slett innfyllingsfelt').click();
       await maltekstseksjon.locator('[data-placeholder="hjemmel"]').getByTitle('Slett innfyllingsfelt').click();
 
-      expect(maltekstseksjon.getByText('Vi har omgjort vedtaket, slik at .')).toBeVisible();
-      expect(maltekstseksjon.getByText('Vedtaket er gjort etter  § .')).toBeVisible();
-      expect(maltekstseksjon.getByText('Se vedlegg for regelverket som gjelder for saken. ')).toBeVisible();
-    });
-
-    await test.step('Anførsler: Skrive i redigerbar maltekst', async () => {
-      const maltekstseksjon = smartEditor.locator('[data-element="maltekstseksjon"][data-section="section-ulv"]');
-
-      await maltekstseksjon.locator('li').first().click();
-      await page.keyboard.type('Alt som er feil');
-      await page.keyboard.press('Enter');
-      await page.keyboard.type('Alt som ikke er riktig');
-
-      const list = maltekstseksjon.locator('ul');
-      const item1 = list.locator('li').nth(0);
-      const item2 = list.locator('li').nth(1);
-
-      expect(await item1.textContent()).toBe('Alt som er feil');
-      expect(await item2.textContent()).toBe('Alt som ikke er riktig');
+      expect(maltekstseksjon.getByText('Vedtaket er gjort etter ')).toBeVisible();
+      expect(maltekstseksjon.getByText('og forvaltningsloven § 34.')).toBeVisible();
     });
 
     await test.step('Vurderingen: Fylle ut innfyllingsfelt', async () => {
       const maltekstseksjon = smartEditor.locator('[data-element="maltekstseksjon"][data-section="section-mus"]');
 
-      await maltekstseksjon.locator('[data-placeholder="fyll ut/vis tilbake til konklusjonen øverst"]').first().click();
-      await page.keyboard.type('får igjen masse penger!');
+      await maltekstseksjon.locator('[data-placeholder^="Ved stadfestet eller medhold:"]').first().click();
+      await page.keyboard.type('du får igjen masse penger!');
 
-      expect(maltekstseksjon.getByText('Derfor har vi kommet fram til at du får igjen masse penger!')).toBeVisible();
+      expect(maltekstseksjon.getByText('Vi har derfor kommet til at')).toBeVisible();
+      expect(maltekstseksjon.getByText('du får igjen masse penger!')).toBeVisible();
     });
 
     await test.step('Sett hjemmel', async () => {
