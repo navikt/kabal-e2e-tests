@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.1.3/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.3/schema.json",
   "root": true,
   "vcs": {
     "enabled": true,
@@ -34,10 +34,10 @@
         "noReExportAll": "warn"
       },
       "security": {
-        "recommended": true
+        "recommended": true,
+        "noSecrets": "off"
       },
       "nursery": {
-        "noSecrets": "off",
         "useExplicitType": "off",
         "noImportCycles": "off"
       },
@@ -89,6 +89,6 @@
     "linter": { "enabled": true }
   },
   "files": {
-    "includes": ["**", "!**/dist/**"]
+    "includes": ["**", "!**/dist"]
   }
 }
