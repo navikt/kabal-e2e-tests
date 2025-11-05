@@ -1,19 +1,20 @@
 import { chromium, type Page } from '@playwright/test';
-import type { FullConfig } from '@playwright/test/reporter';
-import { DEV_DOMAIN } from './../tests/functions';
-import { USE_LOCAL } from '../tests/functions';
+import { storageState } from '../playwright.config';
+import { DEV_DOMAIN, UI_DOMAIN, USE_LOCALHOST } from './../tests/functions';
 import { getLoggedInPage } from '../tests/helpers';
 import { userSaksbehandler } from '../tests/users';
 
-const globalSetup = async (config: FullConfig) => {
-  const { storageState } = config.projects[0].use;
+const globalSetup = async () => {
+  console.debug(`Using ${process.env.CONFIG ?? 'local'} config.`);
+  console.debug(`Running tests against ${UI_DOMAIN}\n`);
+
   const browser = await chromium.launch();
   const page = await browser.newPage();
 
   await getLoggedInPage(page, userSaksbehandler);
 
   if (typeof storageState === 'string') {
-    if (USE_LOCAL) {
+    if (USE_LOCALHOST) {
       await setLocalhostCookie(page);
     }
 
