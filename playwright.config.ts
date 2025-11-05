@@ -1,16 +1,47 @@
-import { defineConfig } from '@playwright/test';
-import { baseConfig } from './playwright.config.base';
+import { defineConfig } from 'playwright/test';
 
-export default defineConfig({
+const isInNais = process.env.CONFIG === 'nais';
+
+export const storageState = isInNais ? '/tmp/state.json' : './state.json';
+
+const baseConfig = defineConfig({
+  name: 'Kabal',
+  timeout: 120_000,
+  globalTimeout: 600_000,
+  globalSetup: './setup/global-setup.ts',
+
+  testDir: './tests',
+  testMatch: '**/*.test.ts',
+  fullyParallel: true,
+
+  use: {
+    locale: 'no-NB',
+    actionTimeout: 10_000,
+    navigationTimeout: 15_000,
+    storageState,
+    trace: 'on',
+    video: 'on',
+    screenshot: 'on',
+  },
+});
+
+const local = defineConfig({
   ...baseConfig,
+
+  maxFailures: 1,
+  outputDir: './test-results',
+  reporter: [['list']],
+  retries: 0,
+});
+
+const nais = defineConfig({
+  ...baseConfig,
+
+  forbidOnly: true,
+  maxFailures: 0,
   outputDir: '/tmp/test-results',
   reporter: [['list'], ['./reporters/slack-reporter.ts'], ['./reporters/status.ts']],
   retries: 1,
-
-  use: {
-    ...baseConfig.use,
-    video: 'on',
-    screenshot: 'on',
-    storageState: '/tmp/state.json', // File for storing cookies and localStorage (per origin). Speeds up test execution, as the test browser no longer needs to log in for every test.
-  },
 });
+
+export default isInNais ? nais : local;
