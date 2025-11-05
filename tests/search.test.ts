@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { UI_DOMAIN } from './functions';
+import { UI_DOMAIN } from '@/tests/functions';
 
 test.describe('Søk', () => {
   test.beforeEach(async ({ page }) => {

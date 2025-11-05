@@ -1,6 +1,6 @@
 import { test as base, type Page } from '@playwright/test';
-import { generateBehandling, SaksTypeName } from './generate';
-import { AnkebehandlingPage, KabalPage, KlagebehandlingPage } from './page';
+import { generateBehandling, SaksTypeName } from '@/fixtures/behandling/generate';
+import { AnkebehandlingPage, KabalPage, KlagebehandlingPage } from '@/fixtures/behandling/page';
 
 export interface Pages {
   index: KabalPage;

@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
-import { createApiUrl } from '../../tests/functions';
-import { makeDirectApiRequest } from '../direct-api-request';
+import { makeDirectApiRequest } from '@/fixtures/direct-api-request';
+import { createApiUrl } from '@/tests/functions';
 
 export const deleteBehandling = async (page: Page, behandlingId: string) => {
   const api = 'kabal-api';

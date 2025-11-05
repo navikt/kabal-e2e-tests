@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
-import { getParsedUrl } from './functions';
-import { getLoggedInPage, goToAzure } from './helpers';
-import { userSaksbehandler } from './users';
+import { getParsedUrl } from '@/tests/functions';
+import { getLoggedInPage, goToAzure } from '@/tests/helpers';
+import { userSaksbehandler } from '@/tests/users';
 
 test.describe('Ikke innlogget', () => {
   // Don't reuse logged in state for these tests.

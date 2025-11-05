@@ -1,7 +1,7 @@
 import { expect, type Locator, type Page } from '@playwright/test';
-import type { Behandling } from '../fixtures/behandling/behandling';
-import { test } from '../fixtures/behandling/fixture';
-import { UI_DOMAIN } from './functions';
+import type { Behandling } from '@/fixtures/behandling/behandling';
+import { test } from '@/fixtures/behandling/fixture';
+import { UI_DOMAIN } from '@/tests/functions';
 
 test.describe('Tildeling/fradeling', () => {
   test('Tildele og fradele seg behandling', async ({ index }, testInfo) => {

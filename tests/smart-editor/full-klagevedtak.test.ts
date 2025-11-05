@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
-import { test } from '../../fixtures/behandling/fixture';
-import { UtfallLabel } from '../../fixtures/behandling/types';
-import { FULLMEKTIG_DATA, KLAGER_DATA, SAKEN_GJELDER_DATA } from '../users';
+import { test } from '@/fixtures/behandling/fixture';
+import { UtfallLabel } from '@/fixtures/behandling/types';
+import { FULLMEKTIG_DATA, KLAGER_DATA, SAKEN_GJELDER_DATA } from '@/tests/users';
 
 test.describe('Smart editor', () => {
   test('Klagevedtak', async ({ klagebehandling }) => {

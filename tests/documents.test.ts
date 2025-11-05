@@ -1,5 +1,5 @@
-import { test } from '../fixtures/behandling/fixture';
-import { DocumentType } from '../fixtures/behandling/types';
+import { test } from '@/fixtures/behandling/fixture';
+import { DocumentType } from '@/fixtures/behandling/types';
 
 test.describe('Dokumenter', () => {
   test('Laste opp og slette', async ({ klagebehandling }) => {

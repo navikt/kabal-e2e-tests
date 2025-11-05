@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { createApiUrl } from '../tests/functions';
+import { createApiUrl } from '@/tests/functions';
 
 export const makeDirectApiRequest = async <T>(
   page: Page,
