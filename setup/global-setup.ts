@@ -1,8 +1,8 @@
 import { chromium, type Page } from '@playwright/test';
-import { storageState } from '../playwright.config';
-import { DEV_DOMAIN, UI_DOMAIN, USE_LOCALHOST } from './../tests/functions';
-import { getLoggedInPage } from '../tests/helpers';
-import { userSaksbehandler } from '../tests/users';
+import { storageState } from '@/playwright.config';
+import { DEV_DOMAIN, UI_DOMAIN, USE_LOCALHOST } from '@/tests/functions';
+import { getLoggedInPage } from '@/tests/helpers';
+import { userSaksbehandler } from '@/tests/users';
 
 const globalSetup = async () => {
   console.debug(`Using ${process.env.CONFIG ?? 'local'} config.`);

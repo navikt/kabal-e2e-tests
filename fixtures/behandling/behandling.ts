@@ -1,7 +1,6 @@
 import type { Page } from '@playwright/test';
-import { UI_DOMAIN } from '../../tests/functions';
-import { assignBehandling, deAssignBehandling } from './assign';
-import { deleteBehandling } from './delete';
+import { assignBehandling, deAssignBehandling } from '@/fixtures/behandling/assign';
+import { deleteBehandling } from '@/fixtures/behandling/delete';
 import {
   deleteDocument,
   downloadPdf,
@@ -11,9 +10,10 @@ import {
   setDocumentAsAttachmentTo,
   setDocumentType,
   uploadDocument,
-} from './documents';
-import { type IGenerateResponse, SaksTypeName, Sakstype } from './generate';
-import type { DocumentType } from './types';
+} from '@/fixtures/behandling/documents';
+import { type IGenerateResponse, SaksTypeName, Sakstype } from '@/fixtures/behandling/generate';
+import type { DocumentType } from '@/fixtures/behandling/types';
+import { UI_DOMAIN } from '@/tests/functions';
 
 export class Behandling {
   public readonly id: string;

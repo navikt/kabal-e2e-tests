@@ -1,7 +1,7 @@
 import type { Page, Request } from '@playwright/test';
 import { expect } from '@playwright/test';
-import { DEV_DOMAIN, LOCAL_DOMAIN, UI_DOMAIN, USE_LOCALHOST } from './functions';
-import type { User } from './users';
+import { DEV_DOMAIN, LOCAL_DOMAIN, UI_DOMAIN, USE_LOCALHOST } from '@/tests/functions';
+import type { User } from '@/tests/users';
 
 export const goToAzure = async (page: Page, path = ''): Promise<Page> => {
   const res = await page.goto(`${DEV_DOMAIN}${path}`);

@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test';
-import { FULLMEKTIG, KLAGER, SAKEN_GJELDER } from '../../tests/users';
-import { makeDirectApiRequest } from '../direct-api-request';
-import { Behandling } from './behandling';
+import { Behandling } from '@/fixtures/behandling/behandling';
+import { makeDirectApiRequest } from '@/fixtures/direct-api-request';
+import { FULLMEKTIG, KLAGER, SAKEN_GJELDER } from '@/tests/users';
 
 export const generateBehandling = async (page: Page, type: SaksTypeName): Promise<Behandling> => {
   const res = await makeDirectApiRequest(page, 'kabal-api', `/mockdata/random${type}`, 'POST', {

@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test';
-import { makeDirectApiRequest } from '../direct-api-request';
-import { getBrukerData } from './get-user-data';
+import { getBrukerData } from '@/fixtures/behandling/get-user-data';
+import { makeDirectApiRequest } from '@/fixtures/direct-api-request';
 
 enum FradelReason {
   FEIL_HJEMMEL = 1,

@@ -1,5 +1,5 @@
-import { requiredEnvString } from '../config/env';
-import { formatIdNumber } from './format-id';
+import { requiredEnvString } from '@/config/env';
+import { formatIdNumber } from '@/tests/format-id';
 
 export interface User {
   username: string;

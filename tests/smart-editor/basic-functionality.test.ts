@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { test } from '../../fixtures/behandling/fixture';
+import { test } from '@/fixtures/behandling/fixture';
 
 test.describe('Smart editor - Grunnleggende funksjonalitet', () => {
   test('Skrive et avsnitt', async ({ page, klagebehandling }) => {
