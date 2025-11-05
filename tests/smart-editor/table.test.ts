@@ -1,4 +1,4 @@
-import { expect } from 'playwright/test';
+import { expect } from '@playwright/test';
 import { test } from '../../fixtures/behandling/fixture';
 
 test.describe('Smart editor -Tabell', () => {
