@@ -26,9 +26,6 @@ export const getLoggedInPage = async (page: Page, { username, password }: User, 
   // Click "Sign in".
   await azurePage.click('input[type=submit]');
 
-  // Click "No" to remember login.
-  await azurePage.click('input[type=button]');
-
   // Force navigation to local domain, if not using dev domain.
   if (USE_LOCALHOST) {
     await page.goto(`${LOCAL_DOMAIN}${path}`);
