@@ -30,7 +30,10 @@ test.describe('Smart editor', () => {
       expect(smartEditor.getByText(`Saken gjelder: ${SAKEN_GJELDER_DATA.name}`)).toBeVisible();
       expect(smartEditor.getByText(`Fødselsnummer: ${SAKEN_GJELDER_DATA.id}`)).toBeVisible();
       expect(smartEditor.getByText(`Klager: ${KLAGER_DATA.name}`)).toBeVisible();
-      expect(smartEditor.getByText(`Fullmektig: ${FULLMEKTIG_DATA.name}`)).toBeVisible();
+
+      const fullmektigElement = smartEditor.locator('[data-element="fullmektig"]');
+      expect(fullmektigElement.getByText('Fullmektig')).toBeVisible();
+      expect(fullmektigElement.getByText(FULLMEKTIG_DATA.name)).toBeVisible();
       expect(smartEditor.getByText(`Saksnummer: ${saksnummer}`)).toBeVisible();
     });
 
@@ -107,7 +110,7 @@ test.describe('Smart editor', () => {
     await test.step('Sett hjemmel', async () => {
       await page.getByTestId('lovhjemmel-button').click();
       const folketrygdloven = page.locator('li[data-groupname="Folketrygdloven"]');
-      await folketrygdloven.getByText('§ 2-14').click();
+      await folketrygdloven.getByText('§ 8-9').click();
     });
 
     await test.step('Sett inn regelverk', async () => {
@@ -128,7 +131,10 @@ test.describe('Smart editor', () => {
 
       await button.click();
 
-      expect(firstParagraph).toHaveText('Folketrygdloven § 2-14');
+      expect(firstParagraph).toHaveText('Forvaltningsloven § 34:');
+
+      const sixthParagraph = regelverk.locator('p').nth(5);
+      expect(sixthParagraph).toHaveText('Folketrygdloven § 8-9:');
 
       await expect(sistLagret).not.toHaveText(sistLagretText);
     });
