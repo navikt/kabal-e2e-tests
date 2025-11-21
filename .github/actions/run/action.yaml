@@ -32,7 +32,7 @@ runs:
   using: "composite"
   steps:
     - name: Checkout E2E
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: navikt/kabal-e2e-tests
 
