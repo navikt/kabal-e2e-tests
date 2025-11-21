@@ -27,6 +27,7 @@ jobs:
       id-token: write
     outputs:
       image: ${{ steps.image-info.outputs.image }}
+      version: ${{ steps.image-tag.outputs.tag }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -94,10 +95,9 @@ jobs:
         uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-gcp
-          VAR: jobid=${{ steps.uuid.outputs.uuid }},image=${{ needs.build.outputs.image }}
+          VAR: jobid=${{ steps.uuid.outputs.uuid }},image=${{ needs.build.outputs.image }},version=${{ needs.build.outputs.version }},github_actor=${{ github.actor }},github_repository=${{ github.repository }}
           TEAM: klage
           RESOURCE: nais/e2e-job.yaml
-          IMAGE: ${{ needs.build.outputs.image }}
 
       - name: Check E2E job status
         uses: navikt/klage-job-status/action@main
