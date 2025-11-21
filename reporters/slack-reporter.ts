@@ -149,7 +149,10 @@ class SlackReporter implements Reporter {
     const testThread = this.threads.get(test.id);
     const icon = getTestStatusIcon(test, result.status);
     const title = getTestTitle(test);
-    this.updateTestMessage(test, { icon, status: `${(result.duration / 1_000).toFixed(1)}s` });
+    this.updateTestMessage(test, {
+      icon,
+      status: `${(result.duration / 1_000).toFixed(1)}s`,
+    });
 
     const isFailed = result.status === 'failed' || result.status === 'timedOut';
 

@@ -29,7 +29,11 @@ const update = async (status: Status) => {
     return;
   }
 
-  await fetch(UPDATE_URL, { method: 'PUT', headers: { API_KEY }, body: status });
+  await fetch(UPDATE_URL, {
+    method: 'PUT',
+    headers: { API_KEY },
+    body: status,
+  });
 };
 
 class StatusReporter implements Reporter {
