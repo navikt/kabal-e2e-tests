@@ -35,6 +35,7 @@ runs:
       uses: actions/checkout@v6
       with:
         repository: navikt/kabal-e2e-tests
+        ref: ${{ inputs.e2e_tag }}
 
     - name: Get image registry
       id: image-registry
@@ -52,14 +53,7 @@ runs:
     - name: Get image tag
       id: image-tag
       shell: bash
-      run: |
-        if [[ -n "${{ inputs.e2e_tag }}" ]]; then
-          echo "tag=${{ inputs.e2e_tag }}" >> $GITHUB_OUTPUT
-        elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-          echo "tag=latest" >> $GITHUB_OUTPUT
-        else
-          echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-        fi
+      run: echo "tag=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
     - name: Generate image name
       id: image
