@@ -4,14 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       run-tests:
-        description: 'Run after build?'
+        description: "Run after build?"
         required: true
         default: true
         type: boolean
   workflow_call:
     inputs:
       run-tests:
-        description: 'Run after build?'
+        description: "Run after build?"
         required: true
         default: false
         type: boolean
@@ -30,13 +30,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      
+        uses: actions/checkout@v6
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      
+
       - name: Install dependencies
         shell: bash
         env:
@@ -44,7 +44,7 @@ jobs:
         run: |
           echo -e "\n[install.scopes]\n\"@navikt\" = { token = \"$BUN_AUTH_TOKEN\", url = \"https://npm.pkg.github.com/\" }" >> bunfig.toml
           bun install --frozen-lockfile
-      
+
       - name: Get image tag
         id: image-tag
         shell: bash
@@ -71,7 +71,7 @@ jobs:
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }} # required, but is defined as an organization variable
           build_args: |
             CI=true
-  
+
   e2e_tests:
     name: Run E2E tests (${{ github.ref_name }})
     needs: build
@@ -82,7 +82,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Generate UUID
         id: uuid
