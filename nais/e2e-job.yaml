@@ -17,17 +17,17 @@ spec:
       memory: 512Mi
     limits:
       cpu: 8000m
-      memory: 8Gi  
+      memory: 8Gi
   image: {{image}}
   env:
     - name: JOB_ID
-      value: {{jobid}}
+      value: '{{jobid}}'
     - name: VERSION
-      value: {{version}}
+      value: '{{version}}'
     - name: GITHUB_ACTOR
-      value: {{github_actor}}
+      value: '{{github_actor}}'
     - name: GITHUB_REPOSITORY
-      value: {{github_repository}}
+      value: '{{github_repository}}'
   envFrom:
     - secret: kabal-e2e-test-users
     - secret: slack-e2e-secrets
