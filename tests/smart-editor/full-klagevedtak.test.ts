@@ -108,9 +108,10 @@ test.describe('Smart editor', () => {
     });
 
     await test.step('Sett hjemmel', async () => {
-      await page.getByTestId('lovhjemmel-button').click();
-      const folketrygdloven = page.locator('li[data-groupname="Folketrygdloven"]');
+      await page.getByText('Hjemmel (0)').click();
+      const folketrygdloven = page.getByLabel('Folketrygdloven');
       await folketrygdloven.getByText('§ 8-9').click();
+      await page.getByText('Hjemmel (1)').click(); // Close dropdown
     });
 
     await test.step('Sett inn regelverk', async () => {
