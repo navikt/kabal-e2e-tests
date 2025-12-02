@@ -40,9 +40,9 @@ const assignBehandling = async (page: Page, behandling: Behandling) => {
   });
 
   await test.step('Sett filtere for ledige oppgaver', async () => {
-    await setFilter(page, 'filter-type', behandling.typeId);
-    await setFilter(page, 'filter-ytelse', behandling.ytelseId);
-    await setFilter(page, 'filter-hjemler', behandling.hjemmelId);
+    await setFilter(page, 'Type', behandling.typeId);
+    await setFilter(page, 'Ytelse', behandling.ytelseId);
+    await setFilter(page, 'Hjemmel', behandling.hjemmelId);
 
     await page.locator(`[data-testid="${tableId}-rows"][data-state="ready"]`).waitFor();
   });
@@ -77,25 +77,9 @@ const deAssignBehandling = async (page: Page, behandlingId: string) => {
 };
 
 const setFilter = async (page: Page, filterName: string, value: string) => {
-  const filterContainer = page.locator(`data-testid=${filterName}`);
-  const filterToggleButton = filterContainer.locator('[data-testid="toggle-button"]');
-  await filterToggleButton.click();
-
-  const filterList = filterContainer.locator('[data-testid="filter-list"]');
-  await filterList.waitFor();
-
-  await filterList.locator(`[data-testid="filter"][data-filterid="${value}"]`).check();
-  const filterItems = await filterList.locator(`[data-testid="filter"]`).all();
-
-  for (const filterItem of filterItems) {
-    const filterItemValue = await filterItem.getAttribute('data-filterid');
-
-    if (filterItemValue !== value) {
-      await filterItem.uncheck();
-    }
-  }
-
-  await filterToggleButton.click();
+  await page.getByText(`${filterName} (0)`).click();
+  await page.locator(`input[type="checkbox"][value="${value}"]`).check();
+  await page.getByText(`${filterName} (1)`).click(); // Close dropdown
 };
 
 interface IFindOppgaveRowOptions {

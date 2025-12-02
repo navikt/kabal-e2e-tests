@@ -52,23 +52,15 @@ const changeHjemmel = async (behandling: AnkebehandlingPage | KlagebehandlingPag
 
   const hjemmelName = '§ 22-15 første ledd første punktum';
 
-  const lovhjemmelButton = page.getByTestId('lovhjemmel-button');
+  const lovhjemmelButton = page.getByText('Hjemmel (0)');
   await lovhjemmelButton.scrollIntoViewIfNeeded();
   await lovhjemmelButton.click();
 
   const filterText = 'første ledd første';
-  await page.getByPlaceholder('Søk').fill(filterText);
-
-  const lovkildeList = page.getByTestId('filter-group');
-  const lovkildeCount = await lovkildeList.count();
-  expect(lovkildeCount).toBe(1);
-
-  const inputs = lovkildeList.getByTestId('filter');
-  const inputCount = await inputs.count();
-  expect(inputCount).toBe(1);
+  await page.getByPlaceholder('Filtrer').fill(filterText);
 
   await page.getByText(hjemmelName).click();
-  const checkbox = page.locator(`input[data-label="${hjemmelName}"]`);
+  const checkbox = page.getByLabel(hjemmelName);
 
   const checked = await checkbox.isChecked();
   await checkbox.setChecked(!checked);
