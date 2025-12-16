@@ -57,14 +57,6 @@ jobs:
         with:
           team: klage # required
           tag: ${{ steps.image-tag.outputs.tag }} # optional
-          push_image: true # optional, default true
-          dockerfile: Dockerfile # optional, default Dockerfile
-          docker_context: . # optional, default .
-          image_suffix: # optional, default empty
-          cache_from: type=gha # optional, default type=gha
-          cache_to: type=gha,mode=max # optional, default type=gha,mode=max
-          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }} # required, but is defined as an organization secret
-          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }} # required, but is defined as an organization variable
           build_args: |
             CI=true
 
