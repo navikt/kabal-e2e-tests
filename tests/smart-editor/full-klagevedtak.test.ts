@@ -11,16 +11,14 @@ test.describe('Smart editor', () => {
     await test.step('Topptekst', () => {
       const header = smartEditor.locator('[data-element="header"]');
 
-      expect(header).toHaveText(
-        'Returadresse: Nav klageinstans Oslo og Akershus, Postboks 7028 St. Olavs plass, 0130 Oslo',
-      );
+      expect(header).toHaveText('Returadresse: Klageinstans Oslo, Postboks 7028 St. Olavs plass, 0130 Oslo');
     });
 
     await test.step('Bunntekst', () => {
       const footer = smartEditor.locator('[data-element="footer"]');
 
       expect(footer).toHaveText(
-        'Postadresse: Nav klageinstans Oslo og Akershus // Postboks 7028 St. Olavs plass // 0130 Oslo\nTelefon: 55 55 33 33\nnav.no',
+        'Postadresse: Klageinstans Oslo // Postboks 7028 St. Olavs plass // 0130 Oslo // Telefon: 55 55 33 33 // nav.no',
       );
     });
 
@@ -76,9 +74,7 @@ test.describe('Smart editor', () => {
       await page.keyboard.type('Ønsker å få tilbake penger.');
 
       expect(
-        maltekstseksjon.getByText(
-          'Saken gjelder: Klagen din av 13/37-1337 over Nav Vikafossen sitt vedtak av 14/37-1337.',
-        ),
+        maltekstseksjon.getByText('Saken gjelder: Klagen din 13/37-1337 over Nav Vikafossen sitt vedtak 14/37-1337.'),
       ).toBeVisible();
       expect(maltekstseksjon.getByText('Ønsker å få tilbake penger.')).toBeVisible();
     });
@@ -100,11 +96,18 @@ test.describe('Smart editor', () => {
     await test.step('Vurderingen: Fylle ut innfyllingsfelt', async () => {
       const maltekstseksjon = smartEditor.locator('[data-element="maltekstseksjon"][data-section="section-mus"]');
 
-      await maltekstseksjon.locator('[data-placeholder^="Ved stadfestet eller medhold:"]').first().click();
-      await page.keyboard.type('du får igjen masse penger!');
+      await maltekstseksjon.locator('[data-placeholder^="Beskriv hovedpoengene"]').first().click();
+      await page.keyboard.type('at du vil ha igjen masse penger.');
 
-      expect(maltekstseksjon.getByText('Vi har derfor kommet til at')).toBeVisible();
-      expect(maltekstseksjon.getByText('du får igjen masse penger!')).toBeVisible();
+      await maltekstseksjon.locator('[data-placeholder^="Forklar kort og presist"]').first().click();
+      await page.keyboard.type('Reglene sier at du skal få igjen masse penger.');
+
+      await maltekstseksjon.locator('[data-placeholder^="fyll ut"]').first().click();
+      await page.keyboard.type('kommet fram til at du får igjen masse penger!');
+
+      expect(maltekstseksjon.getByText('at du vil ha igjen masse penger.')).toBeVisible();
+      expect(maltekstseksjon.getByText('Reglene sier at du skal få igjen masse penger.')).toBeVisible();
+      expect(maltekstseksjon.getByText('kommet fram til at du får igjen masse penger!')).toBeVisible();
     });
 
     await test.step('Sett hjemmel', async () => {
