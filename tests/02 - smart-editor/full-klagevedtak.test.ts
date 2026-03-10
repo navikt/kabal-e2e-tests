@@ -44,7 +44,12 @@ test.describe('Smart editor', () => {
       expect(smartEditor.getByText('Du har rett til å anke')).not.toBeVisible();
       expect(smartEditor.getByText('Informasjon om dekning av sakskostnader')).not.toBeVisible();
 
-      await page.getByLabel('Utfall/resultat', { exact: true }).selectOption({ label: UtfallLabel.MEDHOLD });
+      const utfallContainer = page.getByRole('button', { name: 'Utfall/resultat', exact: true }).locator('..');
+      await page.waitForTimeout(1000);
+      await utfallContainer.getByText(UtfallLabel.IKKE_VALGT).click();
+      await utfallContainer.locator('.aksel-popover').waitFor({ state: 'visible' });
+      await utfallContainer.getByText(UtfallLabel.MEDHOLD, { exact: true }).check();
+      await utfallContainer.getByRole('button', { name: 'Sett utfall' }).click();
 
       expect(smartEditor.getByText(`Avgjørelse${NO_MALTEKSTSEKSJON_TEXT}`)).not.toBeVisible();
       expect(smartEditor.getByText(`Ankeinfo${NO_MALTEKSTSEKSJON_TEXT}`)).not.toBeVisible();
@@ -111,10 +116,19 @@ test.describe('Smart editor', () => {
     });
 
     await test.step('Sett hjemmel', async () => {
-      await page.getByText('Hjemmel (0)').click();
-      const folketrygdloven = page.getByLabel('Folketrygdloven');
-      await folketrygdloven.getByText('§ 8-9').click();
-      await page.getByText('Hjemmel (1)').click(); // Close dropdown
+      const container = page
+        .locator('div')
+        .filter({ hasText: 'Utfallet er basert på lovhjemmel' })
+        .filter({ has: page.getByLabel('Hjemmel') });
+
+      await page.getByText('Velg hjemler').click();
+
+      const hjemmel = 'Folketrygdloven - § 8-9';
+
+      await container.getByPlaceholder('Filtrer...').filter({ visible: true }).fill(hjemmel);
+
+      await container.getByText(hjemmel).check();
+      await container.getByRole('button', { name: 'Sett hjemler' }).click();
     });
 
     await test.step('Sett inn regelverk', async () => {
@@ -144,6 +158,7 @@ test.describe('Smart editor', () => {
     });
 
     await test.step('Send ut', async () => {
+      await page.waitForTimeout(1000);
       const newName = `Klagevedtak - ${new Date().toISOString()}`;
 
       await behandling.renameDocument('Klagevedtak', newName);

@@ -40,9 +40,9 @@ const assignBehandling = async (page: Page, behandling: Behandling) => {
   });
 
   await test.step('Sett filtere for ledige oppgaver', async () => {
-    await setFilter(page, 'Type', behandling.typeId);
-    await setFilter(page, 'Ytelse', behandling.ytelseId);
-    await setFilter(page, 'Hjemmel', behandling.hjemmelId);
+    await setFilter(page, 'Type', behandling.typeName);
+    await setFilter(page, 'Ytelse', behandling.ytelseName);
+    await setFilter(page, 'Hjemmel', behandling.getHjemmelName(), true);
 
     await page.locator(`[data-testid="${tableId}-rows"][data-state="ready"]`).waitFor();
   });
@@ -76,10 +76,13 @@ const deAssignBehandling = async (page: Page, behandlingId: string) => {
   });
 };
 
-const setFilter = async (page: Page, filterName: string, value: string) => {
-  await page.getByText(`${filterName} (0)`).click();
-  await page.locator(`input[type="checkbox"][value="${value}"]`).check();
-  await page.getByText(`${filterName} (1)`).click(); // Close dropdown
+const setFilter = async (page: Page, filterName: string, value: string, exact = false) => {
+  await page.getByRole('button', { name: filterName }).click();
+
+  const popover = page.locator('.aksel-popover').filter({ visible: true });
+  await popover.getByPlaceholder('Filtrer...').fill(value);
+  await popover.getByText(value, { exact }).click();
+  await popover.getByRole('button', { name: 'Bekreft' }).click();
 };
 
 interface IFindOppgaveRowOptions {
@@ -113,12 +116,16 @@ const findOppgaveRow = async ({ page, tableId, behandlingId }: IFindOppgaveRowOp
 
 const refreshOppgaver = async (page: Page, tableId: string) => {
   const pagination = page.getByTestId(`${tableId}-footer-pagination`);
-  const pageOneButton = pagination.locator('button[page="1"]').first();
-  await pageOneButton.click();
+
+  if (await pagination.isVisible()) {
+    await pagination.locator('button[page="1"]').first().click()
+    await page.locator(`[data-testid="${tableId}-rows"][data-state="ready"]`).waitFor();
+  }
 
   const refreshButton = page.getByTestId(`${tableId}-footer-refresh-button`).first();
 
   await refreshButton.click();
+  await page.locator(`[data-testid="${tableId}-rows"][data-state="ready"]`).waitFor();
 };
 
 type FindFnType = (page: Page, tableId: string, behandlingId: string) => Promise<Locator | null>;

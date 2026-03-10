@@ -1,5 +1,6 @@
 import { chromium, type Page } from '@playwright/test';
 import { storageState } from '@/playwright.config';
+import { getHjemler } from '@/setup/get-hjemler';
 import { DEV_DOMAIN, UI_DOMAIN, USE_LOCALHOST } from '@/tests/functions';
 import { getLoggedInPage } from '@/tests/helpers';
 import { userSaksbehandler } from '@/tests/users';
@@ -11,6 +12,7 @@ const globalSetup = async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage();
 
+  await getHjemler();
   await getLoggedInPage(page, userSaksbehandler);
 
   if (typeof storageState === 'string') {
