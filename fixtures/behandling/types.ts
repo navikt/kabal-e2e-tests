@@ -6,6 +6,7 @@ export enum DocumentType {
 }
 
 export enum UtfallLabel {
+  IKKE_VALGT = 'Ikke valgt',
   TRUKKET = 'Trukket',
   RETUR = 'Retur',
   OPPHEVET = 'Opphevet',

@@ -25,10 +25,10 @@ interface Part {
   id: Id;
 }
 
-export const SAKEN_GJELDER: Part = { id: { type: PartType.PERSON, verdi: '27528510332' } };
+export const SAKEN_GJELDER: Part = { id: { type: PartType.PERSON, verdi: '03859397416' } };
 export const KLAGER: Part = { id: { type: PartType.PERSON, verdi: '20840899684' } };
 export const FULLMEKTIG: Part = { id: { type: PartType.PERSON, verdi: '19900598796' } };
 
-export const SAKEN_GJELDER_DATA = { id: formatIdNumber(SAKEN_GJELDER.id.verdi), name: 'Firkantet Trakt' };
+export const SAKEN_GJELDER_DATA = { id: formatIdNumber(SAKEN_GJELDER.id.verdi), name: 'RISIKABEL PAMP' };
 export const KLAGER_DATA = { id: formatIdNumber(KLAGER.id.verdi), name: 'PRATSOM KLUT' };
 export const FULLMEKTIG_DATA = { id: formatIdNumber(FULLMEKTIG.id.verdi), name: 'BEGEISTRET FLEKK' };

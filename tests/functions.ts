@@ -7,6 +7,7 @@ export const getParsedUrl = (url: string): URL => new URL(url);
 
 export const USE_LOCALHOST = process.env.TARGET === 'local';
 
+export const KODEVERK_URL = 'https://klage-kodeverk-api.intern.dev.nav.no/kodeverk';
 export const LOCAL_DOMAIN = 'http://localhost:8061';
 export const DEV_DOMAIN = 'https://kabal.intern.dev.nav.no';
 

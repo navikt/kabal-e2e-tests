@@ -27,83 +27,68 @@ test.describe('Ankebehandling', () => {
 const changeUtfall = async (behandling: AnkebehandlingPage | KlagebehandlingPage) => {
   const { page } = behandling;
 
-  const select = page.getByTestId('select-utfall');
-  await select.scrollIntoViewIfNeeded();
+  const container = page.getByTestId('utfall-section');
 
-  await page.locator('[data-testid="select-utfall"][data-ready="true"]').waitFor();
-
+  await container.getByText(UtfallLabel.IKKE_VALGT).click();
+  await container.getByText(UtfallLabel.MEDHOLD, { exact: true }).check();
   const requestPromise = page.waitForRequest('**/behandlinger/**/resultat/utfall');
-  await select.selectOption({ label: UtfallLabel.MEDHOLD });
+  await container.getByRole('button', { name: 'Sett utfall' }).click();
   await finishedRequest(requestPromise);
 
-  await page.waitForTimeout(200);
-
   await page.reload();
-  await select.scrollIntoViewIfNeeded();
 
-  await page.locator('[data-testid="select-utfall"][data-ready="true"]').waitFor();
-  const selected = await select.inputValue();
-
-  expect(selected).toBe('4');
+  await expect(container.getByText(UtfallLabel.MEDHOLD)).toBeVisible();
 };
 
 const changeHjemmel = async (behandling: AnkebehandlingPage | KlagebehandlingPage) => {
   const { page } = behandling;
 
-  const hjemmelName = '§ 22-15 første ledd første punktum';
+  const container = page.getByLabel('Hjemmel').locator('..');
 
-  const lovhjemmelButton = page.getByText('Hjemmel (0)');
-  await lovhjemmelButton.scrollIntoViewIfNeeded();
-  await lovhjemmelButton.click();
+  const hjemmelName = 'Folketrygdloven - § 22-15 første ledd første punktum';
 
-  const filterText = 'første ledd første';
-  await page.getByPlaceholder('Filtrer').fill(filterText);
+  await page.getByText('Velg hjemler').waitFor({ state: 'visible' });
+  await page.getByText('Velg hjemler').click();
 
-  await page.getByText(hjemmelName).click();
-  const checkbox = page.getByLabel(hjemmelName);
+  const popover = container.locator('.aksel-popover').filter({ visible: true });
+  await popover.getByPlaceholder('Filtrer...').fill('første ledd første');
+  await container.getByText(hjemmelName).check();
+  const promise = page.waitForRequest('**/behandlinger/**/resultat/hjemler');
+  await container.getByRole('button', { name: 'Sett hjemler' }).click();
+  await finishedRequest(promise);
 
-  const checked = await checkbox.isChecked();
-  await checkbox.setChecked(!checked);
-
-  await page.waitForTimeout(200);
   await page.reload();
 
-  await lovhjemmelButton.scrollIntoViewIfNeeded();
-  await lovhjemmelButton.click();
-  const checkedAfterToggle = await checkbox.isChecked();
-
-  expect(checkedAfterToggle).toBe(!checked);
+  await expect(page.getByText(hjemmelName)).toBeVisible();
 };
 
 const changeMedunderskriver = async (behandling: AnkebehandlingPage | KlagebehandlingPage) => {
   const { page } = behandling;
 
-  const select = page.getByTestId('select-medunderskriver');
-  await select.scrollIntoViewIfNeeded();
+  const container = page.getByLabel('Medunderskriver').locator('..');
+  await container.getByText('Ingen', { exact: true }).click();
 
-  const [, secondValue] = await select
-    .locator('option')
-    .evaluateAll<string[], HTMLOptionElement>((options) => options.map((option) => option.value));
+  await container.getByText('F_Z994864 E_Z994864').check();
 
-  const requestPromise = page.waitForRequest('**/behandlinger/**/medunderskrivernavident');
-  await select.selectOption({ value: secondValue });
-  await finishedRequest(requestPromise);
+  const identPromise = page.waitForRequest('**/behandlinger/**/medunderskrivernavident');
+  const flowPromise = page.waitForRequest('**/behandlinger/**/medunderskriverflowstate');
+  await container.getByRole('button', { name: 'Send til medunderskriver' }).click();
+  await finishedRequest(identPromise);
+  await finishedRequest(flowPromise);
 
   await page.reload();
-  await select.scrollIntoViewIfNeeded();
 
-  const selected = await select.inputValue();
-
-  expect(selected).toBe(secondValue);
+  await expect(container.getByText('F_Z994864 E_Z994864', { exact: true })).toBeVisible();
 };
 
 const showErrors = async (behandling: AnkebehandlingPage | KlagebehandlingPage) => {
   const { page } = behandling;
 
-  const select = page.getByTestId('select-utfall');
-  await select.scrollIntoViewIfNeeded();
+  const container = page.getByLabel('Utfall/resultat').locator('..');
+  await container.getByText('Ikke valgt').click();
+  const popover = container.locator('.aksel-popover').filter({ visible: true });
+  await popover.getByText(UtfallLabel.IKKE_VALGT).check();
 
-  await select.selectOption({ index: 0 });
   await page.click('data-testid=complete-button');
 
   const ERROR_TEXT = 'Sett et utfall på saken.';

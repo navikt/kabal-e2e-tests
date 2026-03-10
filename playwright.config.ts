@@ -5,6 +5,7 @@ const isInNais = process.env.CONFIG === 'nais';
 export const storageState = isInNais ? '/tmp/state.json' : './state.json';
 
 const baseConfig = defineConfig({
+  workers: 4,
   name: 'Kabal',
   timeout: 120_000,
   globalTimeout: 600_000,
@@ -22,6 +23,7 @@ const baseConfig = defineConfig({
     trace: 'on',
     video: 'on',
     screenshot: 'on',
+    viewport: { width: 1280, height: 800 },
   },
 });
 

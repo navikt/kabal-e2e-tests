@@ -4,6 +4,7 @@ import { test } from '@/fixtures/behandling/fixture';
 test.describe('Smart editor - Grunnleggende funksjonalitet', () => {
   test('Skrive et avsnitt', async ({ page, klagebehandling }) => {
     const smartEditor = await klagebehandling.behandling.initSmartEditor('Generelt brev');
+    await smartEditor.locator('[data-placeholder="Avsnitt"]').first().click();
 
     const p = smartEditor.locator('.slate-p').last();
     await p.click();
@@ -16,6 +17,7 @@ test.describe('Smart editor - Grunnleggende funksjonalitet', () => {
 
   test('Lage en liste', async ({ page, klagebehandling }) => {
     const smartEditor = await klagebehandling.behandling.initSmartEditor('Generelt brev');
+    await smartEditor.locator('[data-placeholder="Avsnitt"]').first().click();
 
     const p = smartEditor.locator('.slate-p').last();
     await p.click();

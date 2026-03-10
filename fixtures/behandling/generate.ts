@@ -18,7 +18,7 @@ export const generateBehandling = async (page: Page, type: SaksTypeName): Promis
   const response: unknown = await res.json();
 
   if (isGenerateResponse(response)) {
-    return new Behandling(page, response);
+    return new Behandling(page, type, 'Sykepenger', response);
   }
 
   throw new Error(`Invalid response from mock endpoint: ${res.statusText} - Status code: ${res.status}`);

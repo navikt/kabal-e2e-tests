@@ -79,7 +79,7 @@ export const renameDocument = async (page: Page, documentName: string, newDocume
   return newDocumentName;
 };
 
-const NYTT_DOKUMENT_REGEX = /\/nytt-dokument\/(.*)\/(.*)/;
+const NYTT_DOKUMENT_REGEX = /\/file-viewer\/dua\/(.*)\/(.*)/;
 
 export const downloadPdf = async (page: Page, documentName: string) => {
   const container = getDocumentByName(page, documentName);
@@ -130,8 +130,6 @@ export const finishAndVerifyDocument = async (page: Page, documentName: string) 
 
   await modal.getByTestId('document-finish-button').click();
   await modal.getByTestId('document-finish-confirm').click();
-
-  await container.getByTestId('document-archiving').waitFor();
 
   const finishedList = page.getByTestId('oppgavebehandling-documents-all-list');
 
@@ -239,8 +237,7 @@ export const initSmartEditor = async (page: Page, templateName: string) => {
   await section.getByText(templateName).click();
 
   const smartEditor = page.locator('[data-area="content"]');
-  // Wait for actual content to load
-  await smartEditor.locator('[class="slate-current-date"]').waitFor();
+  await page.locator('[data-slate-editor="true"]').waitFor({ state: 'visible' });
 
   return smartEditor;
 };
@@ -249,6 +246,7 @@ const selectSuggestedMottaker = async (page: Page, name: string) => {
   const suggestedMottakere = page.locator('fieldset').filter({ hasText: 'Foreslåtte mottakere fra saken' });
 
   const promise = page.waitForRequest('**/behandlinger/**/dokumenter/**/mottakere');
+  await suggestedMottakere.getByText(name).waitFor();
   await suggestedMottakere.getByText(name).click();
   await finishedRequest(promise);
 };
