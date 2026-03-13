@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.13/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.6/schema.json",
   "root": true,
   "vcs": {
     "enabled": true,
@@ -38,8 +38,7 @@
         "noSecrets": "off"
       },
       "nursery": {
-        "useExplicitType": "off",
-        "noImportCycles": "off"
+        "useExplicitType": "off"
       },
       "correctness": {
         "noUndeclaredDependencies": "off",
@@ -75,7 +74,8 @@
           "options": { "allow": ["debug", "info", "warn", "error"] }
         },
         "noReactSpecificProps": "off",
-        "noEmptyBlockStatements": "off"
+        "noEmptyBlockStatements": "off",
+        "noImportCycles": "off"
       }
     }
   },
