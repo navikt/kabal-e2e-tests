@@ -4,6 +4,8 @@ import type { AnkebehandlingPage, KlagebehandlingPage } from '@/fixtures/behandl
 import { UtfallLabel } from '@/fixtures/behandling/types';
 import { finishedRequest } from '@/tests/helpers';
 
+const MEDUNDERSKRIVER_NAME = /F_Z994864 E_Z994864/;
+
 test.describe('Klagebehandling', () => {
   test('Endre utfall', ({ klagebehandling }) => changeUtfall(klagebehandling));
 
@@ -30,9 +32,9 @@ const changeUtfall = async (behandling: AnkebehandlingPage | KlagebehandlingPage
   const container = page.getByTestId('utfall-section');
 
   await container.getByText(UtfallLabel.IKKE_VALGT).click();
-  await container.getByText(UtfallLabel.MEDHOLD, { exact: true }).check();
   const requestPromise = page.waitForRequest('**/behandlinger/**/resultat/utfall');
-  await container.getByRole('button', { name: 'Sett utfall' }).click();
+  await container.getByRole('option', { name: UtfallLabel.MEDHOLD, exact: true }).click();
+  await page.keyboard.press('Meta+Enter');
   await finishedRequest(requestPromise);
 
   await page.reload();
@@ -52,9 +54,9 @@ const changeHjemmel = async (behandling: AnkebehandlingPage | KlagebehandlingPag
 
   const popover = container.locator('.aksel-popover').filter({ visible: true });
   await popover.getByPlaceholder('Filtrer...').fill('første ledd første');
-  await container.getByText(hjemmelName).check();
   const promise = page.waitForRequest('**/behandlinger/**/resultat/hjemler');
-  await container.getByRole('button', { name: 'Sett hjemler' }).click();
+  await container.getByRole('option', { name: hjemmelName }).click();
+  await page.keyboard.press('Meta+Enter');
   await finishedRequest(promise);
 
   await page.reload();
@@ -68,7 +70,7 @@ const changeMedunderskriver = async (behandling: AnkebehandlingPage | Klagebehan
   const container = page.getByLabel('Medunderskriver').locator('..');
   await container.getByText('Ingen', { exact: true }).click();
 
-  await container.getByText('F_Z994864 E_Z994864').check();
+  await container.getByRole('option', { name: MEDUNDERSKRIVER_NAME }).click();
 
   const identPromise = page.waitForRequest('**/behandlinger/**/medunderskrivernavident');
   const flowPromise = page.waitForRequest('**/behandlinger/**/medunderskriverflowstate');
@@ -87,7 +89,8 @@ const showErrors = async (behandling: AnkebehandlingPage | KlagebehandlingPage) 
   const container = page.getByLabel('Utfall/resultat').locator('..');
   await container.getByText('Ikke valgt').click();
   const popover = container.locator('.aksel-popover').filter({ visible: true });
-  await popover.getByText(UtfallLabel.IKKE_VALGT).check();
+  await popover.getByRole('option', { name: UtfallLabel.IKKE_VALGT }).click();
+  await page.keyboard.press('Meta+Enter');
 
   await page.click('data-testid=complete-button');
 

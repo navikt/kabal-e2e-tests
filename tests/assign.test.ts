@@ -81,8 +81,8 @@ const setFilter = async (page: Page, filterName: string, value: string, exact = 
 
   const popover = page.locator('.aksel-popover').filter({ visible: true });
   await popover.getByPlaceholder('Filtrer...').fill(value);
-  await popover.getByText(value, { exact }).click();
-  await popover.getByRole('button', { name: 'Bekreft' }).click();
+  await popover.getByRole('option', { name: value, exact }).click();
+  await page.keyboard.press('Meta+Enter');
 };
 
 interface IFindOppgaveRowOptions {
@@ -118,7 +118,7 @@ const refreshOppgaver = async (page: Page, tableId: string) => {
   const pagination = page.getByTestId(`${tableId}-footer-pagination`);
 
   if (await pagination.isVisible()) {
-    await pagination.locator('button[page="1"]').first().click()
+    await pagination.locator('button[page="1"]').first().click();
     await page.locator(`[data-testid="${tableId}-rows"][data-state="ready"]`).waitFor();
   }
 
