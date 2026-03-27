@@ -48,8 +48,8 @@ test.describe('Smart editor', () => {
       await page.waitForTimeout(1000);
       await utfallContainer.getByText(UtfallLabel.IKKE_VALGT).click();
       await utfallContainer.locator('.aksel-popover').waitFor({ state: 'visible' });
-      await utfallContainer.getByText(UtfallLabel.MEDHOLD, { exact: true }).check();
-      await utfallContainer.getByRole('button', { name: 'Sett utfall' }).click();
+      await utfallContainer.getByRole('option', { name: UtfallLabel.MEDHOLD, exact: true }).click();
+      await page.keyboard.press('Meta+Enter');
 
       expect(smartEditor.getByText(`Avgjørelse${NO_MALTEKSTSEKSJON_TEXT}`)).not.toBeVisible();
       expect(smartEditor.getByText(`Ankeinfo${NO_MALTEKSTSEKSJON_TEXT}`)).not.toBeVisible();
@@ -127,8 +127,8 @@ test.describe('Smart editor', () => {
 
       await container.getByPlaceholder('Filtrer...').filter({ visible: true }).fill(hjemmel);
 
-      await container.getByText(hjemmel).check();
-      await container.getByRole('button', { name: 'Sett hjemler' }).click();
+      await container.getByRole('option', { name: hjemmel }).click();
+      await page.keyboard.press('Meta+Enter');
     });
 
     await test.step('Sett inn regelverk', async () => {
