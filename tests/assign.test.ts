@@ -2,6 +2,7 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import type { Behandling } from '@/fixtures/behandling/behandling';
 import { test } from '@/fixtures/behandling/fixture';
 import { UI_DOMAIN } from '@/tests/functions';
+import { SUBMIT_SHORTCUT } from '@/tests/helpers';
 
 test.describe('Tildeling/fradeling', () => {
   test('Tildele og fradele seg behandling', async ({ index }, testInfo) => {
@@ -77,12 +78,14 @@ const deAssignBehandling = async (page: Page, behandlingId: string) => {
 };
 
 const setFilter = async (page: Page, filterName: string, value: string, exact = false) => {
-  await page.getByRole('button', { name: filterName }).click();
+  const filterButton = page.getByRole('button', { name: filterName });
+  await filterButton.click();
+  const parent = filterButton.locator('..');
 
-  const popover = page.locator('.aksel-popover').filter({ visible: true });
-  await popover.getByPlaceholder('Filtrer...').fill(value);
-  await popover.getByText(value, { exact }).click();
-  await popover.getByRole('button', { name: 'Bekreft' }).click();
+  await parent.getByPlaceholder('Filtrer...').fill(value);
+  const option = parent.getByText(value, { exact });
+  await option.click();
+  await option.press(SUBMIT_SHORTCUT);
 };
 
 interface IFindOppgaveRowOptions {
@@ -118,7 +121,7 @@ const refreshOppgaver = async (page: Page, tableId: string) => {
   const pagination = page.getByTestId(`${tableId}-footer-pagination`);
 
   if (await pagination.isVisible()) {
-    await pagination.locator('button[page="1"]').first().click()
+    await pagination.locator('button[page="1"]').first().click();
     await page.locator(`[data-testid="${tableId}-rows"][data-state="ready"]`).waitFor();
   }
 

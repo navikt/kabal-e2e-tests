@@ -2,7 +2,9 @@ import { expect } from '@playwright/test';
 import { test } from '@/fixtures/behandling/fixture';
 import type { AnkebehandlingPage, KlagebehandlingPage } from '@/fixtures/behandling/page';
 import { UtfallLabel } from '@/fixtures/behandling/types';
-import { finishedRequest } from '@/tests/helpers';
+import { finishedRequest, SUBMIT_SHORTCUT } from '@/tests/helpers';
+
+const MEDUNDERSKRIVER_NAME = /F_Z994864 E_Z994864/;
 
 test.describe('Klagebehandling', () => {
   test('Endre utfall', ({ klagebehandling }) => changeUtfall(klagebehandling));
@@ -30,9 +32,8 @@ const changeUtfall = async (behandling: AnkebehandlingPage | KlagebehandlingPage
   const container = page.getByTestId('utfall-section');
 
   await container.getByText(UtfallLabel.IKKE_VALGT).click();
-  await container.getByText(UtfallLabel.MEDHOLD, { exact: true }).check();
   const requestPromise = page.waitForRequest('**/behandlinger/**/resultat/utfall');
-  await container.getByRole('button', { name: 'Sett utfall' }).click();
+  await container.getByText(UtfallLabel.MEDHOLD, { exact: true }).click();
   await finishedRequest(requestPromise);
 
   await page.reload();
@@ -50,11 +51,11 @@ const changeHjemmel = async (behandling: AnkebehandlingPage | KlagebehandlingPag
   await page.getByText('Velg hjemler').waitFor({ state: 'visible' });
   await page.getByText('Velg hjemler').click();
 
-  const popover = container.locator('.aksel-popover').filter({ visible: true });
-  await popover.getByPlaceholder('Filtrer...').fill('første ledd første');
-  await container.getByText(hjemmelName).check();
+  await container.getByPlaceholder('Filtrer...').fill('første ledd første');
+  const option = container.getByText(hjemmelName);
   const promise = page.waitForRequest('**/behandlinger/**/resultat/hjemler');
-  await container.getByRole('button', { name: 'Sett hjemler' }).click();
+  await option.click();
+  await option.press(SUBMIT_SHORTCUT);
   await finishedRequest(promise);
 
   await page.reload();
@@ -68,11 +69,12 @@ const changeMedunderskriver = async (behandling: AnkebehandlingPage | Klagebehan
   const container = page.getByLabel('Medunderskriver').locator('..');
   await container.getByText('Ingen', { exact: true }).click();
 
-  await container.getByText('F_Z994864 E_Z994864').check();
-
   const identPromise = page.waitForRequest('**/behandlinger/**/medunderskrivernavident');
   const flowPromise = page.waitForRequest('**/behandlinger/**/medunderskriverflowstate');
+
+  await container.getByText(MEDUNDERSKRIVER_NAME).click();
   await container.getByRole('button', { name: 'Send til medunderskriver' }).click();
+
   await finishedRequest(identPromise);
   await finishedRequest(flowPromise);
 
@@ -85,9 +87,9 @@ const showErrors = async (behandling: AnkebehandlingPage | KlagebehandlingPage) 
   const { page } = behandling;
 
   const container = page.getByLabel('Utfall/resultat').locator('..');
-  await container.getByText('Ikke valgt').click();
-  const popover = container.locator('.aksel-popover').filter({ visible: true });
-  await popover.getByText(UtfallLabel.IKKE_VALGT).check();
+  await container.getByRole('button').click();
+
+  await container.getByRole('option').getByText(UtfallLabel.IKKE_VALGT).click();
 
   await page.click('data-testid=complete-button');
 

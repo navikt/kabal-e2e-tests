@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { test } from '@/fixtures/behandling/fixture';
 import { UtfallLabel } from '@/fixtures/behandling/types';
+import { SUBMIT_SHORTCUT } from '@/tests/helpers';
 import { FULLMEKTIG_DATA, KLAGER_DATA, SAKEN_GJELDER_DATA } from '@/tests/users';
 
 test.describe('Smart editor', () => {
@@ -47,9 +48,7 @@ test.describe('Smart editor', () => {
       const utfallContainer = page.getByRole('button', { name: 'Utfall/resultat', exact: true }).locator('..');
       await page.waitForTimeout(1000);
       await utfallContainer.getByText(UtfallLabel.IKKE_VALGT).click();
-      await utfallContainer.locator('.aksel-popover').waitFor({ state: 'visible' });
-      await utfallContainer.getByText(UtfallLabel.MEDHOLD, { exact: true }).check();
-      await utfallContainer.getByRole('button', { name: 'Sett utfall' }).click();
+      await utfallContainer.getByText(UtfallLabel.MEDHOLD, { exact: true }).click();
 
       expect(smartEditor.getByText(`Avgjørelse${NO_MALTEKSTSEKSJON_TEXT}`)).not.toBeVisible();
       expect(smartEditor.getByText(`Ankeinfo${NO_MALTEKSTSEKSJON_TEXT}`)).not.toBeVisible();
@@ -127,8 +126,9 @@ test.describe('Smart editor', () => {
 
       await container.getByPlaceholder('Filtrer...').filter({ visible: true }).fill(hjemmel);
 
-      await container.getByText(hjemmel).check();
-      await container.getByRole('button', { name: 'Sett hjemler' }).click();
+      const option = container.getByText(hjemmel);
+      await option.click();
+      await option.press(SUBMIT_SHORTCUT);
     });
 
     await test.step('Sett inn regelverk', async () => {

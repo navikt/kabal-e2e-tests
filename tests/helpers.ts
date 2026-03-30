@@ -3,6 +3,8 @@ import { expect } from '@playwright/test';
 import { DEV_DOMAIN, LOCAL_DOMAIN, UI_DOMAIN, USE_LOCALHOST } from '@/tests/functions';
 import type { User } from '@/tests/users';
 
+export const SUBMIT_SHORTCUT = process.platform === 'darwin' ? 'Meta+Enter' : 'Control+Enter';
+
 export const goToAzure = async (page: Page, path = ''): Promise<Page> => {
   const res = await page.goto(`${DEV_DOMAIN}${path}`);
   expect(res).not.toBeNull();
