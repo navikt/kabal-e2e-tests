@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test';
-import { getParsedUrl, UI_DOMAIN } from '@/tests/functions';
+import { test } from '@playwright/test';
+import { UI_DOMAIN } from '@/tests/functions';
 
 const timeout = 15_000;
 
@@ -9,34 +9,30 @@ test.describe('Navigering', () => {
   });
 
   test('"Oppgaver"-lenke navigerer til `/oppgaver`', async ({ page }) => {
-    const behandlingerLink = page.getByTestId('oppgaver-nav-link');
+    const behandlingerLink = page.getByRole('link', { name: 'Oppgaver', exact: true });
     await behandlingerLink.click({ timeout });
 
-    const url = getParsedUrl(page.url());
-    expect(url.pathname).toBe('/oppgaver');
+    await page.waitForURL('**/oppgaver');
   });
 
   test('"Mine Oppgaver"-lenke navigerer til `/mineoppgaver`', async ({ page }) => {
-    const link = page.getByTestId('mine-oppgaver-nav-link');
+    const link = page.getByRole('link', { name: 'Mine Oppgaver' });
     await link.click({ timeout });
 
-    const url = getParsedUrl(page.url());
-    expect(url.pathname).toBe('/mineoppgaver');
+    await page.waitForURL('**/mineoppgaver');
   });
 
   test('"Søk"-lenke navigerer til `/sok`', async ({ page }) => {
-    const link = page.getByTestId('search-nav-link');
+    const link = page.getByRole('link', { name: 'Søk på person' });
     await link.click({ timeout });
 
-    const url = getParsedUrl(page.url());
-    expect(url.pathname).toBe('/sok');
+    await page.waitForURL('**/sok');
   });
 
   test('"Oppgavestyring"-lenke navigerer til `/oppgavestyring`', async ({ page }) => {
-    const link = page.getByTestId('oppgavestyring-nav-link');
+    const link = page.getByRole('link', { name: 'Oppgavestyring' });
     await link.click({ timeout });
 
-    const url = getParsedUrl(page.url());
-    expect(url.pathname).toBe('/oppgavestyring');
+    await page.waitForURL('**/oppgavestyring');
   });
 });

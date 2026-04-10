@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test';
-import { getParsedUrl, UI_DOMAIN } from '@/tests/functions';
+import { test } from '@playwright/test';
+import { UI_DOMAIN } from '@/tests/functions';
 
 test.describe('Oppgaver', () => {
   test.beforeEach(async ({ page }) => {
@@ -7,8 +7,7 @@ test.describe('Oppgaver', () => {
   });
 
   test('"Oppgaver"-siden vises', async ({ page }) => {
-    const url = getParsedUrl(page.url());
-    expect(url.pathname).toBe('/oppgaver');
-    await page.locator('[data-testid="oppgave-table-rows"][data-state="ready"]').waitFor();
+    await page.waitForURL('**/oppgaver');
+    await page.locator('tbody[aria-busy="false"]').waitFor();
   });
 });
