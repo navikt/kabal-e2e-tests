@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { test } from '@/fixtures/behandling/fixture';
 import type { AnkebehandlingPage, KlagebehandlingPage } from '@/fixtures/behandling/page';
+import { getUtfallResultat } from '@/fixtures/behandling/regions';
 import { UtfallLabel } from '@/fixtures/behandling/types';
 import { finishedRequest, SUBMIT_SHORTCUT } from '@/tests/helpers';
 
@@ -29,11 +30,13 @@ test.describe('Ankebehandling', () => {
 const changeUtfall = async (behandling: AnkebehandlingPage | KlagebehandlingPage) => {
   const { page } = behandling;
 
-  const container = page.getByTestId('utfall-section');
+  const container = getUtfallResultat(page);
 
-  await container.getByText(UtfallLabel.IKKE_VALGT).click();
+  const utfallButton = container.getByRole('button', { name: 'Utfall/resultat', exact: true });
+  await utfallButton.click();
+  await page.getByRole('listbox').waitFor();
   const requestPromise = page.waitForRequest('**/behandlinger/**/resultat/utfall');
-  await container.getByText(UtfallLabel.MEDHOLD, { exact: true }).click();
+  await page.getByRole('option', { name: 'Medhold', exact: true }).click();
   await finishedRequest(requestPromise);
 
   await page.reload();
@@ -86,18 +89,18 @@ const changeMedunderskriver = async (behandling: AnkebehandlingPage | Klagebehan
 const showErrors = async (behandling: AnkebehandlingPage | KlagebehandlingPage) => {
   const { page } = behandling;
 
-  const container = page.getByLabel('Utfall/resultat').locator('..');
-  await container.getByRole('button').click();
+  const utfallButton = page.getByRole('button', { name: 'Utfall/resultat', exact: true });
+  await utfallButton.click();
+  await page.getByRole('listbox').waitFor();
+  await page.getByRole('option', { name: 'Ikke valgt' }).click();
 
-  await container.getByRole('option').getByText(UtfallLabel.IKKE_VALGT).click();
-
-  await page.click('data-testid=complete-button');
+  await page.getByRole('button', { name: 'Fullfør' }).click();
 
   const ERROR_TEXT = 'Sett et utfall på saken.';
 
-  const summary = page.getByTestId('validation-summary');
-  await summary.locator(`text="${ERROR_TEXT}"`).waitFor();
+  await page.getByRole('heading', { name: 'Kan ikke fullføre behandlingen' }).waitFor();
+  await page.getByRole('listitem').filter({ hasText: ERROR_TEXT }).waitFor();
 
-  const utfallSection = page.getByTestId('utfall-section');
-  await utfallSection.locator(`text="${ERROR_TEXT}"`).waitFor();
+  const utfallSection = getUtfallResultat(page);
+  await utfallSection.getByText(ERROR_TEXT).waitFor();
 };
