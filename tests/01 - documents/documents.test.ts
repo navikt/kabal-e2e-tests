@@ -1,4 +1,5 @@
 import { test } from '@/fixtures/behandling/fixture';
+import { getJournalfoerteDokumenter } from '@/fixtures/behandling/regions';
 import { DocumentType } from '@/fixtures/behandling/types';
 
 test.describe('Dokumenter', () => {
@@ -40,8 +41,8 @@ test.describe('Dokumenter', () => {
     await behandling.setDocumentType(doc1, DocumentType.VEDTAKSBREV);
     await behandling.setDocumentType(doc2, DocumentType.BESLUTNING);
 
-    await page
-      .getByTestId('oppgavebehandling-documents-all-list-item')
+    await getJournalfoerteDokumenter(page)
+      .getByRole('treeitem')
       .first()
       .waitFor({ timeout: 10_000 })
       .catch(() => {
