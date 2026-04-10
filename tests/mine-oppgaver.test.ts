@@ -1,4 +1,5 @@
 import { test } from '@playwright/test';
+import { getTable } from '@/fixtures/table';
 import { UI_DOMAIN } from '@/tests/functions';
 
 const TABLES = ['Oppgaver under arbeid', 'Oppgaver på vent', 'Fullførte oppgaver'];
@@ -12,8 +13,8 @@ test.describe('Mine Oppgaver', () => {
     await Promise.all(
       TABLES.map((tableName) =>
         test.step(tableName, async () => {
-          const section = page.locator('section').filter({ has: page.getByRole('heading', { name: tableName }) });
-          await section.locator('tbody[aria-busy="false"]').waitFor();
+          const { body } = getTable(page, tableName);
+          await body.waitFor();
         }),
       ),
     );

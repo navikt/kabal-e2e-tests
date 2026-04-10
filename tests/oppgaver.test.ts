@@ -1,4 +1,5 @@
 import { test } from '@playwright/test';
+import { getTable } from '@/fixtures/table';
 import { UI_DOMAIN } from '@/tests/functions';
 
 test.describe('Oppgaver', () => {
@@ -8,6 +9,7 @@ test.describe('Oppgaver', () => {
 
   test('"Oppgaver"-siden vises', async ({ page }) => {
     await page.waitForURL('**/oppgaver');
-    await page.locator('tbody[aria-busy="false"]').waitFor();
+    const { body } = getTable(page, 'Ledige oppgaver');
+    await body.waitFor();
   });
 });
