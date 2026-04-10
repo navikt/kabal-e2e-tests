@@ -51,7 +51,7 @@ export class Behandling {
   public renameDocument = (title: string, newTitle: string) => renameDocument(this.page, title, newTitle);
   public deleteDocument = (title: string) => deleteDocument(this.page, title);
   public finishAndVerifyDocument = (title: string) => finishAndVerifyDocument(this.page, title);
-  public downloadPdf = async (title: string) => downloadPdf(this.page, title);
+  public downloadPdf = async (title: string) => downloadPdf(this.page, this.id, title);
   public setDocumentType = (title: string, type: DocumentType) => setDocumentType(this.page, title, type);
   public setDocumentAsAttachmentTo = (title: string, parentName: string) =>
     setDocumentAsAttachmentTo(this.page, title, parentName);
