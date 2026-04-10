@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test';
-import { getParsedUrl, UI_DOMAIN } from '@/tests/functions';
+import { test } from '@playwright/test';
+import { UI_DOMAIN } from '@/tests/functions';
 
 test.describe('Innstillinger-navigasjon', () => {
   test.beforeEach(async ({ page }) => {
@@ -7,13 +7,12 @@ test.describe('Innstillinger-navigasjon', () => {
   });
 
   test('Navigerer til `/innstillinger`', async ({ page }) => {
-    const button = page.getByTestId('user-menu-button');
-    await button.click({ timeout: 15_000 });
+    const userMenuButton = page.getByRole('button').filter({ hasText: 'Enhet:' });
+    await userMenuButton.click({ timeout: 15_000 });
 
-    const innstillingerLink = page.getByTestId('innstillinger-link');
+    const innstillingerLink = page.getByRole('menuitem', { name: 'Innstillinger' });
     await innstillingerLink.click();
 
-    const url = getParsedUrl(page.url());
-    expect(url.pathname).toBe('/innstillinger');
+    await page.waitForURL('**/innstillinger');
   });
 });

@@ -1,5 +1,8 @@
-import { expect, test } from '@playwright/test';
-import { getParsedUrl, UI_DOMAIN } from '@/tests/functions';
+import { test } from '@playwright/test';
+import { UI_DOMAIN } from '@/tests/functions';
+
+const YTELSER_REGEX = /Ytelser/;
+const HJEMLER_REGEX = /Hjemler/;
 
 test.describe('Innstillinger', () => {
   test.beforeEach(async ({ page }) => {
@@ -7,10 +10,11 @@ test.describe('Innstillinger', () => {
   });
 
   test('"Innstillinger" laster og viser innstillinger', async ({ page }) => {
-    const url = getParsedUrl(page.url());
+    await page.waitForURL('**/innstillinger');
 
-    expect(url.pathname).toBe('/innstillinger');
-
-    await Promise.all([page.getByTestId('ytelser-settings').waitFor(), page.getByTestId('hjemler-settings').waitFor()]);
+    await Promise.all([
+      page.getByRole('group', { name: YTELSER_REGEX }).waitFor(),
+      page.getByRole('group', { name: HJEMLER_REGEX }).waitFor(),
+    ]);
   });
 });

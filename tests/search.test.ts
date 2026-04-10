@@ -7,6 +7,8 @@ test.describe('Søk', () => {
   });
 
   test('Søk på fnr med både tall og bokstaver utfører ikke et søk', async ({ page }) => {
+    const TEST_STRING = 'tøffeldyr12121248484';
+
     page.on('request', (req) => {
       const url = req.url();
 
@@ -15,8 +17,7 @@ test.describe('Søk', () => {
       }
     });
 
-    const TEST_STRING = 'tøffeldyr12121248484';
-    const searchField = page.getByTestId('search-input');
+    const searchField = page.getByRole('searchbox');
     await searchField.fill(TEST_STRING);
 
     await page.waitForTimeout(1_000);
@@ -25,9 +26,9 @@ test.describe('Søk', () => {
   test('Søk på fnr med 11 siffer skal søke etter saker på enkeltperson', async ({ page }) => {
     const TEST_STRING = '184969 00509';
 
-    await page.getByTestId('search-input').fill(TEST_STRING);
+    await page.getByRole('searchbox').fill(TEST_STRING);
 
-    await expect(page.getByTestId('search-result')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Søkeresultater' })).toBeVisible();
   });
 
   test('Søk på saksnummer må trigges manuelt', async ({ page }) => {
@@ -36,6 +37,6 @@ test.describe('Søk', () => {
     await search.fill('1736');
     await search.press('Enter');
 
-    await expect(page.getByTestId('search-result')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Søkeresultater' })).toBeVisible();
   });
 });
