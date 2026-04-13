@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2017",
+    "target": "ESNext",
     "lib": ["esnext", "DOM"],
     "sourceMap": true,
     "allowJs": false,
@@ -9,8 +9,8 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "es2015",
-    "moduleResolution": "node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "resolveJsonModule": false,
     "isolatedModules": true,
     "noEmit": false,
@@ -18,9 +18,8 @@
     "outDir": "./dist",
 
     /* Paths */
-    "baseUrl": "./",
     "paths": {
-      "@/*": ["*"]
+      "@/*": ["./*"]
     }
   },
   "include": ["./"]
