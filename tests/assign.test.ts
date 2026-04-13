@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 import type { Behandling } from '@/fixtures/behandling/behandling';
 import { test } from '@/fixtures/behandling/fixture';
+import { getMainMenu } from '@/fixtures/regions';
 import { findRow, getTable, setFilter } from '@/fixtures/table';
 import { UI_DOMAIN } from '@/tests/functions';
 
@@ -37,7 +38,7 @@ test.describe('Tildeling/fradeling', () => {
 
 const assignBehandling = async (page: Page, behandling: Behandling) => {
   await test.step('Naviger til "Oppgaver"', async () => {
-    await page.getByRole('link', { name: 'Oppgaver', exact: true }).click();
+    await getMainMenu(page).getByRole('link', { name: 'Oppgaver', exact: true }).click();
     await page.waitForURL('**/oppgaver');
   });
 
@@ -59,7 +60,7 @@ const assignBehandling = async (page: Page, behandling: Behandling) => {
 
 const deAssignBehandling = async (page: Page, behandlingId: string) => {
   await test.step('Naviger til "Mine oppgaver"', async () => {
-    await page.getByRole('link', { name: 'Mine Oppgaver' }).click();
+    await getMainMenu(page).getByRole('link', { name: 'Mine Oppgaver' }).click();
     await page.waitForURL('**/mineoppgaver');
   });
 
