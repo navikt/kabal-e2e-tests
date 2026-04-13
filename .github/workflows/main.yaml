@@ -40,11 +40,7 @@ jobs:
 
       - name: Install dependencies
         shell: bash
-        env:
-          BUN_AUTH_TOKEN: ${{ secrets.READER_TOKEN }}
-        run: |
-          echo -e "\n[install.scopes]\n\"@navikt\" = { token = \"$BUN_AUTH_TOKEN\", url = \"https://npm.pkg.github.com/\" }" >> bunfig.toml
-          bun install --frozen-lockfile
+        run: bun install --frozen-lockfile --ignore-scripts
 
       - name: Get image tag
         id: image-tag
