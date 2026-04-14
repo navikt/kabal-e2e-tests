@@ -73,8 +73,9 @@ const deAssignBehandling = async (page: Page, behandlingId: string) => {
     await expect(leggTilbakeButton).toBeVisible({ timeout: 30_000 });
     await leggTilbakeButton.click();
 
-    await oppgaveRow.getByText('Inhabil').click();
-    await oppgaveRow.getByText('Legg tilbake').last().click();
+    const popup = oppgaveRow.getByRole('dialog', { name: 'Legg tilbake oppgave' });
+    await popup.getByText('Inhabil').click();
+    await popup.getByText('Legg tilbake').click();
 
     await page.getByText(DEASSIGNED_TOAST_REGEX).waitFor();
   });
