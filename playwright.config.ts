@@ -1,3 +1,4 @@
+import { slackReporter, statusReporter } from '@navikt/klage-e2e-reporters';
 import { defineConfig } from 'playwright/test';
 
 const isInNais = process.env.CONFIG === 'nais';
@@ -42,7 +43,11 @@ const nais = defineConfig({
   forbidOnly: true,
   maxFailures: 0,
   outputDir: '/tmp/test-results',
-  reporter: [['list'], ['./reporters/slack-reporter.ts'], ['./reporters/status.ts']],
+  reporter: [
+    ['list'],
+    slackReporter({ botName: 'Kabal E2E', iconUrl: 'navikt/kabal/main/frontend/assets/android-chrome-192x192.png' }),
+    statusReporter({ name: 'Kabal E2E' }),
+  ],
   retries: 1,
 });
 
