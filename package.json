@@ -1,6 +1,9 @@
 {
   "name": "kabal-e2e-tests",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "test": "TARGET=dev CONFIG=nais playwright test",
     "dev": "TARGET=dev CONFIG=local playwright test",
