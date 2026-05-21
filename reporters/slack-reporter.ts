@@ -73,7 +73,11 @@ class SlackReporter implements Reporter {
 
     if (this.mainThread === null) {
       if (this.slack === null) {
-        throw new Error('Cannot post main message. No Slack client.');
+        if (process.env.NODE_ENV === 'test') {
+          throw new Error('Cannot post main message. No Slack client.');
+        }
+
+        return;
       }
 
       this.mainThread = await this.slack.postMessage(mainMessage);

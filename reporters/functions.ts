@@ -1,8 +1,8 @@
 import type { FullResult, TestCase, TestStatus } from '@playwright/test/reporter';
 
 export const getTestTitle = (test: TestCase) => {
-  const [, , , description, testName] = test.titlePath();
-  return `${description} - ${testName}`;
+  const [_root, _project, _file, ...describesAndTest] = test.titlePath();
+  return describesAndTest.join(' > ');
 };
 
 export const isNotNull = <T>(v: T | null): v is T => v !== null;
