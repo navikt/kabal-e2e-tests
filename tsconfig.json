@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "esnext",
     "lib": ["esnext", "DOM"],
     "types": ["node"],
     "sourceMap": true,
@@ -10,11 +10,11 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "resolveJsonModule": false,
     "isolatedModules": true,
-    "noEmit": false,
+    "noEmit": true,
     "rootDir": "./",
     "outDir": "./dist",
 
