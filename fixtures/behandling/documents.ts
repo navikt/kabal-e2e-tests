@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import { resolve } from 'node:path';
-import { expect, type Page } from '@playwright/test';
-import { test } from '@/fixtures/behandling/fixture';
+import { expect, type Page, test } from '@playwright/test';
 import { getDokumenter, getDokumenterUnderArbeid, getJournalfoerteDokumenter } from '@/fixtures/behandling/regions';
 import type { DocumentType } from '@/fixtures/behandling/types';
 import { UI_DOMAIN } from '@/tests/functions';
