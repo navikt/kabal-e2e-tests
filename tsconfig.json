@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "lib": ["esnext", "DOM"],
+    "types": ["node"],
     "sourceMap": true,
     "allowJs": false,
     "skipLibCheck": true,
