@@ -28,7 +28,7 @@ jobs:
       packages: read
     outputs:
       image: ${{ steps.image-info.outputs.image }}
-      version: ${{ steps.image-tag.outputs.tag }}
+      version: ${{ steps.image-tag.outputs.sha }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -45,14 +45,22 @@ jobs:
         env:
           READER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Typecheck
+        run: bun typecheck
+
+      - name: Lint
+        run: bun lint
+
       - name: Get image tag
         id: image-tag
         shell: bash
         run: |
+          SHA=$(git rev-parse --short HEAD)
+          echo "sha=$SHA" >> $GITHUB_OUTPUT
           if [ "${{ github.ref_name }}" = "main" ]; then
-            echo "tag=latest,$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+            echo "tag=latest,$SHA" >> $GITHUB_OUTPUT
           else
-            echo "tag=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+            echo "tag=$SHA" >> $GITHUB_OUTPUT
           fi
 
       - name: Build and publish image
@@ -68,7 +76,7 @@ jobs:
         id: image-info
         shell: bash
         # Replace auto-generated image tag with custom tag
-        run: echo "image=$(echo '${{ steps.docker-build-push.outputs.image }}' | sed 's/:.*$/:${{ steps.image-tag.outputs.tag }}/')" >> $GITHUB_OUTPUT
+        run: echo "image=$(echo '${{ steps.docker-build-push.outputs.image }}' | sed 's/:.*$/:${{ steps.image-tag.outputs.sha }}/')" >> $GITHUB_OUTPUT
 
   e2e_tests:
     name: Run E2E tests (${{ github.ref_name }})
