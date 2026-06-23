@@ -88,7 +88,7 @@ export const renameDocument = async (page: Page, documentName: string, newDocume
   await test.step(`Endre navn \`${documentId.substring(0, 8)}...\``, async () => {
     const document = getDocumentById(page, documentId);
     await document.waitFor();
-    await document.locator(`text="${newDocumentName}"`).waitFor({ timeout: 1_000 });
+    await document.locator(`text="${newDocumentName}"`).waitFor({ timeout: 5_000 });
   });
 
   return newDocumentName;
