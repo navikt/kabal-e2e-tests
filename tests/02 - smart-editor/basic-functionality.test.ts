@@ -36,14 +36,14 @@ test.describe('Smart editor - Grunnleggende funksjonalitet', () => {
 
     const a1 = list.getByRole('listitem').nth(0);
     const b1 = list.getByRole('listitem').nth(1);
-    const a1Text = a1.locator('> div');
-    const b1Text = b1.locator('> div');
+    const a1Text = a1.locator('> div.slate-lic');
+    const b1Text = b1.locator('> div.slate-lic');
 
     const b2 = b1.getByRole('list').getByRole('listitem').first();
-    const b2Text = b2.locator('> div');
+    const b2Text = b2.locator('> div.slate-lic');
 
     const b3 = b2.getByRole('list').getByRole('listitem').first();
-    const b3Text = b3.locator('> div');
+    const b3Text = b3.locator('> div.slate-lic');
 
     expect(await a1Text.textContent()).toBe('Dette er et punkt');
     expect(await b1Text.textContent()).toBe('Dette er et annet punkt');
