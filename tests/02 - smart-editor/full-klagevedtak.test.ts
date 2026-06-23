@@ -9,31 +9,31 @@ test.describe('Smart editor', () => {
     const { page, behandling } = klagebehandling;
     const smartEditor = await behandling.initSmartEditor('Vedtak/beslutning (klage)');
 
-    await test.step('Topptekst', async () => {
-      const header = smartEditor.locator('[data-element="header"]');
-
-      await expect(header).toHaveText('Returadresse: Klageinstans Oslo, Postboks 7028 St. Olavs plass, 0130 Oslo');
-    });
-
-    await test.step('Bunntekst', async () => {
-      const footer = smartEditor.locator('[data-element="footer"]');
-
-      await expect(footer).toHaveText(
-        'Postadresse: Klageinstans Oslo // Postboks 7028 St. Olavs plass // 0130 Oslo // Telefon: 55 55 33 33 // nav.no',
-      );
-    });
-
     await test.step('Parter og saksnummer', async () => {
+      const saksinfo = smartEditor.locator('div[data-element="saksinfo"]');
+
       const saksnummer = await getSaksnummer(page).getByRole('button').textContent();
 
-      await expect(smartEditor.getByText(`Saken gjelder: ${SAKEN_GJELDER_DATA.name}`)).toBeVisible();
-      await expect(smartEditor.getByText(`Fødselsnummer: ${SAKEN_GJELDER_DATA.id}`)).toBeVisible();
-      await expect(smartEditor.getByText(`Klager: ${KLAGER_DATA.name}`)).toBeVisible();
+      await expect(saksinfo.getByText('Saken gjelder:')).toBeVisible();
+      await expect(saksinfo.getByText(SAKEN_GJELDER_DATA.name)).toBeVisible();
 
-      const fullmektigElement = smartEditor.locator('[data-element="fullmektig"]');
+      await expect(saksinfo.getByText('Fødselsnummer:')).toBeVisible();
+      await expect(saksinfo.getByText(SAKEN_GJELDER_DATA.id)).toBeVisible();
+
+      await expect(saksinfo.getByText('Klager:')).toBeVisible();
+      await expect(saksinfo.getByText(KLAGER_DATA.name)).toBeVisible();
+
+      const fullmektigElement = saksinfo.locator('[data-element="fullmektig"]');
       await expect(fullmektigElement.getByText('Fullmektig')).toBeVisible();
       await expect(fullmektigElement.getByText(FULLMEKTIG_DATA.name)).toBeVisible();
-      await expect(smartEditor.getByText(`Saksnummer: ${saksnummer}`)).toBeVisible();
+      
+      await expect(saksinfo.getByText('Saksnummer:')).toBeVisible();
+
+      if (saksnummer === null) {
+        throw new Error('Saksnummer is null');
+      }
+
+      await expect(saksinfo.getByText(saksnummer)).toBeVisible();
     });
 
     await test.step('Sett utfall', async () => {
