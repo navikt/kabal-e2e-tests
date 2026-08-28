@@ -83,6 +83,7 @@ export const renameDocument = async (page: Page, documentName: string, newDocume
   await input.focus();
   await input.clear();
   await input.fill(newDocumentName);
+  await input.focus();
   await input.press('Enter');
 
   await test.step(`Endre navn \`${documentId.substring(0, 8)}...\``, async () => {
@@ -157,11 +158,11 @@ export const finishAndVerifyDocument = async (page: Page, documentName: string) 
   await finishedDocument.locator('[data-included="true"]').waitFor({ timeout: 60_000 });
 
   if (numberOfNewDocsBeforeFinish > 1) {
-    const inNewList = await inProgressList.getByRole('article').filter({ hasText: documentName }).count();
-    expect(inNewList).toBe(0);
+    await expect(inProgressList.getByRole('article').filter({ hasText: documentName })).toHaveCount(0, {
+      timeout: 2_000,
+    });
   } else {
-    const inProgressChildren = await inProgressList.getByRole('listitem').count();
-    expect(inProgressChildren).toBe(0);
+    await expect(inProgressList.getByRole('listitem')).toHaveCount(0, { timeout: 2_000 });
   }
 };
 

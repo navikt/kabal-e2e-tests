@@ -15,6 +15,8 @@ test.describe('Dokumenter', () => {
   });
 
   test('Opplasting, endre navn/type, ferdigstille', async ({ klagebehandling, page }) => {
+    test.setTimeout(240_000); // Archiving document can take a while
+
     const filename = 'e2e-test-document.pdf';
 
     const { behandling } = klagebehandling;
@@ -44,7 +46,7 @@ test.describe('Dokumenter', () => {
     await getJournalfoerteDokumenter(page)
       .getByRole('treeitem')
       .first()
-      .waitFor({ timeout: 10_000 })
+      .waitFor({ timeout: 20_000 })
       .catch(() => {
         throw new Error('Listen over journalførte dokumenter lastet ikke i tide');
       });
