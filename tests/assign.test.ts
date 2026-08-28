@@ -60,6 +60,7 @@ const assignBehandling = async (page: Page, behandling: Behandling) => {
 
 const deAssignBehandling = async (page: Page, behandlingId: string) => {
   await test.step('Naviger til "Mine oppgaver"', async () => {
+    await page.waitForTimeout(1000); // Sometimes newly assigned oppgave is not found in mine oppgaver immediately after assignment
     await getMainMenu(page).getByRole('link', { name: 'Mine Oppgaver' }).click();
     await page.waitForURL('**/mineoppgaver');
   });

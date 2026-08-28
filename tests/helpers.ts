@@ -14,7 +14,16 @@ export const goToAzure = async (page: Page, path = ''): Promise<Page> => {
   return page;
 };
 
-export const getLoggedInPage = async (page: Page, { username, password }: User, path = '') => {
+export const getLoggedInPage = async (page: Page, user: User, path = '') => {
+  try {
+    return await loginAttempt(page, user, path);
+  } catch {
+    // Azure login can flake - retry the whole flow once.
+    return await loginAttempt(page, user, path);
+  }
+};
+
+const loginAttempt = async (page: Page, { username, password }: User, path: string) => {
   const azurePage = await goToAzure(page, path);
   // Fill in username.
   await azurePage.fill('input[type=email][name=loginfmt]', username);

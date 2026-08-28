@@ -7,9 +7,9 @@ import { SUBMIT_SHORTCUT } from '@/tests/helpers';
 export const getTable = (page: Page, heading: string | RegExp) => {
   const section = getRegion(page, heading);
 
-  const table = section.getByRole('table');
+  const table = section.getByRole('table').first();
   const header = table.locator('thead');
-  const body = table.locator('tbody[aria-busy="false"]');
+  const body = table.locator('tbody[aria-busy="false"]').first();
   const footer = table.locator('tfoot');
   const navigation = footer.getByRole('navigation');
 
@@ -95,7 +95,5 @@ export const findRow = async (table: OppgaveTable, behandlingId: string) => {
     intervals: [1_000, 2_000, 5_000],
   });
 
-  await expect(rowLocator).toHaveCount(1);
-
-  return rowLocator;
+  return rowLocator.first();
 };

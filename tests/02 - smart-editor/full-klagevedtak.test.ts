@@ -5,6 +5,12 @@ import { SUBMIT_SHORTCUT } from '@/tests/helpers';
 import { FULLMEKTIG_DATA, KLAGER_DATA, SAKEN_GJELDER_DATA } from '@/tests/users';
 
 test.describe('Smart editor', () => {
+  test.beforeEach(async ({ klagebehandling: { page } }) => {
+    // Disable irrelevant tabs
+    await page.locator('header').getByRole('checkbox', { exact: true, name: 'Dokumenter' }).uncheck();
+    await page.locator('header').getByRole('checkbox', { exact: true, name: 'Kvalitetsvurdering' }).uncheck();
+  });
+
   test('Klagevedtak', async ({ klagebehandling }) => {
     const { page, behandling } = klagebehandling;
     const smartEditor = await behandling.initSmartEditor('Vedtak/beslutning (klage)');
@@ -148,6 +154,8 @@ test.describe('Smart editor', () => {
     });
 
     await test.step('Sett inn regelverk', async () => {
+      test.setTimeout(240_000); // Archiving document can take a while
+
       const regelverk = smartEditor
         .locator('[data-slate-node="element"]')
         .filter({ hasText: 'Regelverket som gjelder i saken' });
@@ -170,12 +178,13 @@ test.describe('Smart editor', () => {
       const sixthParagraph = regelverk.locator('p').nth(5);
       await expect(sixthParagraph).toHaveText('Folketrygdloven § 8-9:');
 
-      await expect(sistLagret).not.toHaveText(sistLagretText);
+      await expect(sistLagret).not.toHaveText(sistLagretText, { timeout: 10_000 });
     });
 
     await test.step('Send ut', async () => {
       await page.waitForTimeout(1000);
       const newName = `Klagevedtak - ${new Date().toISOString()}`;
+      await page.locator('header').getByRole('checkbox', { exact: true, name: 'Dokumenter' }).check();
 
       await behandling.renameDocument('Klagevedtak', newName);
       await behandling.downloadPdf(newName);

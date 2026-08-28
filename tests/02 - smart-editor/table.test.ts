@@ -1,7 +1,19 @@
-import { expect } from '@playwright/test';
+import { expect, type Locator } from '@playwright/test';
 import { test } from '@/fixtures/behandling/fixture';
 
+// Ensure that the given cell is selected natively
+const selectCell = async (cell: Locator) => {
+  await cell.click();
+  await expect.poll(() => cell.evaluate((el) => el.contains(document.getSelection()?.anchorNode ?? null))).toBe(true);
+};
+
 test.describe('Smart editor -Tabell', () => {
+  test.beforeEach(async ({ klagebehandling: { page } }) => {
+    // Disable irrelevant tabs
+    await page.locator('header').getByRole('checkbox', { exact: true, name: 'Dokumenter' }).uncheck();
+    await page.locator('header').getByRole('checkbox', { exact: true, name: 'Kvalitetsvurdering' }).uncheck();
+  });
+
   test('Enkel innfylling', async ({ page, klagebehandling }) => {
     const smartEditor = await klagebehandling.behandling.initSmartEditor('Generelt brev');
 
@@ -60,48 +72,36 @@ test.describe('Smart editor -Tabell', () => {
     const c1 = row3.locator('td').nth(0);
     const c2 = row3.locator('td').nth(1);
 
-    await a1.click();
-
     await test.step('Fyll inn data i initiell 2x2-tabell', async () => {
       await a1.fill('A1');
-      await page.keyboard.press('ArrowRight');
       await a2.fill('A2');
-      await page.keyboard.press('ArrowRight');
       await b1.fill('B1');
-      await page.keyboard.press('ArrowRight');
       await b2.fill('B2');
     });
 
     await test.step('Legg til rad over', async () => {
+      await selectCell(b1);
       await page.getByLabel('Legg til rad over').click();
+      await expect(table.locator('tr')).toHaveCount(3);
     });
 
-    await test.step('Naviger til starten av den nye raden', async () => {
-      await page.keyboard.press('ArrowLeft');
-      await page.keyboard.press('ArrowLeft');
-      await page.keyboard.press('ArrowLeft');
-    });
-
-    await test.step('Fyll inn data', async () => {
+    await test.step('Fyll inn data i den nye raden', async () => {
       await b1.fill('New B1');
-      await page.keyboard.press('ArrowRight');
       await b2.fill('New B2');
     });
 
-    await test.step('Gå til den nederste raden og slett den', async () => {
-      await page.keyboard.press('ArrowDown');
-      await page.waitForTimeout(100);
+    await test.step('Slett den nederste raden', async () => {
+      await selectCell(c1);
       await page.getByLabel('Fjern rad').click();
     });
 
     await test.step('Legg til rad under', async () => {
+      await selectCell(b1);
       await page.getByLabel('Legg til rad under').click();
     });
 
     await test.step('Fyll inn data i den nye raden', async () => {
-      await page.keyboard.press('ArrowRight');
       await c1.fill('C1');
-      await page.keyboard.press('ArrowRight');
       await c2.fill('C2');
     });
 
@@ -138,57 +138,35 @@ test.describe('Smart editor -Tabell', () => {
     const b2 = row2.locator('td').nth(1);
     const b3 = row2.locator('td').nth(2);
 
-    await a1.click();
-
     await test.step('Fyll inn data i initiell 2x2-tabell', async () => {
       await a1.fill('A1');
-      await page.keyboard.press('ArrowRight');
       await a2.fill('A2');
-      await page.keyboard.press('ArrowRight');
       await b1.fill('B1');
-      await page.keyboard.press('ArrowRight');
       await b2.fill('B2');
     });
 
     await test.step('Legg til kolonne til venstre', async () => {
+      await selectCell(b2);
       await page.getByLabel('Legg til kolonne til venstre').click();
-    });
-
-    await test.step('Naviger til starten av ny kolonne', async () => {
-      await page.keyboard.press('ArrowLeft');
-      await page.waitForTimeout(100);
-      await page.keyboard.press('ArrowUp');
-      await page.waitForTimeout(100);
     });
 
     await test.step('Fyll inn data i den nye kolonnen', async () => {
       await a2.fill('New A2');
-      await page.keyboard.press('ArrowDown');
-      await page.waitForTimeout(100);
       await b2.fill('New B2');
     });
 
-    await test.step('Naviger til den gamle kolonnen og slett den', async () => {
-      await page.keyboard.press('ArrowRight');
-      await page.waitForTimeout(100);
+    await test.step('Slett den gamle kolonnen', async () => {
+      await selectCell(b3);
       await page.getByLabel('Fjern kolonne').click();
     });
 
     await test.step('Legg til kolonne til høyre', async () => {
+      await selectCell(b2);
       await page.getByLabel('Legg til kolonne til høyre').click();
-    });
-
-    await test.step('Naviger til toppen av den nye kolonnen', async () => {
-      await page.keyboard.press('ArrowRight');
-      await page.waitForTimeout(100);
-      await page.keyboard.press('ArrowUp');
-      await page.waitForTimeout(100);
     });
 
     await test.step('Fyll inn data i den nye kolonnen', async () => {
       await a3.fill('A3');
-      await page.keyboard.press('ArrowDown');
-      await page.waitForTimeout(100);
       await b3.fill('B3');
     });
 

@@ -2,6 +2,12 @@ import { expect } from '@playwright/test';
 import { test } from '@/fixtures/behandling/fixture';
 
 test.describe('Smart editor - Grunnleggende funksjonalitet', () => {
+  test.beforeEach(async ({ klagebehandling: { page } }) => {
+    // Disable irrelevant tabs
+    await page.locator('header').getByRole('checkbox', { exact: true, name: 'Dokumenter' }).uncheck();
+    await page.locator('header').getByRole('checkbox', { exact: true, name: 'Kvalitetsvurdering' }).uncheck();
+  });
+
   test('Skrive et avsnitt', async ({ page, klagebehandling }) => {
     const smartEditor = await klagebehandling.behandling.initSmartEditor('Generelt brev');
     await smartEditor.locator('[data-placeholder="Avsnitt"]').first().click();
