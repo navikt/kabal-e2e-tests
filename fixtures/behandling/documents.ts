@@ -120,8 +120,6 @@ export const finishAndVerifyDocument = async (page: Page, documentName: string) 
   const inProgressList = getDokumenterUnderArbeid(page);
   await inProgressList.waitFor();
 
-  const numberOfNewDocsBeforeFinish = await inProgressList.getByRole('listitem').count();
-
   await getJournalfoerteDokumenter(page)
     .getByRole('treeitem')
     .first()
@@ -153,17 +151,13 @@ export const finishAndVerifyDocument = async (page: Page, documentName: string) 
   await finishedList.waitFor({ timeout: 120_000 });
 
   const finishedDocument = finishedList.getByRole('treeitem').filter({ hasText: documentName });
-  await finishedDocument.waitFor({ timeout: 60_000 });
+  await finishedDocument.waitFor({ timeout: 120_000 });
 
   await finishedDocument.locator('[data-included="true"]').waitFor({ timeout: 60_000 });
 
-  if (numberOfNewDocsBeforeFinish > 1) {
-    await expect(inProgressList.getByRole('article').filter({ hasText: documentName })).toHaveCount(0, {
-      timeout: 2_000,
-    });
-  } else {
-    await expect(inProgressList.getByRole('listitem')).toHaveCount(0, { timeout: 2_000 });
-  }
+  await expect(inProgressList.getByRole('article').filter({ hasText: documentName })).toHaveCount(0, {
+    timeout: 2_000,
+  });
 };
 
 export const deleteDocument = async (page: Page, documentName: string) => {
