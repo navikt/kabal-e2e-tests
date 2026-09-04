@@ -16,7 +16,7 @@ test.describe('Tildeling/fradeling', () => {
     await index.page.goto(UI_DOMAIN);
 
     await assignBehandling(index.page, behandling);
-    await deAssignBehandling(index.page, behandling.id);
+    await deAssignBehandling(index.page, behandling);
 
     try {
       await behandling.delete();
@@ -58,16 +58,24 @@ const assignBehandling = async (page: Page, behandling: Behandling) => {
   });
 };
 
-const deAssignBehandling = async (page: Page, behandlingId: string) => {
+const deAssignBehandling = async (page: Page, behandling: Behandling) => {
   await test.step('Naviger til "Mine oppgaver"', async () => {
     await page.waitForTimeout(1000); // Sometimes newly assigned oppgave is not found in mine oppgaver immediately after assignment
     await getMainMenu(page).getByRole('link', { name: 'Mine Oppgaver' }).click();
     await page.waitForURL('**/mineoppgaver');
   });
 
-  await test.step(`Fradel behandling \`${behandlingId.substring(0, 8)}...\``, async () => {
-    const table = getTable(page, 'Oppgaver under arbeid');
-    const oppgaveRow = await findRow(table, behandlingId);
+  const table = getTable(page, 'Oppgaver under arbeid');
+
+  await test.step('Sett filtere for mine oppgaver', async () => {
+    await setFilter(table, 'Type', behandling.typeName);
+    await setFilter(table, 'Ytelse', behandling.ytelseName);
+    await setFilter(table, 'Hjemmel', behandling.getHjemmelName(), true);
+    await table.body.waitFor();
+  });
+
+  await test.step(`Fradel behandling \`${behandling.id.substring(0, 8)}...\``, async () => {
+    const oppgaveRow = await findRow(table, behandling.id);
 
     // "Angre" button shows for ~10s after assignment, then "Legg tilbake" appears.
     const leggTilbakeButton = oppgaveRow.getByRole('button', { name: 'Legg tilbake' });
