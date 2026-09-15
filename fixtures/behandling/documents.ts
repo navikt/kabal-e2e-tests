@@ -3,7 +3,8 @@ import { resolve } from 'node:path';
 import { expect, type Page, test } from '@playwright/test';
 import { getDokumenter, getDokumenterUnderArbeid, getJournalfoerteDokumenter } from '@/fixtures/behandling/regions';
 import type { DocumentType } from '@/fixtures/behandling/types';
-import { UI_DOMAIN } from '@/tests/functions';
+import { makeDirectApiRequest } from '@/fixtures/direct-api-request';
+import { createApiUrl } from '@/tests/functions';
 import { finishedRequest } from '@/tests/helpers';
 import { SAKEN_GJELDER_DATA } from '@/tests/users';
 
@@ -103,16 +104,13 @@ export const downloadPdf = async (page: Page, behandlingId: string, documentName
     throw new Error(`Could not find document ID for document: ${documentName}`);
   }
 
-  const url = `${UI_DOMAIN}/api/kabal-api/behandlinger/${behandlingId}/dokumenter/${documentId}/pdf`;
+  const api = 'kabal-api';
+  const path = `/behandlinger/${behandlingId}/dokumenter/${documentId}/pdf`;
 
-  const cookies = await page.context().cookies();
-
-  const res = await fetch(url, {
-    headers: { cookie: cookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ') },
-  });
+  const res = await makeDirectApiRequest(page, api, path, 'GET', { accept: 'application/pdf' });
 
   if (!res.ok) {
-    throw new Error(`Failed to fetch PDF from ${url}, response: ${res.status} - ${res.statusText}`);
+    throw new Error(`Failed to fetch PDF from ${createApiUrl(api, path)}, response: ${res.status} - ${res.statusText}`);
   }
 };
 
