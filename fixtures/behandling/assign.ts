@@ -19,7 +19,7 @@ export const assignBehandling = async (page: Page, behandlingId: string) => {
   }
 
   const res = await makeDirectApiRequest(page, 'kabal-api', `/behandlinger/${behandlingId}/saksbehandler`, 'PUT', {
-    navIdent: brukerData.navIdent,
+    body: { navIdent: brukerData.navIdent },
   });
 
   if (!res.ok) {
@@ -35,7 +35,7 @@ export const deAssignBehandling = async (page: Page, behandlingId: string) => {
   }
 
   const res = await makeDirectApiRequest(page, 'kabal-api', `/behandlinger/${behandlingId}/fradel`, 'POST', {
-    reasonId: FradelReason.ANNET,
+    body: { reasonId: FradelReason.ANNET },
   });
 
   if (!res.ok) {
