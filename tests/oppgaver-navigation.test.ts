@@ -31,7 +31,7 @@ test.describe('Navigering', () => {
   });
 
   test('"Oppgavestyring"-lenke navigerer til `/oppgavestyring`', async ({ page }) => {
-    const link = getMainMenu(page).getByRole('link', { name: 'Oppgavestyring' });
+    const link = getMainMenu(page).getByRole('link', { name: 'Oppgavestyring', exact: true });
     await link.click({ timeout });
 
     await page.waitForURL('**/oppgavestyring');
