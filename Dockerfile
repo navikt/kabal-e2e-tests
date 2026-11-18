@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.63.0-resolute
+FROM mcr.microsoft.com/playwright:v1.65.1-resolute
 
 ENV TARGET=dev
 ENV CONFIG=nais
